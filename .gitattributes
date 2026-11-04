@@ -1,0 +1,22 @@
+# Normalize every text file to LF, regardless of each machine's core.autocrlf.
+* text=auto eol=lf
+
+# Windows scripts can break when run with LF line endings.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Binary files: never touch their content.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.ttf binary
+*.otf binary
+*.woff binary
+*.woff2 binary
+*.pdf binary
+*.jar binary
+*.jks binary
+*.keystore binary

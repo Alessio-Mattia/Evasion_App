@@ -1,0 +1,5 @@
+package ch.mattia.evasion
+
+import io.flutter.embedding.android.FlutterActivity
+
+class MainActivity : FlutterActivity()
