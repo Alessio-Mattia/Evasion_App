@@ -65,7 +65,7 @@ Règles :
 - La position exacte des utilisateurs (`user_locations`) et des posts (`posts.exact_geog`) n'est **jamais** lisible par les autres : lecture via la vue `posts_public` et des fonctions RPC.
 - Logique sensible côté serveur (fonctions SQL, triggers, Edge Functions) : détection des croisements, création des matchs, décompte des quotas de messages, expiration des posts. Le client ne doit jamais pouvoir contourner ces règles.
 - Deux projets : `dev` et `prod`. Ne jamais exécuter de commande sur `prod` sans que je le demande explicitement.
-- Les clés (URL, anon key) viennent de `--dart-define-from-file` ; aucun secret dans le code ni dans Git. La `service_role` key n'est jamais utilisée dans l'application.
+- Les clés (URL, publishable key) viennent de `--dart-define-from-file` ; aucun secret dans le code ni dans Git. La `service_role` key n'est jamais utilisée dans l'application.
 
 ## Règles métier clés (valeurs à placer dans `core/config/business_rules.dart`)
 
