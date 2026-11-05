@@ -1,0 +1,23 @@
+{
+  "@@locale": "fr",
+  "appTitle": "Evasion",
+  "@appTitle": {
+    "description": "Application name shown by the operating system's task switcher."
+  },
+  "tabHome": "Accueil",
+  "@tabHome": {
+    "description": "Bottom navigation label of the home tab."
+  },
+  "tabMessages": "Messagerie",
+  "@tabMessages": {
+    "description": "Bottom navigation label of the messaging tab."
+  },
+  "tabAdd": "Ajout",
+  "@tabAdd": {
+    "description": "Bottom navigation label of the tab used to create content."
+  },
+  "tabProfile": "Profil",
+  "@tabProfile": {
+    "description": "Bottom navigation label of the user's profile tab."
+  }
+}

@@ -65,7 +65,7 @@ Règles :
 - La position exacte des utilisateurs (`user_locations`) et des posts (`posts.exact_geog`) n'est **jamais** lisible par les autres : lecture via la vue `posts_public` et des fonctions RPC.
 - Logique sensible côté serveur (fonctions SQL, triggers, Edge Functions) : détection des croisements, création des matchs, décompte des quotas de messages, expiration des posts. Le client ne doit jamais pouvoir contourner ces règles.
 - Deux projets : `dev` et `prod`. Ne jamais exécuter de commande sur `prod` sans que je le demande explicitement.
-- Les clés (URL, anon key) viennent de `--dart-define-from-file` ; aucun secret dans le code ni dans Git. La `service_role` key n'est jamais utilisée dans l'application.
+- Les clés (URL, publishable key) viennent de `--dart-define-from-file` ; aucun secret dans le code ni dans Git. La `service_role` key n'est jamais utilisée dans l'application.
 
 ## Règles métier clés (valeurs à placer dans `core/config/business_rules.dart`)
 
@@ -84,14 +84,18 @@ Les seuils (durées, quotas, rayons) ne sont pas encore fixés : les centraliser
 
 ```bash
 flutter pub get
-dart run build_runner build --delete-conflicting-outputs   # après modification d'un modèle freezed / provider
+flutter gen-l10n
+dart run build_runner build       # après modification d'un modèle freezed / provider
 flutter analyze
 flutter test
-flutter run -t lib/main_dev.dart --dart-define-from-file=env/dev.json
+flutter run --flavor dev -t lib/main_dev.dart --dart-define-from-file=env/dev.json
+flutter run --flavor prod -t lib/main_prod.dart --dart-define-from-file=env/prod.json
 supabase start                    # Supabase local (nécessite Docker)
 supabase migration new <nom>
 supabase db reset                 # rejoue toutes les migrations en local
 ```
+
+`flutter gen-l10n` et `build_runner` doivent être lancés après un clone ou un pull : le code généré n'est pas versionné.
 
 ## Façon de travailler
 

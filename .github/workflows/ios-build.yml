@@ -1,0 +1,23 @@
+name: iOS build
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.47.9
+          cache: true
+      - run: flutter pub get
+      - run: flutter gen-l10n
+      - run: dart run build_runner build
+      - run: flutter build ios --no-codesign --flavor dev -t lib/main_dev.dart --dart-define-from-file=env/example.json
+      - run: flutter build ios --no-codesign --flavor prod -t lib/main_prod.dart --dart-define-from-file=env/example.json
