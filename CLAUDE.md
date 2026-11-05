@@ -85,10 +85,11 @@ Les seuils (durées, quotas, rayons) ne sont pas encore fixés : les centraliser
 ```bash
 flutter pub get
 flutter gen-l10n
-dart run build_runner build --delete-conflicting-outputs   # après modification d'un modèle freezed / provider
+dart run build_runner build       # après modification d'un modèle freezed / provider
 flutter analyze
 flutter test
 flutter run --flavor dev -t lib/main_dev.dart --dart-define-from-file=env/dev.json
+flutter run --flavor prod -t lib/main_prod.dart --dart-define-from-file=env/prod.json
 supabase start                    # Supabase local (nécessite Docker)
 supabase migration new <nom>
 supabase db reset                 # rejoue toutes les migrations en local

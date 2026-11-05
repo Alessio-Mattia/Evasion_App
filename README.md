@@ -102,8 +102,15 @@ flutter pub get
 #    → android/app/src/main/AndroidManifest.xml
 #    → ios/Runner/AppDelegate.swift
 
-# 5. Run the app
-flutter run
+# 5. Generate the code and create the local env files
+flutter gen-l10n
+dart run build_runner build
+cp env/example.json env/dev.json
+cp env/example.json env/prod.json
+
+# 6. Run the app (--flavor is required, the build fails without it)
+flutter run --flavor dev -t lib/main_dev.dart --dart-define-from-file=env/dev.json
+flutter run --flavor prod -t lib/main_prod.dart --dart-define-from-file=env/prod.json
 ```
 
 > **Note:** Firebase config files and API keys are not included in this repository for security reasons. See the Firebase console to generate them.
