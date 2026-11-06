@@ -107,6 +107,7 @@ flutter gen-l10n
 dart run build_runner build
 cp env/example.json env/dev.json
 cp env/example.json env/prod.json
+#    → then set the URL and publishable key of each Supabase project
 
 # 6. Run the app (--flavor is required, the build fails without it)
 flutter run --flavor dev -t lib/main_dev.dart --dart-define-from-file=env/dev.json
