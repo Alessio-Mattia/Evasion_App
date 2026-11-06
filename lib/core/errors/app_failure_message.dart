@@ -10,6 +10,8 @@ extension AppFailureMessage on AppFailure {
       PermissionDeniedFailure() => l10n.errorPermissionDenied,
       NotFoundFailure() => l10n.errorNotFound,
       ConflictFailure() => l10n.errorConflict,
+      InvalidCodeFailure() => l10n.errorInvalidCode,
+      TooManyRequestsFailure() => l10n.errorTooManyRequests,
       UnexpectedFailure() => l10n.errorUnexpected,
     };
   }

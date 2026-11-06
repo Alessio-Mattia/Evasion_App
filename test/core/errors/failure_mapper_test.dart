@@ -35,6 +35,36 @@ void main() {
       );
     });
 
+    test('maps a wrong or expired sign-in code to InvalidCodeFailure', () {
+      expect(
+        map(
+          const AuthException(
+            'expired',
+            statusCode: '403',
+            code: 'otp_expired',
+          ),
+        ),
+        isA<InvalidCodeFailure>(),
+      );
+    });
+
+    test('maps rate limits to TooManyRequestsFailure', () {
+      for (final code in [
+        'over_email_send_rate_limit',
+        'over_request_rate_limit',
+      ]) {
+        expect(
+          map(AuthException('slow down', statusCode: '429', code: code)),
+          isA<TooManyRequestsFailure>(),
+          reason: code,
+        );
+      }
+      expect(
+        map(const AuthException('slow down', statusCode: '429')),
+        isA<TooManyRequestsFailure>(),
+      );
+    });
+
     group('PostgrestException', () {
       AppFailure mapCode(String? code) =>
           map(PostgrestException(message: 'error', code: code));
@@ -72,6 +102,7 @@ void main() {
         expect(mapStatus('403'), isA<PermissionDeniedFailure>());
         expect(mapStatus('404'), isA<NotFoundFailure>());
         expect(mapStatus('409'), isA<ConflictFailure>());
+        expect(mapStatus('429'), isA<TooManyRequestsFailure>());
         expect(mapStatus('500'), isA<UnexpectedFailure>());
       });
     });

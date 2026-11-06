@@ -10,6 +10,10 @@ abstract final class BusinessRules {
   /// Minimum age to sign up, from the terms of use.
   static const int minimumAge = 18;
 
+  /// Number of digits of the sign-in code sent by email. Also configured in
+  /// Supabase: `otp_length` in supabase/config.toml and in the dashboard.
+  static const int signInCodeLength = 6;
+
   // Encounters
 
   /// Default detection radius of a new user, editable in the settings.

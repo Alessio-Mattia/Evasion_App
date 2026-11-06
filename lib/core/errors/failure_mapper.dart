@@ -25,10 +25,7 @@ AppFailure toAppFailure(Object error, StackTrace stackTrace) {
     // Checked before AuthException, of which it is a subtype.
     SocketException() || TimeoutException() || AuthRetryableFetchException() =>
       NetworkFailure(cause: error, stackTrace: stackTrace),
-    AuthException() => UnauthenticatedFailure(
-      cause: error,
-      stackTrace: stackTrace,
-    ),
+    AuthException() => _fromAuthException(error, stackTrace),
     PostgrestException(:final code) => _fromPostgrestCode(
       code,
       error,
@@ -40,6 +37,22 @@ AppFailure toAppFailure(Object error, StackTrace stackTrace) {
       stackTrace,
     ),
     _ => UnexpectedFailure(cause: error, stackTrace: stackTrace),
+  };
+}
+
+/// Supabase Auth error codes:
+/// https://supabase.com/docs/guides/auth/debugging/error-codes
+AppFailure _fromAuthException(AuthException error, StackTrace stackTrace) {
+  return switch (error.code) {
+    // Returned both for a wrong code and for an expired one.
+    'otp_expired' => InvalidCodeFailure(cause: error, stackTrace: stackTrace),
+    'over_email_send_rate_limit' || 'over_request_rate_limit' =>
+      TooManyRequestsFailure(cause: error, stackTrace: stackTrace),
+    _ when error.statusCode == '429' => TooManyRequestsFailure(
+      cause: error,
+      stackTrace: stackTrace,
+    ),
+    _ => UnauthenticatedFailure(cause: error, stackTrace: stackTrace),
   };
 }
 
@@ -74,6 +87,7 @@ AppFailure _fromHttpStatus(
     '403' => PermissionDeniedFailure(cause: error, stackTrace: stackTrace),
     '404' => NotFoundFailure(cause: error, stackTrace: stackTrace),
     '409' => ConflictFailure(cause: error, stackTrace: stackTrace),
+    '429' => TooManyRequestsFailure(cause: error, stackTrace: stackTrace),
     _ => UnexpectedFailure(cause: error, stackTrace: stackTrace),
   };
 }
