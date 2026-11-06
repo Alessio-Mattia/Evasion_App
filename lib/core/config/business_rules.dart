@@ -10,10 +10,31 @@ abstract final class BusinessRules {
   /// Minimum age to sign up, from the terms of use.
   static const int minimumAge = 18;
 
+  /// Oldest accepted age, to catch typing mistakes in the birth date.
+  /// Also enforced in SQL (birth date trigger).
+  static const int maximumAge = 120;
+
+  // Profile
+
+  /// Also enforced in SQL.
+  static const int displayNameMaxLength = 50;
+
+  /// Also enforced in SQL.
+  static const int bioMaxLength = 500;
+
+  /// Also enforced in SQL.
+  static const int occupationMaxLength = 100;
+
+  /// Also enforced in SQL.
+  static const int universityMaxLength = 100;
+
   // Encounters
 
   /// Default detection radius of a new user, editable in the settings.
   static const int defaultDetectionRadiusMeters = 100;
+
+  /// Largest detection radius a user can choose. Also enforced in SQL.
+  static const int maxDetectionRadiusMeters = 5000;
 
   /// How long raw positions are kept before being purged.
   /// Also enforced in SQL (purge job).
