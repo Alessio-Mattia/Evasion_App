@@ -19,5 +19,29 @@
   "tabProfile": "Profil",
   "@tabProfile": {
     "description": "Bottom navigation label of the user's profile tab."
+  },
+  "errorNetwork": "Pas de connexion internet. Réessaie dans un instant.",
+  "@errorNetwork": {
+    "description": "Error shown when the device is offline or the server does not answer."
+  },
+  "errorUnauthenticated": "Ta session a expiré. Reconnecte-toi.",
+  "@errorUnauthenticated": {
+    "description": "Error shown when the user's session is missing or expired."
+  },
+  "errorPermissionDenied": "Tu n'as pas l'autorisation de faire ça.",
+  "@errorPermissionDenied": {
+    "description": "Error shown when the server refuses an action for the current user."
+  },
+  "errorNotFound": "Cet élément n'existe pas ou plus.",
+  "@errorNotFound": {
+    "description": "Error shown when the requested item was not found or was deleted."
+  },
+  "errorConflict": "C'est déjà fait.",
+  "@errorConflict": {
+    "description": "Error shown when the action was already done, for example a duplicate."
+  },
+  "errorUnexpected": "Une erreur est survenue. Réessaie plus tard.",
+  "@errorUnexpected": {
+    "description": "Generic error shown when no more specific message applies."
   }
 }
