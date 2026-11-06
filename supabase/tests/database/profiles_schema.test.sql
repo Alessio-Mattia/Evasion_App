@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(39);
+select plan(47);
 
 -- Fixtures --------------------------------------------------------------------
 
@@ -206,12 +206,61 @@ select lives_ok(
     where id = '00000000-0000-0000-0000-000000000001'$$,
   'a user can set their birth date'
 );
+select is(
+  (select birth_date_corrected from public.profiles
+   where id = '00000000-0000-0000-0000-000000000001'),
+  false,
+  'setting the birth date does not use the correction'
+);
+select lives_ok(
+  $$update public.profiles set birth_date = '2000-01-01'
+    where id = '00000000-0000-0000-0000-000000000001'$$,
+  'saving the same birth date is accepted'
+);
+select is(
+  (select birth_date_corrected from public.profiles
+   where id = '00000000-0000-0000-0000-000000000001'),
+  false,
+  'saving the same birth date does not use the correction'
+);
 select throws_ok(
-  $$update public.profiles set birth_date = '2001-01-01'
+  $$update public.profiles
+    set birth_date = (current_date - interval '10 years')::date
     where id = '00000000-0000-0000-0000-000000000001'$$,
   '23514',
-  'birth_date can only be set once',
-  'a user cannot change their birth date afterwards'
+  'the user is under the minimum age',
+  'a correction cannot go under the minimum age'
+);
+select is(
+  (select birth_date_corrected from public.profiles
+   where id = '00000000-0000-0000-0000-000000000001'),
+  false,
+  'a refused correction does not use the correction'
+);
+select lives_ok(
+  $$update public.profiles set birth_date = '2001-01-01'
+    where id = '00000000-0000-0000-0000-000000000001'$$,
+  'a user can correct their birth date once'
+);
+select is(
+  (select birth_date_corrected from public.profiles
+   where id = '00000000-0000-0000-0000-000000000001'),
+  true,
+  'the correction is recorded'
+);
+select throws_ok(
+  $$update public.profiles set birth_date = '2002-01-01'
+    where id = '00000000-0000-0000-0000-000000000001'$$,
+  '23514',
+  'birth_date can only be corrected once',
+  'a user cannot correct their birth date twice'
+);
+select throws_ok(
+  $$update public.profiles set birth_date_corrected = false
+    where id = '00000000-0000-0000-0000-000000000001'$$,
+  '42501',
+  null,
+  'a user cannot reset their correction'
 );
 select throws_ok(
   $$update public.profiles set id = gen_random_uuid()
@@ -256,9 +305,9 @@ select is(
   'another profile was left unchanged'
 );
 select lives_ok(
-  $$update public.profiles set birth_date = '2001-01-01'
+  $$update public.profiles set birth_date = '2003-01-01'
     where id = '00000000-0000-0000-0000-000000000001'$$,
-  'an administrator can correct a birth date'
+  'an administrator can still correct a birth date'
 );
 
 -- Account deletion ------------------------------------------------------------

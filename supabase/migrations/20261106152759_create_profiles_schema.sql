@@ -20,6 +20,8 @@ create table public.profiles (
   id uuid primary key references auth.users (id) on delete cascade,
   display_name text check (btrim(display_name) <> ''),
   birth_date date,
+  -- Set by a trigger when the user uses their only birth date correction.
+  birth_date_corrected boolean not null default false,
   gender text check (gender in ('woman', 'man', 'other')),
   bio text,
   occupation text,
@@ -194,13 +196,17 @@ begin
       using errcode = 'check_violation';
   end if;
 
-  -- Users set it once. Only an administrator, with a server role, can correct
-  -- it afterwards.
+  -- Users can correct it once, for example after a typing mistake. After that,
+  -- only an administrator, with a server role, can change it.
   if old.birth_date is not null
     and new.birth_date <> old.birth_date
     and current_user = 'authenticated' then
-    raise exception 'birth_date can only be set once'
-      using errcode = 'check_violation';
+    if old.birth_date_corrected then
+      raise exception 'birth_date can only be corrected once'
+        using errcode = 'check_violation';
+    end if;
+
+    new.birth_date_corrected := true;
   end if;
 
   -- Keep the 18 in sync with BusinessRules.minimumAge (business_rules.dart).
