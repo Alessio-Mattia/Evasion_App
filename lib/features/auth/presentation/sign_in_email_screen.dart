@@ -27,6 +27,8 @@ class _SignInEmailScreenState extends ConsumerState<SignInEmailScreen> {
   }
 
   Future<void> _submit() async {
+    // The button and the keyboard's done key can both submit.
+    if (ref.read(sendCodeControllerProvider).isLoading) return;
     if (!_formKey.currentState!.validate()) return;
     final email = normalizeEmail(_emailController.text);
     final sent = await ref

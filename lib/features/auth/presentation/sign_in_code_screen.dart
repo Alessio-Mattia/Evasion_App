@@ -35,6 +35,9 @@ class _SignInCodeScreenState extends ConsumerState<SignInCodeScreen> {
   }
 
   Future<void> _verify() async {
+    // The last digit and the keyboard's done key can both submit: a code can
+    // only be used once, so a second call would fail.
+    if (ref.read(verifyCodeControllerProvider).isLoading) return;
     if (!_formKey.currentState!.validate()) return;
     await ref
         .read(verifyCodeControllerProvider.notifier)
@@ -42,6 +45,7 @@ class _SignInCodeScreenState extends ConsumerState<SignInCodeScreen> {
   }
 
   Future<void> _resend() async {
+    if (ref.read(sendCodeControllerProvider).isLoading) return;
     final l10n = AppLocalizations.of(context);
     final sent = await ref
         .read(sendCodeControllerProvider.notifier)

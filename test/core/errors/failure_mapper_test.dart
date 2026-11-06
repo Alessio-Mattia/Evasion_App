@@ -27,12 +27,40 @@ void main() {
       );
     });
 
-    test('maps auth errors to UnauthenticatedFailure', () {
+    test('maps session errors to UnauthenticatedFailure', () {
       expect(map(AuthSessionMissingException()), isA<UnauthenticatedFailure>());
-      expect(
-        map(const AuthException('invalid', statusCode: '400')),
-        isA<UnauthenticatedFailure>(),
-      );
+      for (final code in [
+        'session_expired',
+        'session_not_found',
+        'session_missing',
+        'refresh_token_not_found',
+        'refresh_token_already_used',
+        'no_authorization',
+        'bad_jwt',
+      ]) {
+        expect(
+          map(AuthException('session', statusCode: '401', code: code)),
+          isA<UnauthenticatedFailure>(),
+          reason: code,
+        );
+      }
+    });
+
+    test('maps other auth errors to UnexpectedFailure, not to a session '
+        'error, since they also happen while signing in', () {
+      for (final code in [
+        'email_address_not_authorized',
+        'email_address_invalid',
+        'validation_failed',
+        'unexpected_failure',
+        null,
+      ]) {
+        expect(
+          map(AuthException('error', statusCode: '400', code: code)),
+          isA<UnexpectedFailure>(),
+          reason: code,
+        );
+      }
     });
 
     test('maps a wrong or expired sign-in code to InvalidCodeFailure', () {

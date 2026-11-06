@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:evasion/features/auth/presentation/sign_in_code_screen.dart';
 import 'package:evasion/features/auth/presentation/sign_in_email_screen.dart';
 import 'package:evasion/features/map/presentation/home_screen.dart';
@@ -44,6 +46,42 @@ void main() {
     expect(repository.sentCodesTo, ['alex@epfl.ch']);
     expect(find.byType(SignInCodeScreen), findsOneWidget);
     expect(find.textContaining('alex@epfl.ch'), findsOneWidget);
+  });
+
+  testWidgets('the keyboard done key does not send a second code request', (
+    tester,
+  ) async {
+    await pumpEvasionApp(tester, authRepository: repository);
+    repository.pendingCall = Completer<void>();
+
+    await tester.enterText(find.byType(TextFormField), 'alex@epfl.ch');
+    await tester.tap(find.text('Recevoir un code'));
+    await tester.pump();
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pump();
+
+    expect(repository.sentCodesTo, hasLength(1));
+    repository.pendingCall!.complete();
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('the code is checked once, even if done follows the last digit', (
+    tester,
+  ) async {
+    await pumpEvasionApp(tester, authRepository: repository);
+    await enterEmail(tester, 'alex@epfl.ch');
+    repository.pendingCall = Completer<void>();
+
+    // The last digit submits, then the done key is pressed during the check.
+    await tester.enterText(find.byType(TextFormField), '123456');
+    await tester.pump();
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pump();
+
+    expect(repository.verifyCodeCalls, 1);
+    repository.pendingCall!.complete();
+    await tester.pumpAndSettle();
+    expect(find.byType(HomeScreen), findsOneWidget);
   });
 
   testWidgets('a wrong code shows its message and stays', (tester) async {

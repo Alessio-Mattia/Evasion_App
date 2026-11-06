@@ -42,7 +42,13 @@ AppFailure toAppFailure(Object error, StackTrace stackTrace) {
 
 /// Supabase Auth error codes:
 /// https://supabase.com/docs/guides/auth/debugging/error-codes
+///
+/// Only real session errors mean "sign in again": the other auth errors also
+/// happen while signing in, before any session exists.
 AppFailure _fromAuthException(AuthException error, StackTrace stackTrace) {
+  if (error is AuthSessionMissingException) {
+    return UnauthenticatedFailure(cause: error, stackTrace: stackTrace);
+  }
   return switch (error.code) {
     // Returned both for a wrong code and for an expired one.
     'otp_expired' => InvalidCodeFailure(cause: error, stackTrace: stackTrace),
@@ -52,7 +58,14 @@ AppFailure _fromAuthException(AuthException error, StackTrace stackTrace) {
       cause: error,
       stackTrace: stackTrace,
     ),
-    _ => UnauthenticatedFailure(cause: error, stackTrace: stackTrace),
+    'session_expired' ||
+    'session_not_found' ||
+    'session_missing' ||
+    'refresh_token_not_found' ||
+    'refresh_token_already_used' ||
+    'no_authorization' ||
+    'bad_jwt' => UnauthenticatedFailure(cause: error, stackTrace: stackTrace),
+    _ => UnexpectedFailure(cause: error, stackTrace: stackTrace),
   };
 }
 
