@@ -27,11 +27,69 @@ void main() {
       );
     });
 
-    test('maps auth errors to UnauthenticatedFailure', () {
+    test('maps session errors to UnauthenticatedFailure', () {
       expect(map(AuthSessionMissingException()), isA<UnauthenticatedFailure>());
+      for (final code in [
+        'session_expired',
+        'session_not_found',
+        'session_missing',
+        'refresh_token_not_found',
+        'refresh_token_already_used',
+        'no_authorization',
+        'bad_jwt',
+      ]) {
+        expect(
+          map(AuthException('session', statusCode: '401', code: code)),
+          isA<UnauthenticatedFailure>(),
+          reason: code,
+        );
+      }
+    });
+
+    test('maps other auth errors to UnexpectedFailure, not to a session '
+        'error, since they also happen while signing in', () {
+      for (final code in [
+        'email_address_not_authorized',
+        'email_address_invalid',
+        'validation_failed',
+        'unexpected_failure',
+        null,
+      ]) {
+        expect(
+          map(AuthException('error', statusCode: '400', code: code)),
+          isA<UnexpectedFailure>(),
+          reason: code,
+        );
+      }
+    });
+
+    test('maps a wrong or expired sign-in code to InvalidCodeFailure', () {
       expect(
-        map(const AuthException('invalid', statusCode: '400')),
-        isA<UnauthenticatedFailure>(),
+        map(
+          const AuthException(
+            'expired',
+            statusCode: '403',
+            code: 'otp_expired',
+          ),
+        ),
+        isA<InvalidCodeFailure>(),
+      );
+    });
+
+    test('maps rate limits to TooManyRequestsFailure', () {
+      for (final code in [
+        'over_email_send_rate_limit',
+        'over_request_rate_limit',
+      ]) {
+        expect(
+          map(AuthException('slow down', statusCode: '429', code: code)),
+          isA<TooManyRequestsFailure>(),
+          reason: code,
+        );
+      }
+      expect(
+        map(const AuthException('slow down', statusCode: '429')),
+        isA<TooManyRequestsFailure>(),
       );
     });
 
@@ -72,6 +130,7 @@ void main() {
         expect(mapStatus('403'), isA<PermissionDeniedFailure>());
         expect(mapStatus('404'), isA<NotFoundFailure>());
         expect(mapStatus('409'), isA<ConflictFailure>());
+        expect(mapStatus('429'), isA<TooManyRequestsFailure>());
         expect(mapStatus('500'), isA<UnexpectedFailure>());
       });
     });

@@ -43,5 +43,80 @@
   "errorUnexpected": "Une erreur est survenue. Réessaie plus tard.",
   "@errorUnexpected": {
     "description": "Generic error shown when no more specific message applies."
+  },
+  "errorInvalidCode": "Ce code est incorrect ou a expiré.",
+  "@errorInvalidCode": {
+    "description": "Error shown when the sign-in code entered is wrong or expired."
+  },
+  "errorTooManyRequests": "Trop de tentatives. Réessaie dans quelques minutes.",
+  "@errorTooManyRequests": {
+    "description": "Error shown when the server rate-limits the user."
+  },
+  "signInTitle": "Bienvenue sur Evasion",
+  "@signInTitle": {
+    "description": "Title of the sign-in screen where the user enters their email."
+  },
+  "signInSubtitle": "Saisis ton adresse e-mail : on t'envoie un code pour te connecter ou créer ton compte.",
+  "@signInSubtitle": {
+    "description": "Explanation under the sign-in title. The same flow signs in and signs up."
+  },
+  "signInEmailLabel": "Adresse e-mail",
+  "@signInEmailLabel": {
+    "description": "Label of the email field on the sign-in screen."
+  },
+  "signInEmailInvalid": "Saisis une adresse e-mail valide.",
+  "@signInEmailInvalid": {
+    "description": "Validation error when the email format is wrong."
+  },
+  "signInStudentHint": "Avec ton adresse universitaire, ton profil reçoit le badge étudiant.",
+  "@signInStudentHint": {
+    "description": "Hint explaining the student badge, shown under the email field."
+  },
+  "signInSendCode": "Recevoir un code",
+  "@signInSendCode": {
+    "description": "Button that sends the sign-in code by email."
+  },
+  "signInCodeTitle": "Saisis ton code",
+  "@signInCodeTitle": {
+    "description": "Title of the screen where the user enters the code received by email."
+  },
+  "signInCodeSentTo": "On a envoyé un code à {length} chiffres à {email}.",
+  "@signInCodeSentTo": {
+    "description": "Tells the user where the code was sent.",
+    "placeholders": {
+      "length": {"type": "int", "example": "6"},
+      "email": {"type": "String", "example": "alex@epfl.ch"}
+    }
+  },
+  "signInCodeLabel": "Code",
+  "@signInCodeLabel": {
+    "description": "Label of the code field."
+  },
+  "signInCodeInvalid": "Le code contient {length} chiffres.",
+  "@signInCodeInvalid": {
+    "description": "Validation error when the code does not have the expected number of digits.",
+    "placeholders": {
+      "length": {"type": "int", "example": "6"}
+    }
+  },
+  "signInVerify": "Valider",
+  "@signInVerify": {
+    "description": "Button that checks the code and signs the user in."
+  },
+  "signInResendCode": "Renvoyer le code",
+  "@signInResendCode": {
+    "description": "Button that sends a new code to the same email."
+  },
+  "signInCodeResent": "Nouveau code envoyé.",
+  "@signInCodeResent": {
+    "description": "Confirmation shown after a new code was sent."
+  },
+  "signInChangeEmail": "Changer d'adresse",
+  "@signInChangeEmail": {
+    "description": "Button that goes back to the email screen to use another address."
+  },
+  "signOut": "Se déconnecter",
+  "@signOut": {
+    "description": "Button that signs the user out."
   }
 }
