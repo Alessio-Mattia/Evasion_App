@@ -1,0 +1,8 @@
+targets:
+  $default:
+    builders:
+      json_serializable:
+        options:
+          # Database columns are snake_case (display_name), Dart fields
+          # camelCase (displayName).
+          field_rename: snake

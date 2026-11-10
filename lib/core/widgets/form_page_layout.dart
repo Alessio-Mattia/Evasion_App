@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-/// Shared frame of the sign-in screens: a title, an explanation, then the
-/// form, centered and scrollable when the keyboard is open.
-class SignInLayout extends StatelessWidget {
-  const SignInLayout({
+/// Frame of a form screen (sign-in, onboarding): a title, an explanation, then
+/// the form, centered and scrollable when the keyboard is open.
+class FormPageLayout extends StatelessWidget {
+  const FormPageLayout({
     required this.title,
     required this.subtitle,
     required this.children,
@@ -45,9 +45,9 @@ class SignInLayout extends StatelessWidget {
   }
 }
 
-/// Main button of a sign-in step, replaced by a spinner while it works.
-class SignInSubmitButton extends StatelessWidget {
-  const SignInSubmitButton({
+/// Main button of a form, replaced by a spinner while it works.
+class LoadingButton extends StatelessWidget {
+  const LoadingButton({
     required this.label,
     required this.isLoading,
     required this.onPressed,
@@ -56,7 +56,9 @@ class SignInSubmitButton extends StatelessWidget {
 
   final String label;
   final bool isLoading;
-  final VoidCallback onPressed;
+
+  /// Null disables the button, for example while the form is not filled.
+  final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {

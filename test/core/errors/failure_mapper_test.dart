@@ -105,6 +105,10 @@ void main() {
         expect(mapCode('23505'), isA<ConflictFailure>());
       });
 
+      test('23514 is a refused value', () {
+        expect(mapCode('23514'), isA<InvalidInputFailure>());
+      });
+
       test('PGRST116 is not found', () {
         expect(mapCode('PGRST116'), isA<NotFoundFailure>());
       });

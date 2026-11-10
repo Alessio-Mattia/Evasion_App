@@ -80,6 +80,8 @@ AppFailure _fromPostgrestCode(
     '42501' => PermissionDeniedFailure(cause: error, stackTrace: stackTrace),
     // unique_violation.
     '23505' => ConflictFailure(cause: error, stackTrace: stackTrace),
+    // check_violation: a check constraint or a trigger refused a value.
+    '23514' => InvalidInputFailure(cause: error, stackTrace: stackTrace),
     // A single row was requested but none was found.
     'PGRST116' => NotFoundFailure(cause: error, stackTrace: stackTrace),
     // Missing, invalid or expired JWT.

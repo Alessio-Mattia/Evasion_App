@@ -12,6 +12,7 @@ extension AppFailureMessage on AppFailure {
       ConflictFailure() => l10n.errorConflict,
       InvalidCodeFailure() => l10n.errorInvalidCode,
       TooManyRequestsFailure() => l10n.errorTooManyRequests,
+      InvalidInputFailure() => l10n.errorInvalidInput,
       UnexpectedFailure() => l10n.errorUnexpected,
     };
   }
