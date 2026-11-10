@@ -155,7 +155,7 @@ select throws_ok(
 );
 
 update public.profiles
-set display_name = 'Bob', gender = 'man', avatar_path = 'bob.jpg'
+set display_name = 'Bob', gender = 'man', avatar_path = '00000000-0000-0000-0000-000000000002/bob.jpg'
 where id = '00000000-0000-0000-0000-000000000002';
 
 select is(

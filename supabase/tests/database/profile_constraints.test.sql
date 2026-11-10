@@ -30,7 +30,7 @@ set
   display_name = 'Alice',
   birth_date = '2000-01-01',
   gender = 'other',
-  avatar_path = 'alice.jpg'
+  avatar_path = '00000000-0000-0000-0000-000000000001/alice.jpg'
 where id = '00000000-0000-0000-0000-000000000001';
 
 update public.user_settings
@@ -62,7 +62,7 @@ select throws_ok(
 );
 select lives_ok(
   $$update public.profiles
-    set display_name = 'Alicia', gender = 'woman', avatar_path = 'new.jpg'
+    set display_name = 'Alicia', gender = 'woman', avatar_path = '00000000-0000-0000-0000-000000000001/new.jpg'
     where id = '00000000-0000-0000-0000-000000000001'$$,
   'a user can replace the required fields'
 );
