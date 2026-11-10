@@ -33,6 +33,9 @@ class FakeProfileStore implements ProfileRepository, OnboardingRepository {
 
   /// Set to make the next saves fail.
   AppFailure? saveFailure;
+
+  /// Set to make the next onboarding progress reads fail.
+  AppFailure? progressFailure;
   int fetchCount = 0;
   final List<Map<String, Object?>> savedChanges = [];
 
@@ -44,12 +47,15 @@ class FakeProfileStore implements ProfileRepository, OnboardingRepository {
   }
 
   @override
-  Future<OnboardingProgress> fetchProgress() async => OnboardingProgress(
-    hasDisplayName: profile.displayName != null,
-    hasBirthDate: profile.birthDate != null,
-    hasGender: profile.gender != null,
-    hasPhoto: profile.avatarPath != null,
-  );
+  Future<OnboardingProgress> fetchProgress() async {
+    if (progressFailure case final failure?) throw failure;
+    return OnboardingProgress(
+      hasDisplayName: profile.displayName != null,
+      hasBirthDate: profile.birthDate != null,
+      hasGender: profile.gender != null,
+      hasPhoto: profile.avatarPath != null,
+    );
+  }
 
   @override
   Future<void> saveBasics({

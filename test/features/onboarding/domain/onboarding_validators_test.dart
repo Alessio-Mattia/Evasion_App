@@ -25,6 +25,22 @@ void main() {
     });
   });
 
+  group('serverToday', () {
+    test('is the UTC date, like Postgres current_date', () {
+      // 00:30 on 11 November in Switzerland (UTC+1) is still the 10th in UTC.
+      expect(
+        serverToday(DateTime.utc(2026, 11, 10, 23, 30)),
+        DateTime(2026, 11, 10),
+      );
+    });
+
+    test('keeps no time of day', () {
+      final today = serverToday();
+
+      expect([today.hour, today.minute, today.second], [0, 0, 0]);
+    });
+  });
+
   group('birth date limits', () {
     final today = DateTime(2026, 11, 10);
 

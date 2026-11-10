@@ -79,6 +79,20 @@ void main() {
     expect(find.text('Saisis ton prénom.'), findsOneWidget);
   });
 
+  testWidgets('tapping the chosen gender again keeps it selected', (
+    tester,
+  ) async {
+    await pumpEvasionApp(tester, profiles: store);
+    await answerUpToGender(tester);
+
+    // A second tap on a segmented button asks to deselect it.
+    await tapText(tester, 'Femme');
+
+    expect(tester.takeException(), isNull);
+    await tapText(tester, 'Continuer');
+    expect(store.savedChanges.single['gender'], Gender.woman);
+  });
+
   testWidgets('once the profile is complete, the app opens', (tester) async {
     // A photo is already there, as after the photo step: saving the answers
     // completes the profile.
@@ -104,6 +118,22 @@ void main() {
       findsOneWidget,
     );
     expect(find.text('Tu es…'), findsOneWidget);
+  });
+
+  testWidgets('a failed onboarding load shows its message in the page, once, '
+      'and can be retried', (tester) async {
+    store.progressFailure = const NetworkFailure();
+    await pumpEvasionApp(tester, profiles: store);
+
+    const message = 'Pas de connexion internet. Réessaie dans un instant.';
+    expect(find.text(message), findsOneWidget);
+    expect(find.byType(SnackBar), findsNothing);
+
+    store.progressFailure = null;
+    await tapText(tester, 'Réessayer');
+
+    expect(find.text(message), findsNothing);
+    expect(find.text('Bienvenue !'), findsOneWidget);
   });
 
   testWidgets('a failed profile load can be retried', (tester) async {

@@ -69,6 +69,8 @@ class OnboardingScreen extends ConsumerWidget {
   }
 }
 
+/// Shown when the progress could not be loaded. The message is part of the
+/// page, so that rebuilding the screen does not show it again.
 class _LoadError extends StatelessWidget {
   const _LoadError({required this.error, required this.onRetry});
 
@@ -77,14 +79,18 @@ class _LoadError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => showFailureSnackBar(context, error),
-    );
     return Scaffold(
       body: Center(
-        child: FilledButton(
-          onPressed: onRetry,
-          child: Text(AppLocalizations.of(context).retry),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 16,
+          children: [
+            Text(failureMessage(context, error), textAlign: TextAlign.center),
+            FilledButton(
+              onPressed: onRetry,
+              child: Text(AppLocalizations.of(context).retry),
+            ),
+          ],
         ),
       ),
     );

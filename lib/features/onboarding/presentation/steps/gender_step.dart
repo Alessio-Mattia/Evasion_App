@@ -30,11 +30,16 @@ class GenderStep extends ConsumerWidget {
               ButtonSegment(value: option, label: Text(option.label(l10n))),
           ],
           selected: {?gender},
+          // Needed to show no choice at first; a second tap on the chosen
+          // segment then asks to deselect it, which is ignored.
           emptySelectionAllowed: true,
           showSelectedIcon: false,
-          onSelectionChanged: (selection) => ref
-              .read(onboardingControllerProvider.notifier)
-              .setGender(selection.single),
+          onSelectionChanged: (selection) {
+            if (selection.isEmpty) return;
+            ref
+                .read(onboardingControllerProvider.notifier)
+                .setGender(selection.single);
+          },
         ),
         LoadingButton(
           label: l10n.onboardingContinue,

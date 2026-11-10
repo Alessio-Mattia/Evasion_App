@@ -14,7 +14,7 @@ class BirthDateStep extends ConsumerWidget {
   final Future<void> Function() onContinue;
 
   Future<void> _pick(BuildContext context, WidgetRef ref) async {
-    final today = DateTime.now();
+    final today = serverToday();
     final latest = latestAllowedBirthDate(today);
     final picked = await showDatePicker(
       context: context,
@@ -38,7 +38,7 @@ class BirthDateStep extends ConsumerWidget {
     );
     final isSaving = ref.watch(saveOnboardingControllerProvider).isLoading;
     final canContinue =
-        birthDate != null && isAllowedBirthDate(birthDate, DateTime.now());
+        birthDate != null && isAllowedBirthDate(birthDate, serverToday());
 
     return FormPageLayout(
       appBar: const OnboardingAppBar(),
