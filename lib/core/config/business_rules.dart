@@ -37,6 +37,17 @@ abstract final class BusinessRules {
   /// Also enforced in SQL.
   static const int universityMaxLength = 100;
 
+  /// Largest profile photo, in bytes. Also enforced in SQL (avatars bucket).
+  static const int avatarMaxBytes = 5 * 1024 * 1024;
+
+  /// Accepted profile photo formats. Also enforced in SQL (avatars bucket).
+  /// HEIC is excluded, since Android cannot display it: convert to JPEG.
+  static const List<String> avatarMimeTypes = [
+    'image/jpeg',
+    'image/png',
+    'image/webp',
+  ];
+
   // Encounters
 
   /// Default detection radius of a new user, editable in the settings.
