@@ -54,12 +54,18 @@ create policy "Users can upload their own avatars"
     and public.avatar_format_matches(name, metadata)
   );
 
+-- The current profile photo cannot be replaced, moved or deleted: a complete
+-- profile always has a photo. Upload a new file, point avatar_path to it, then
+-- delete the old one.
 create policy "Users can replace their own avatars"
   on storage.objects for update
   to authenticated
   using (
     bucket_id = 'avatars'
     and (storage.foldername(name))[1] = (select auth.uid()::text)
+    and name is distinct from (
+      select avatar_path from public.profiles where id = (select auth.uid())
+    )
   )
   with check (
     bucket_id = 'avatars'
@@ -73,6 +79,9 @@ create policy "Users can delete their own avatars"
   using (
     bucket_id = 'avatars'
     and (storage.foldername(name))[1] = (select auth.uid()::text)
+    and name is distinct from (
+      select avatar_path from public.profiles where id = (select auth.uid())
+    )
   );
 
 -- The photo of a profile must be an image of its own folder, so that nobody
@@ -81,3 +90,35 @@ create policy "Users can delete their own avatars"
 alter table public.profiles
   add constraint profiles_avatar_path_own_folder
     check (avatar_path ~* ('^' || id::text || '/[^/]+\.(jpe?g|png|webp)$'));
+
+-- The photo must also exist: a path alone would complete the profile without
+-- any photo.
+create function public.check_avatar_exists()
+returns trigger
+language plpgsql
+security definer
+set search_path = ''
+as $$
+begin
+  if new.avatar_path is not null and not exists (
+    select 1
+    from storage.objects
+    where bucket_id = 'avatars'
+      and name = new.avatar_path
+  ) then
+    raise exception 'avatar_path must point to an uploaded photo'
+      using errcode = 'check_violation';
+  end if;
+
+  return new;
+end;
+$$;
+
+create trigger check_profile_avatar_exists
+  before insert or update of avatar_path on public.profiles
+  for each row
+  execute function public.check_avatar_exists();
+
+-- Only runs through the trigger: not callable from the app.
+revoke all on function public.check_avatar_exists()
+  from public, anon, authenticated;

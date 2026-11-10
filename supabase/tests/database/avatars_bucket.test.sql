@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(19);
+select plan(26);
 
 -- Fixtures --------------------------------------------------------------------
 
@@ -151,6 +151,70 @@ select throws_ok(
   null,
   'a photo path cannot point to a subfolder'
 );
+select throws_ok(
+  $$update public.profiles
+    set avatar_path = '00000000-0000-0000-0000-000000000001/never-uploaded.jpg'
+    where id = '00000000-0000-0000-0000-000000000001'$$,
+  '23514',
+  'avatar_path must point to an uploaded photo',
+  'a photo path needs an uploaded file'
+);
+
+-- Current photo ---------------------------------------------------------------
+
+-- Supabase blocks deletions in SQL unless this setting is on, as the Storage
+-- API does: the policies are then checked as for a real deletion.
+select set_config('storage.allow_delete_query', 'true', true);
+
+delete from storage.objects where name = '00000000-0000-0000-0000-000000000001/alice.jpg';
+
+select is(
+  (select count(*)::int from storage.objects
+   where name = '00000000-0000-0000-0000-000000000001/alice.jpg'),
+  1,
+  'the current photo cannot be deleted'
+);
+
+update storage.objects set name = '00000000-0000-0000-0000-000000000001/moved.jpg'
+where name = '00000000-0000-0000-0000-000000000001/alice.jpg';
+
+select is(
+  (select count(*)::int from storage.objects
+   where name = '00000000-0000-0000-0000-000000000001/alice.jpg'),
+  1,
+  'the current photo cannot be moved'
+);
+
+select lives_ok(
+  $$insert into storage.objects (bucket_id, name, owner_id, metadata)
+    values ('avatars', '00000000-0000-0000-0000-000000000001/second.jpg', '00000000-0000-0000-0000-000000000001',
+            '{"mimetype": "image/jpeg"}')$$,
+  'a user can upload a new photo'
+);
+select lives_ok(
+  $$update public.profiles set avatar_path = '00000000-0000-0000-0000-000000000001/second.jpg'
+    where id = '00000000-0000-0000-0000-000000000001'$$,
+  'a user can switch to the new photo'
+);
+
+delete from storage.objects where name = '00000000-0000-0000-0000-000000000001/alice.jpg';
+
+select is(
+  (select count(*)::int from storage.objects
+   where name = '00000000-0000-0000-0000-000000000001/alice.jpg'),
+  0,
+  'the previous photo can then be deleted'
+);
+
+delete from storage.objects where name = '00000000-0000-0000-0000-000000000001/second.jpg';
+
+select is(
+  (select count(*)::int from storage.objects
+   where name = '00000000-0000-0000-0000-000000000001/second.jpg'),
+  1,
+  'the new current photo is protected in turn'
+);
+
 select throws_ok(
   $$update public.profiles
     set avatar_path = '00000000-0000-0000-0000-000000000001/photo'

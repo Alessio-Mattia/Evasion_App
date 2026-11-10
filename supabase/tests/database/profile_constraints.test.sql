@@ -23,6 +23,12 @@ $$;
 insert into auth.users (id, email, email_confirmed_at) values
   ('00000000-0000-0000-0000-000000000001', 'alice@example.com', now());
 
+insert into storage.objects (bucket_id, name, owner_id, metadata) values
+  ('avatars', '00000000-0000-0000-0000-000000000001/alice.jpg',
+   '00000000-0000-0000-0000-000000000001', '{"mimetype": "image/jpeg"}'),
+  ('avatars', '00000000-0000-0000-0000-000000000001/new.jpg',
+   '00000000-0000-0000-0000-000000000001', '{"mimetype": "image/jpeg"}');
+
 select pg_temp.act_as('00000000-0000-0000-0000-000000000001');
 
 update public.profiles
