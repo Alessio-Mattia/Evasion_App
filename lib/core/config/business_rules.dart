@@ -10,14 +10,40 @@ abstract final class BusinessRules {
   /// Minimum age to sign up, from the terms of use.
   static const int minimumAge = 18;
 
+  /// Oldest accepted age, to catch typing mistakes in the birth date.
+  /// Also enforced in SQL (birth date trigger).
+  static const int maximumAge = 120;
+
   /// Number of digits of the sign-in code sent by email. Also configured in
   /// Supabase: `otp_length` in supabase/config.toml and in the dashboard.
   static const int signInCodeLength = 6;
+
+  // Profile
+  //
+  // Text lengths are counted in Unicode code points, like Postgres
+  // `char_length`: check them with `String.runes.length`, not
+  // `String.length`. An emoji such as 👨‍👩‍👧 shows as one character but
+  // counts as several code points.
+
+  /// Also enforced in SQL.
+  static const int displayNameMaxLength = 50;
+
+  /// Also enforced in SQL.
+  static const int bioMaxLength = 500;
+
+  /// Also enforced in SQL.
+  static const int occupationMaxLength = 100;
+
+  /// Also enforced in SQL.
+  static const int universityMaxLength = 100;
 
   // Encounters
 
   /// Default detection radius of a new user, editable in the settings.
   static const int defaultDetectionRadiusMeters = 100;
+
+  /// Largest detection radius a user can choose. Also enforced in SQL.
+  static const int maxDetectionRadiusMeters = 5000;
 
   /// How long raw positions are kept before being purged.
   /// Also enforced in SQL (purge job).
