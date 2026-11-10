@@ -40,6 +40,16 @@ final class ConflictFailure extends AppFailure {
   const ConflictFailure({super.cause, super.stackTrace});
 }
 
+/// The verification code sent by email is wrong or expired.
+final class InvalidCodeFailure extends AppFailure {
+  const InvalidCodeFailure({super.cause, super.stackTrace});
+}
+
+/// Too many attempts in a short time: the server asks to wait.
+final class TooManyRequestsFailure extends AppFailure {
+  const TooManyRequestsFailure({super.cause, super.stackTrace});
+}
+
 /// Anything not covered above.
 final class UnexpectedFailure extends AppFailure {
   const UnexpectedFailure({super.cause, super.stackTrace});

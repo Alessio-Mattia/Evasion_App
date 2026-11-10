@@ -13,6 +13,8 @@ void main() {
     PermissionDeniedFailure(),
     NotFoundFailure(),
     ConflictFailure(),
+    InvalidCodeFailure(),
+    TooManyRequestsFailure(),
     UnexpectedFailure(),
   ];
 

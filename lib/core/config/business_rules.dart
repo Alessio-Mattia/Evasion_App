@@ -14,7 +14,16 @@ abstract final class BusinessRules {
   /// Also enforced in SQL (birth date trigger).
   static const int maximumAge = 120;
 
+  /// Number of digits of the sign-in code sent by email. Also configured in
+  /// Supabase: `otp_length` in supabase/config.toml and in the dashboard.
+  static const int signInCodeLength = 6;
+
   // Profile
+  //
+  // Text lengths are counted in Unicode code points, like Postgres
+  // `char_length`: check them with `String.runes.length`, not
+  // `String.length`. An emoji such as 👨‍👩‍👧 shows as one character but
+  // counts as several code points.
 
   /// Also enforced in SQL.
   static const int displayNameMaxLength = 50;
