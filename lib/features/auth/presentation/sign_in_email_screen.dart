@@ -1,8 +1,8 @@
 import 'package:evasion/app/router/app_routes.dart';
 import 'package:evasion/core/widgets/failure_snack_bar.dart';
+import 'package:evasion/core/widgets/form_page_layout.dart';
 import 'package:evasion/features/auth/domain/auth_validators.dart';
 import 'package:evasion/features/auth/presentation/sign_in_controllers.dart';
-import 'package:evasion/features/auth/presentation/sign_in_layout.dart';
 import 'package:evasion/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,7 +47,7 @@ class _SignInEmailScreenState extends ConsumerState<SignInEmailScreen> {
       }
     });
 
-    return SignInLayout(
+    return FormPageLayout(
       title: l10n.signInTitle,
       subtitle: l10n.signInSubtitle,
       children: [
@@ -69,7 +69,7 @@ class _SignInEmailScreenState extends ConsumerState<SignInEmailScreen> {
             onFieldSubmitted: (_) => _submit(),
           ),
         ),
-        SignInSubmitButton(
+        LoadingButton(
           label: l10n.signInSendCode,
           isLoading: isLoading,
           onPressed: _submit,

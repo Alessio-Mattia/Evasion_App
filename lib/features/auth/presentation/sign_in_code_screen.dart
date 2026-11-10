@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:evasion/app/router/app_routes.dart';
 import 'package:evasion/core/config/business_rules.dart';
 import 'package:evasion/core/widgets/failure_snack_bar.dart';
+import 'package:evasion/core/widgets/form_page_layout.dart';
 import 'package:evasion/features/auth/domain/auth_validators.dart';
 import 'package:evasion/features/auth/presentation/sign_in_controllers.dart';
-import 'package:evasion/features/auth/presentation/sign_in_layout.dart';
 import 'package:evasion/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -73,7 +73,7 @@ class _SignInCodeScreenState extends ConsumerState<SignInCodeScreen> {
       });
     }
 
-    return SignInLayout(
+    return FormPageLayout(
       appBar: AppBar(),
       title: l10n.signInCodeTitle,
       subtitle: l10n.signInCodeSentTo(codeLength, widget.email),
@@ -101,7 +101,7 @@ class _SignInCodeScreenState extends ConsumerState<SignInCodeScreen> {
             onFieldSubmitted: (_) => _verify(),
           ),
         ),
-        SignInSubmitButton(
+        LoadingButton(
           label: l10n.signInVerify,
           isLoading: isVerifying,
           onPressed: _verify,

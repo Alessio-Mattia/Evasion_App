@@ -50,6 +50,14 @@ final class TooManyRequestsFailure extends AppFailure {
   const TooManyRequestsFailure({super.cause, super.stackTrace});
 }
 
+/// The server refused a value, for example a birth date under the minimum age.
+///
+/// The app checks values before sending them: this only shows when a rule was
+/// missed on the app side.
+final class InvalidInputFailure extends AppFailure {
+  const InvalidInputFailure({super.cause, super.stackTrace});
+}
+
 /// Anything not covered above.
 final class UnexpectedFailure extends AppFailure {
   const UnexpectedFailure({super.cause, super.stackTrace});

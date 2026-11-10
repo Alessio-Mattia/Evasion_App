@@ -118,5 +118,131 @@
   "signOut": "Se déconnecter",
   "@signOut": {
     "description": "Button that signs the user out."
+  },
+  "errorInvalidInput": "Certaines informations ne sont pas valides.",
+  "@errorInvalidInput": {
+    "description": "Error shown when the server refuses a value the app did not catch."
+  },
+  "genderWoman": "Femme",
+  "@genderWoman": {
+    "description": "Gender option: woman."
+  },
+  "genderMan": "Homme",
+  "@genderMan": {
+    "description": "Gender option: man."
+  },
+  "genderOther": "Autre",
+  "@genderOther": {
+    "description": "Gender option for people who are neither woman nor man, or prefer not to say."
+  },
+  "startupProfileError": "Impossible de charger ton profil.",
+  "@startupProfileError": {
+    "description": "Shown at startup when the user's profile could not be loaded."
+  },
+  "retry": "Réessayer",
+  "@retry": {
+    "description": "Button that tries a failed action again."
+  },
+  "onboardingContinue": "Continuer",
+  "@onboardingContinue": {
+    "description": "Button that goes to the next onboarding step."
+  },
+  "onboardingIntroTitle": "Bienvenue !",
+  "@onboardingIntroTitle": {
+    "description": "Title of the first onboarding page, which explains the concept."
+  },
+  "onboardingIntroSubtitle": "Evasion sert à se rencontrer en vrai. Trois idées pour bien commencer :",
+  "@onboardingIntroSubtitle": {
+    "description": "Introduction to the three principles of the app."
+  },
+  "onboardingPrincipleRealTitle": "Le réel d'abord",
+  "@onboardingPrincipleRealTitle": {
+    "description": "Title of the first principle: real meetings unlock the app."
+  },
+  "onboardingPrincipleRealBody": "Tu ne peux liker quelqu'un qu'après l'avoir vraiment rencontré.",
+  "@onboardingPrincipleRealBody": {
+    "description": "Explains that likes are unlocked by real meetings."
+  },
+  "onboardingPrincipleEqualTitle": "Tout le monde au même niveau",
+  "@onboardingPrincipleEqualTitle": {
+    "description": "Title of the second principle: no public counters."
+  },
+  "onboardingPrincipleEqualBody": "Pas d'abonnés, pas de compteurs de likes ni de vues.",
+  "@onboardingPrincipleEqualBody": {
+    "description": "Explains that there are no followers or public counters."
+  },
+  "onboardingPrinciplePrivacyTitle": "Ta position reste privée",
+  "@onboardingPrinciplePrivacyTitle": {
+    "description": "Title of the third principle: exact locations are never shown."
+  },
+  "onboardingPrinciplePrivacyBody": "Personne ne voit jamais où tu te trouves précisément.",
+  "@onboardingPrinciplePrivacyBody": {
+    "description": "Explains that the exact location is never shown to others."
+  },
+  "onboardingStart": "Commencer",
+  "@onboardingStart": {
+    "description": "Button that starts filling the profile after the introduction."
+  },
+  "onboardingNameTitle": "Comment t'appelles-tu ?",
+  "@onboardingNameTitle": {
+    "description": "Title of the onboarding step asking for the display name."
+  },
+  "onboardingNameSubtitle": "C'est le prénom que les autres verront.",
+  "@onboardingNameSubtitle": {
+    "description": "Explains that the display name is public."
+  },
+  "onboardingNameLabel": "Prénom",
+  "@onboardingNameLabel": {
+    "description": "Label of the display name field."
+  },
+  "onboardingNameEmpty": "Saisis ton prénom.",
+  "@onboardingNameEmpty": {
+    "description": "Validation error when the display name is blank."
+  },
+  "onboardingNameTooLong": "{max} caractères maximum.",
+  "@onboardingNameTooLong": {
+    "description": "Validation error when the display name is too long.",
+    "placeholders": {
+      "max": {"type": "int", "example": "50"}
+    }
+  },
+  "onboardingBirthDateTitle": "Ta date de naissance",
+  "@onboardingBirthDateTitle": {
+    "description": "Title of the onboarding step asking for the birth date."
+  },
+  "onboardingBirthDateSubtitle": "Evasion est réservée aux personnes de {age} ans et plus. Les autres ne verront que ton âge.",
+  "@onboardingBirthDateSubtitle": {
+    "description": "Explains the minimum age and that only the age is shown.",
+    "placeholders": {
+      "age": {"type": "int", "example": "18"}
+    }
+  },
+  "onboardingBirthDateChoose": "Choisir la date",
+  "@onboardingBirthDateChoose": {
+    "description": "Button that opens the date picker when no date is chosen yet."
+  },
+  "onboardingBirthDateChange": "Modifier",
+  "@onboardingBirthDateChange": {
+    "description": "Button that opens the date picker to change the chosen date."
+  },
+  "onboardingBirthDateWarning": "Vérifie-la bien : une fois enregistrée, tu ne pourras la corriger qu'une seule fois.",
+  "@onboardingBirthDateWarning": {
+    "description": "Warns that the birth date can be corrected only once after it is saved."
+  },
+  "onboardingGenderTitle": "Tu es…",
+  "@onboardingGenderTitle": {
+    "description": "Title of the onboarding step asking for the gender."
+  },
+  "onboardingGenderSubtitle": "Cette information sert aux critères de croisement : chacun choisit qui il souhaite croiser.",
+  "@onboardingGenderSubtitle": {
+    "description": "Explains why the gender is asked."
+  },
+  "onboardingPhotoTitle": "Plus qu'une étape : ta photo",
+  "@onboardingPhotoTitle": {
+    "description": "Title of the onboarding step asking for a profile photo."
+  },
+  "onboardingPhotoComingSoon": "Une vraie photo de toi est obligatoire pour apparaître dans Evasion. L'ajout de la photo arrive dans la prochaine version de l'app.",
+  "@onboardingPhotoComingSoon": {
+    "description": "Temporary text until the photo step is built."
   }
 }

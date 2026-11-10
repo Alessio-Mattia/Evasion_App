@@ -4,6 +4,9 @@ abstract final class AppRoutes {
   static const String add = '/add';
   static const String profile = '/profile';
 
+  static const String startup = '/startup';
+  static const String onboarding = '/onboarding';
+
   static const String signIn = '/sign-in';
   static const String signInCode = '/sign-in/code';
   static const String emailParameter = 'email';
