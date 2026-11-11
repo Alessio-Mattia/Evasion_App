@@ -244,5 +244,57 @@
   "onboardingPhotoComingSoon": "Une vraie photo de toi est obligatoire pour apparaître dans Evasion. L'ajout de la photo arrive dans la prochaine version de l'app.",
   "@onboardingPhotoComingSoon": {
     "description": "Temporary text until the photo step is built."
+  },
+  "interestSport": "Sport",
+  "@interestSport": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestMusic": "Musique",
+  "@interestMusic": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestMovies": "Cinéma et séries",
+  "@interestMovies": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestReading": "Lecture",
+  "@interestReading": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestTravel": "Voyages",
+  "@interestTravel": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestCooking": "Cuisine",
+  "@interestCooking": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestGaming": "Jeux vidéo",
+  "@interestGaming": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestArt": "Art et culture",
+  "@interestArt": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestNature": "Nature et randonnée",
+  "@interestNature": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestNightlife": "Sorties et fêtes",
+  "@interestNightlife": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestTechnology": "Technologie",
+  "@interestTechnology": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestPhotography": "Photographie",
+  "@interestPhotography": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestVolunteering": "Bénévolat",
+  "@interestVolunteering": {
+    "description": "Label of a predefined interest on the profile carousel."
   }
 }

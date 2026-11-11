@@ -48,6 +48,31 @@ abstract final class BusinessRules {
     'image/webp',
   ];
 
+  // Profile carousel
+  //
+  // The first page is built from the profile; users add up to
+  // profilePagesMax more, so 6 pages in all.
+
+  /// Free pages a user can add. Also enforced in SQL.
+  static const int profilePagesMax = 5;
+
+  /// Also enforced in SQL. Counted in code points, like the texts above.
+  static const int pageTextMaxLength = 300;
+
+  /// Also enforced in SQL. Counted in code points, like the texts above.
+  static const int pageCaptionMaxLength = 100;
+
+  /// Also enforced in SQL.
+  static const int interestsMaxPerPage = 10;
+
+  /// Largest page photo, in bytes. Also enforced in SQL (profile-photos
+  /// bucket).
+  static const int profilePhotoMaxBytes = avatarMaxBytes;
+
+  /// Accepted page photo formats. Also enforced in SQL (profile-photos
+  /// bucket).
+  static const List<String> profilePhotoMimeTypes = avatarMimeTypes;
+
   // Encounters
 
   /// Default detection radius of a new user, editable in the settings.
