@@ -3,6 +3,7 @@ abstract final class AppRoutes {
   static const String messages = '/messages';
   static const String add = '/add';
   static const String profile = '/profile';
+  static const String settings = '/profile/settings';
 
   static const String startup = '/startup';
   static const String onboarding = '/onboarding';

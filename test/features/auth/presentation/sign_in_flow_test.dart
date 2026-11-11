@@ -106,7 +106,13 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(HomeScreen), findsOneWidget);
 
+    // Signing out is in the settings, opened from the profile tab.
     await tester.tap(find.text('Profil'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('Paramètres'));
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.text('Se déconnecter'), 200);
+    await tester.ensureVisible(find.text('Se déconnecter'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Se déconnecter'));
     await tester.pumpAndSettle();
