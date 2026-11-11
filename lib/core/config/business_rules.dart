@@ -60,6 +60,14 @@ abstract final class BusinessRules {
   /// Largest detection radius a user can choose. Also enforced in SQL.
   static const int maxDetectionRadiusMeters = 5000;
 
+  /// Smallest detection radius offered by the app. App side only: below it,
+  /// indoor GPS accuracy (10 to 50 m) makes the setting meaningless.
+  static const int minDetectionRadiusMeters = 50;
+
+  /// Top of the age preference slider; its last position means "no maximum"
+  /// (`pref_age_max` null). App side only.
+  static const int prefAgeSliderMax = 80;
+
   /// How long raw positions are kept before being purged.
   /// Also enforced in SQL (purge job).
   static const Duration rawLocationRetention = Duration(hours: 24);

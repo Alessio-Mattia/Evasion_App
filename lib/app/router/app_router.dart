@@ -12,6 +12,8 @@ import 'package:evasion/features/onboarding/presentation/onboarding_screen.dart'
 import 'package:evasion/features/posts/presentation/add_post_screen.dart';
 import 'package:evasion/features/profile/presentation/own_profile.dart';
 import 'package:evasion/features/profile/presentation/profile_screen.dart';
+import 'package:evasion/features/settings/presentation/settings_button.dart';
+import 'package:evasion/features/settings/presentation/settings_screen.dart';
 import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -94,7 +96,15 @@ GoRouter appRouter(Ref ref) {
               GoRoute(
                 path: AppRoutes.profile,
                 builder: (context, state) =>
-                    const ProfileScreen(signOutButton: SignOutButton()),
+                    const ProfileScreen(settingsButton: SettingsButton()),
+                routes: [
+                  // Inside the profile tab, so that the tab bar stays visible.
+                  GoRoute(
+                    path: 'settings',
+                    builder: (context, state) =>
+                        const SettingsScreen(signOutButton: SignOutButton()),
+                  ),
+                ],
               ),
             ],
           ),

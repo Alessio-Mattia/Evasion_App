@@ -119,7 +119,103 @@
   "@signOut": {
     "description": "Button that signs the user out."
   },
-  "errorInvalidInput": "Certaines informations ne sont pas valides.",
+  "settingsTitle": "Paramètres",
+  "@settingsTitle": {
+    "description": "Title of the settings screen, and tooltip of the button opening it."
+  },
+  "settingsVisibilityTitle": "Visibilité",
+  "@settingsVisibilityTitle": {
+    "description": "Title of the section choosing how the position is shared."
+  },
+  "settingsVisibilityInvisible": "Invisible",
+  "@settingsVisibilityInvisible": {
+    "description": "Location mode where the position is never used."
+  },
+  "settingsVisibilityInvisibleHint": "Tu ne croises personne.",
+  "@settingsVisibilityInvisibleHint": {
+    "description": "Explains the invisible mode."
+  },
+  "settingsVisibilityForeground": "Visible quand l'app est ouverte",
+  "@settingsVisibilityForeground": {
+    "description": "Location mode where the position is used while the app is open."
+  },
+  "settingsVisibilityForegroundHint": "Tu peux croiser des gens pendant que tu utilises Evasion.",
+  "@settingsVisibilityForegroundHint": {
+    "description": "Explains the foreground mode."
+  },
+  "settingsVisibilityBackground": "Visible en arrière-plan",
+  "@settingsVisibilityBackground": {
+    "description": "Location mode where the position is also used in the background."
+  },
+  "settingsVisibilityBackgroundHint": "Bientôt disponible.",
+  "@settingsVisibilityBackgroundHint": {
+    "description": "Shown under the background mode, which is not available yet."
+  },
+  "settingsVisibilityPrivacy": "Ta position précise n'est jamais montrée aux autres.",
+  "@settingsVisibilityPrivacy": {
+    "description": "Reassurance shown under the visibility options."
+  },
+  "settingsRadiusTitle": "Rayon de détection",
+  "@settingsRadiusTitle": {
+    "description": "Title of the section choosing the detection radius."
+  },
+  "settingsRadiusHint": "Distance jusqu'à laquelle tu peux croiser quelqu'un.",
+  "@settingsRadiusHint": {
+    "description": "Explains the detection radius."
+  },
+  "settingsRadiusMeters": "{meters} m",
+  "@settingsRadiusMeters": {
+    "description": "A radius under one kilometer.",
+    "placeholders": {
+      "meters": {"type": "int", "example": "300"}
+    }
+  },
+  "settingsRadiusKilometers": "{kilometers} km",
+  "@settingsRadiusKilometers": {
+    "description": "A radius of one kilometer or more, already formatted with a French decimal comma.",
+    "placeholders": {
+      "kilometers": {"type": "String", "example": "1,5"}
+    }
+  },
+  "settingsGendersTitle": "Qui je veux croiser",
+  "@settingsGendersTitle": {
+    "description": "Title of the section choosing the genders of the people to encounter."
+  },
+  "settingsGendersAtLeastOne": "Choisis au moins un genre.",
+  "@settingsGendersAtLeastOne": {
+    "description": "Shown when the user tries to unselect the last gender."
+  },
+  "settingsAgeTitle": "Âge",
+  "@settingsAgeTitle": {
+    "description": "Title of the section choosing the age range of the people to encounter."
+  },
+  "settingsAgeRange": "De {min} à {max} ans",
+  "@settingsAgeRange": {
+    "description": "Chosen age range with a maximum.",
+    "placeholders": {
+      "min": {"type": "int", "example": "18"},
+      "max": {"type": "int", "example": "30"}
+    }
+  },
+  "settingsAgeRangeNoMax": "{min} ans et plus",
+  "@settingsAgeRangeNoMax": {
+    "description": "Chosen age range without a maximum.",
+    "placeholders": {
+      "min": {"type": "int", "example": "18"}
+    }
+  },
+  "settingsAgeNoMaxLabel": "{age} +",
+  "@settingsAgeNoMaxLabel": {
+    "description": "Label of the last position of the age slider, meaning no maximum age.",
+    "placeholders": {
+      "age": {"type": "int", "example": "80"}
+    }
+  },
+  "settingsAccountTitle": "Compte",
+  "@settingsAccountTitle": {
+    "description": "Title of the account section, with the sign-out button."
+  },
+  "errorInvalidInput":"Certaines informations ne sont pas valides.",
   "@errorInvalidInput": {
     "description": "Error shown when the server refuses a value the app did not catch."
   },
