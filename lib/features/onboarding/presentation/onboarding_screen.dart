@@ -46,7 +46,7 @@ class OnboardingScreen extends ConsumerWidget {
       OnboardingStep.displayName => DisplayNameStep(onContinue: onContinue),
       OnboardingStep.birthDate => BirthDateStep(onContinue: onContinue),
       OnboardingStep.gender => GenderStep(onContinue: onContinue),
-      OnboardingStep.photo => const PhotoStep(),
+      OnboardingStep.photo => PhotoStep(onPhotoSaved: onProfileSaved),
     };
   }
 
