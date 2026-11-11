@@ -48,6 +48,10 @@ abstract final class BusinessRules {
     'image/webp',
   ];
 
+  /// Side of the square profile photo sent by the app, in pixels. App side
+  /// only: large enough for a sharp photo, small enough to upload quickly.
+  static const int avatarSizePixels = 1080;
+
   // Profile carousel
   //
   // The first page is built from the profile; users add up to
