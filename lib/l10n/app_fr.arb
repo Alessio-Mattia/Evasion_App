@@ -372,5 +372,57 @@
   "photoAccessDenied": "Evasion n'a pas accès à tes photos ou à ton appareil photo. Tu peux l'autoriser dans les réglages du téléphone.",
   "@photoAccessDenied": {
     "description": "Shown when the user refused access to the photos or the camera."
+  },
+  "interestSport": "Sport",
+  "@interestSport": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestMusic": "Musique",
+  "@interestMusic": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestMovies": "Cinéma et séries",
+  "@interestMovies": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestReading": "Lecture",
+  "@interestReading": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestTravel": "Voyages",
+  "@interestTravel": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestCooking": "Cuisine",
+  "@interestCooking": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestGaming": "Jeux vidéo",
+  "@interestGaming": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestArt": "Art et culture",
+  "@interestArt": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestNature": "Nature et randonnée",
+  "@interestNature": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestNightlife": "Sorties et fêtes",
+  "@interestNightlife": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestTechnology": "Technologie",
+  "@interestTechnology": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestPhotography": "Photographie",
+  "@interestPhotography": {
+    "description": "Label of a predefined interest on the profile carousel."
+  },
+  "interestVolunteering": "Bénévolat",
+  "@interestVolunteering": {
+    "description": "Label of a predefined interest on the profile carousel."
   }
 }
