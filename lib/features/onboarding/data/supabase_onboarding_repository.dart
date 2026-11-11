@@ -1,9 +1,13 @@
+import 'dart:math';
+import 'dart:typed_data';
+
 import 'package:evasion/core/errors/app_failure.dart';
 import 'package:evasion/core/errors/failure_mapper.dart';
 import 'package:evasion/core/models/gender.dart';
 import 'package:evasion/core/supabase/supabase_client_provider.dart';
 import 'package:evasion/features/onboarding/domain/onboarding_progress.dart';
 import 'package:evasion/features/onboarding/domain/onboarding_repository.dart';
+import 'package:evasion/features/onboarding/domain/profile_photo.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -57,6 +61,52 @@ class SupabaseOnboardingRepository implements OnboardingRepository {
         .select('id')
         .single();
   });
+
+  @override
+  Future<void> savePhoto(Uint8List bytes, PhotoFormat format) =>
+      guard(() async {
+        final userId = _userId;
+        final row = await _client
+            .from('profiles')
+            .select('avatar_path')
+            .eq('id', userId)
+            .single();
+        final previousPath = row['avatar_path'] as String?;
+
+        // The current photo cannot be overwritten: always a new file name.
+        final path = avatarPath(
+          userId: userId,
+          fileName: _uniqueFileName(),
+          format: format,
+        );
+        await _avatars.uploadBinary(
+          path,
+          bytes,
+          fileOptions: FileOptions(contentType: format.mimeType),
+        );
+        await _client
+            .from('profiles')
+            .update({'avatar_path': path})
+            .eq('id', userId)
+            .select('id')
+            .single();
+
+        if (previousPath != null) {
+          try {
+            await _avatars.remove([previousPath]);
+          } on Object {
+            // The new photo is saved: a leftover file stays in the user's
+            // private folder until the account is deleted, which is harmless.
+          }
+        }
+      });
+
+  StorageFileApi get _avatars => _client.storage.from('avatars');
+
+  static final _random = Random();
+
+  static String _uniqueFileName() =>
+      '${DateTime.now().millisecondsSinceEpoch}-${_random.nextInt(1 << 32)}';
 
   static String? _toSqlDate(DateTime? date) => date == null
       ? null

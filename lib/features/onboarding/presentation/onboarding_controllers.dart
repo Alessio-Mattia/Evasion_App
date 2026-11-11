@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:evasion/core/models/gender.dart';
 import 'package:evasion/features/onboarding/data/supabase_onboarding_repository.dart';
 import 'package:evasion/features/onboarding/domain/onboarding_progress.dart';
+import 'package:evasion/features/onboarding/domain/profile_photo.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -80,6 +82,25 @@ class SaveOnboardingController extends _$SaveOnboardingController {
             birthDate: answers.birthDate,
             gender: answers.gender,
           ),
+    );
+    if (!ref.mounted) return false;
+    state = result;
+    return !result.hasError;
+  }
+}
+
+/// Uploads the profile photo. The state is loading during the upload, then an
+/// error holding an `AppFailure`, or data.
+@riverpod
+class SavePhotoController extends _$SavePhotoController {
+  @override
+  FutureOr<void> build() {}
+
+  /// Returns whether the photo was saved.
+  Future<bool> save(Uint8List bytes, PhotoFormat format) async {
+    state = const AsyncLoading();
+    final result = await AsyncValue.guard(
+      () => ref.read(onboardingRepositoryProvider).savePhoto(bytes, format),
     );
     if (!ref.mounted) return false;
     state = result;

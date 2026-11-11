@@ -241,8 +241,40 @@
   "@onboardingPhotoTitle": {
     "description": "Title of the onboarding step asking for a profile photo."
   },
-  "onboardingPhotoComingSoon": "Une vraie photo de toi est obligatoire pour apparaître dans Evasion. L'ajout de la photo arrive dans la prochaine version de l'app.",
-  "@onboardingPhotoComingSoon": {
-    "description": "Temporary text until the photo step is built."
+  "onboardingPhotoSubtitle": "Une vraie photo de toi, où l'on voit bien ton visage : c'est elle que les autres verront.",
+  "@onboardingPhotoSubtitle": {
+    "description": "Explains the profile photo requirement: a real photo showing the face."
+  },
+  "onboardingPhotoGallery": "Choisir dans ma galerie",
+  "@onboardingPhotoGallery": {
+    "description": "Button that opens the phone's photo gallery."
+  },
+  "onboardingPhotoCamera": "Prendre une photo",
+  "@onboardingPhotoCamera": {
+    "description": "Button that opens the camera."
+  },
+  "onboardingPhotoCropTitle": "Recadre ta photo",
+  "@onboardingPhotoCropTitle": {
+    "description": "Title of the crop screen, where the photo is framed in a circle."
+  },
+  "onboardingPhotoConfirm": "Valider cette photo",
+  "@onboardingPhotoConfirm": {
+    "description": "Button that uploads the chosen photo and finishes the onboarding."
+  },
+  "onboardingPhotoChooseAnother": "Choisir une autre photo",
+  "@onboardingPhotoChooseAnother": {
+    "description": "Button that discards the chosen photo to pick another one."
+  },
+  "photoUnsupportedFormat": "Ce format de photo n'est pas pris en charge. Choisis-en une autre.",
+  "@photoUnsupportedFormat": {
+    "description": "Shown when the chosen photo is not a JPEG, PNG or WebP image."
+  },
+  "photoTooLarge": "Cette photo est trop lourde. Choisis-en une autre.",
+  "@photoTooLarge": {
+    "description": "Shown when the chosen photo exceeds the size limit."
+  },
+  "photoAccessDenied": "Evasion n'a pas accès à tes photos ou à ton appareil photo. Tu peux l'autoriser dans les réglages du téléphone.",
+  "@photoAccessDenied": {
+    "description": "Shown when the user refused access to the photos or the camera."
   }
 }

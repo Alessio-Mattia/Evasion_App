@@ -1,5 +1,6 @@
 import 'package:evasion/app/app.dart';
 import 'package:evasion/app/config/app_environment.dart';
+import 'package:evasion/core/services/photo_picker.dart';
 import 'package:evasion/features/auth/data/supabase_auth_repository.dart';
 import 'package:evasion/features/auth/domain/auth_repository.dart';
 import 'package:evasion/features/onboarding/data/supabase_onboarding_repository.dart';
@@ -8,15 +9,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_auth_repository.dart';
+import 'fake_photo_picker.dart';
 import 'fake_profile_repositories.dart';
 
 /// Starts the app without Supabase. By default a user with a complete profile
 /// is already signed in, so the app opens on the tabs; pass [authRepository]
-/// or [profiles] to change that.
+/// or [profiles] to change that. [photoPicker] replaces the phone's gallery and
+/// camera.
 Future<void> pumpEvasionApp(
   WidgetTester tester, {
   AuthRepository? authRepository,
   FakeProfileStore? profiles,
+  FakePhotoPicker? photoPicker,
 }) async {
   final store = profiles ?? FakeProfileStore(completeProfile(testUser.id));
   await tester.pumpWidget(
@@ -31,6 +35,7 @@ Future<void> pumpEvasionApp(
         ),
         profileRepositoryProvider.overrideWithValue(store),
         onboardingRepositoryProvider.overrideWithValue(store),
+        photoPickerProvider.overrideWithValue(photoPicker ?? FakePhotoPicker()),
       ],
       child: const EvasionApp(),
     ),
