@@ -23,8 +23,15 @@ AppFailure toAppFailure(Object error, StackTrace stackTrace) {
   return switch (error) {
     AppFailure() => error,
     // Checked before AuthException, of which it is a subtype.
-    SocketException() || TimeoutException() || AuthRetryableFetchException() =>
-      NetworkFailure(cause: error, stackTrace: stackTrace),
+    // Also checked before FunctionException, of which
+    // FunctionsFetchException is a subtype.
+    SocketException() ||
+    TimeoutException() ||
+    AuthRetryableFetchException() ||
+    FunctionsFetchException() => NetworkFailure(
+      cause: error,
+      stackTrace: stackTrace,
+    ),
     AuthException() => _fromAuthException(error, stackTrace),
     PostgrestException(:final code) => _fromPostgrestCode(
       code,
@@ -33,6 +40,12 @@ AppFailure toAppFailure(Object error, StackTrace stackTrace) {
     ),
     StorageException(:final statusCode) => _fromHttpStatus(
       statusCode,
+      error,
+      stackTrace,
+    ),
+    // Edge Functions: the HTTP status of their response.
+    FunctionException(:final status) => _fromHttpStatus(
+      '$status',
       error,
       stackTrace,
     ),
