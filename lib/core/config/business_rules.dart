@@ -52,6 +52,11 @@ abstract final class BusinessRules {
   /// only: large enough for a sharp photo, small enough to upload quickly.
   static const int avatarSizePixels = 1080;
 
+  /// How long a link to a private photo stays valid. A leaked link stops
+  /// working after it, and a block takes effect on the next link. App side
+  /// only.
+  static const Duration signedUrlLifetime = Duration(hours: 1);
+
   // Profile carousel
   //
   // The first page is built from the profile; users add up to

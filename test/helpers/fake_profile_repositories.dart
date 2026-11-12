@@ -6,6 +6,7 @@ import 'package:evasion/features/onboarding/domain/onboarding_progress.dart';
 import 'package:evasion/features/onboarding/domain/onboarding_repository.dart';
 import 'package:evasion/features/onboarding/domain/profile_photo.dart';
 import 'package:evasion/features/profile/domain/profile.dart';
+import 'package:evasion/features/profile/domain/profile_page.dart';
 import 'package:evasion/features/profile/domain/profile_repository.dart';
 
 /// Profile with every required field, as after onboarding.
@@ -43,11 +44,23 @@ class FakeProfileStore implements ProfileRepository, OnboardingRepository {
   final List<Map<String, Object?>> savedChanges = [];
   final List<PhotoFormat> savedPhotoFormats = [];
 
+  /// Carousel pages of the user, in their order.
+  List<ProfilePage> pages = [];
+
+  /// Set to make the next page reads fail.
+  AppFailure? pagesFailure;
+
   @override
   Future<Profile> fetchOwnProfile(String userId) async {
     fetchCount++;
     if (fetchFailure case final failure?) throw failure;
     return profile;
+  }
+
+  @override
+  Future<List<ProfilePage>> fetchOwnPages(String userId) async {
+    if (pagesFailure case final failure?) throw failure;
+    return pages;
   }
 
   @override

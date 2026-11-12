@@ -1,0 +1,70 @@
+import 'package:evasion/core/widgets/page_indicator.dart';
+import 'package:evasion/features/profile/domain/profile.dart';
+import 'package:evasion/features/profile/domain/profile_page.dart';
+import 'package:evasion/features/profile/presentation/carousel/main_page_card.dart';
+import 'package:evasion/features/profile/presentation/carousel/page_cards.dart';
+import 'package:evasion/l10n/generated/app_localizations.dart';
+import 'package:flutter/material.dart';
+
+/// The profile carousel: the page built from the profile, then the free pages.
+///
+/// It does not loop, so that the dots tell where the user is. The next page
+/// shows at the right edge, to suggest swiping.
+class ProfileCarousel extends StatefulWidget {
+  const ProfileCarousel({
+    required this.profile,
+    required this.pages,
+    super.key,
+  });
+
+  final Profile profile;
+  final List<ProfilePage> pages;
+
+  @override
+  State<ProfileCarousel> createState() => _ProfileCarouselState();
+}
+
+class _ProfileCarouselState extends State<ProfileCarousel> {
+  final _controller = PageController(viewportFraction: 0.88);
+  int _current = 0;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final count = widget.pages.length + 1;
+    final current = _current.clamp(0, count - 1);
+    final pageWidth = MediaQuery.sizeOf(context).width * 0.88;
+
+    return Column(
+      spacing: 12,
+      children: [
+        SizedBox(
+          // Portrait pages, 4:5 like most profile photos.
+          height: pageWidth * 5 / 4,
+          child: PageView.builder(
+            controller: _controller,
+            padEnds: false,
+            itemCount: count,
+            onPageChanged: (index) => setState(() => _current = index),
+            itemBuilder: (context, index) => index == 0
+                ? MainPageCard(profile: widget.profile)
+                : PageCard(page: widget.pages[index - 1]),
+          ),
+        ),
+        if (count > 1)
+          PageIndicator(
+            count: count,
+            current: current,
+            semanticsLabel: AppLocalizations.of(
+              context,
+            ).profilePageIndicator(current + 1, count),
+          ),
+      ],
+    );
+  }
+}

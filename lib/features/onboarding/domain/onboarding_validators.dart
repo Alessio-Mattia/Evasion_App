@@ -15,14 +15,6 @@ DisplayNameError? validateDisplayName(String name) {
   return null;
 }
 
-/// Today as the server sees it: Postgres `current_date` is in UTC. Between
-/// midnight and 1 or 2 am in Switzerland, the local date is already one day
-/// ahead; checking against it would accept a birth date the server refuses.
-DateTime serverToday([DateTime? now]) {
-  final utc = (now ?? DateTime.now()).toUtc();
-  return DateTime(utc.year, utc.month, utc.day);
-}
-
 /// Most recent birth date allowed on [today]: the user must be at least
 /// [BusinessRules.minimumAge].
 DateTime latestAllowedBirthDate(DateTime today) =>

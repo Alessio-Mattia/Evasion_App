@@ -12,9 +12,15 @@ void main() {
       'avatar_path': 'user-1/avatar.jpg',
       'is_student_verified': true,
       'is_complete': true,
+      'occupation': 'Étudiante',
+      'university': 'UNIGE',
+      'bio': 'Salut !',
     });
 
     expect(profile.displayName, 'Alex');
+    expect(profile.occupation, 'Étudiante');
+    expect(profile.university, 'UNIGE');
+    expect(profile.bio, 'Salut !');
     expect(profile.birthDate, DateTime(2000, 5, 17));
     expect(profile.gender, Gender.woman);
     expect(profile.isStudentVerified, isTrue);
