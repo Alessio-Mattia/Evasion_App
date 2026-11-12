@@ -18,6 +18,9 @@ abstract class Profile with _$Profile {
     DateTime? birthDate,
     Gender? gender,
     String? avatarPath,
+    String? occupation,
+    String? university,
+    String? bio,
   }) = _Profile;
 
   factory Profile.fromJson(Map<String, dynamic> json) =>

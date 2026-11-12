@@ -3,6 +3,7 @@ import 'package:evasion/app/router/access_status.dart';
 import 'package:evasion/app/router/app_routes.dart';
 import 'package:evasion/app/router/app_shell.dart';
 import 'package:evasion/app/startup/startup_screen.dart';
+import 'package:evasion/features/auth/presentation/current_user.dart';
 import 'package:evasion/features/auth/presentation/sign_in_code_screen.dart';
 import 'package:evasion/features/auth/presentation/sign_in_email_screen.dart';
 import 'package:evasion/features/auth/presentation/sign_out_button.dart';
@@ -14,7 +15,7 @@ import 'package:evasion/features/profile/presentation/own_profile.dart';
 import 'package:evasion/features/profile/presentation/profile_screen.dart';
 import 'package:evasion/features/settings/presentation/settings_button.dart';
 import 'package:evasion/features/settings/presentation/settings_screen.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -95,8 +96,16 @@ GoRouter appRouter(Ref ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.profile,
-                builder: (context, state) =>
-                    const ProfileScreen(settingsButton: SettingsButton()),
+                builder: (context, state) => switch (ref.read(
+                  currentUserProvider,
+                )) {
+                  final user? => ProfileScreen(
+                    userId: user.id,
+                    settingsButton: const SettingsButton(),
+                  ),
+                  // Only while signing out: the redirect then leaves the tabs.
+                  null => const SizedBox.shrink(),
+                },
                 routes: [
                   // Inside the profile tab, so that the tab bar stays visible.
                   GoRoute(

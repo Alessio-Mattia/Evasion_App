@@ -215,6 +215,34 @@
   "@settingsAccountTitle": {
     "description": "Title of the account section, with the sign-out button."
   },
+  "profileNameAndAge": "{name}, {age}",
+  "@profileNameAndAge": {
+    "description": "Name and age shown on the first carousel page.",
+    "placeholders": {
+      "name": {"type": "String", "example": "Alex"},
+      "age": {"type": "int", "example": "21"}
+    }
+  },
+  "profileStudentBadge": "Étudiant·e",
+  "@profileStudentBadge": {
+    "description": "Badge shown on profiles with a confirmed university email."
+  },
+  "profileInterestsTitle": "Ce qui me plaît",
+  "@profileInterestsTitle": {
+    "description": "Title of an interests page of the profile carousel."
+  },
+  "profileAboutTitle": "À propos",
+  "@profileAboutTitle": {
+    "description": "Title above the bio, under the carousel."
+  },
+  "profilePageIndicator": "Page {current} sur {total}",
+  "@profilePageIndicator": {
+    "description": "Screen reader label of the carousel dots.",
+    "placeholders": {
+      "current": {"type": "int", "example": "2"},
+      "total": {"type": "int", "example": "4"}
+    }
+  },
   "errorInvalidInput":"Certaines informations ne sont pas valides.",
   "@errorInvalidInput": {
     "description": "Error shown when the server refuses a value the app did not catch."
