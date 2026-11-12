@@ -139,6 +139,24 @@ void main() {
       });
     });
 
+    group('FunctionException', () {
+      test('a call that never reached the function is a network failure', () {
+        expect(
+          map(const FunctionsFetchException(details: 'offline')),
+          isA<NetworkFailure>(),
+        );
+      });
+
+      test('maps HTTP statuses', () {
+        AppFailure mapStatus(int status) =>
+            map(FunctionException(status: status));
+
+        expect(mapStatus(401), isA<UnauthenticatedFailure>());
+        expect(mapStatus(429), isA<TooManyRequestsFailure>());
+        expect(mapStatus(500), isA<UnexpectedFailure>());
+      });
+    });
+
     test('maps unknown errors to UnexpectedFailure', () {
       expect(map(const FormatException('bad')), isA<UnexpectedFailure>());
     });
