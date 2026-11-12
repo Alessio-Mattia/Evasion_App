@@ -14,6 +14,7 @@ void main() {
     NotFoundFailure(),
     ConflictFailure(),
     InvalidCodeFailure(),
+    LimitReachedFailure(),
     TooManyRequestsFailure(),
     InvalidInputFailure(),
     UnexpectedFailure(),

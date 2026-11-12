@@ -78,6 +78,11 @@ abstract final class BusinessRules {
   /// bucket).
   static const int profilePhotoMaxBytes = avatarMaxBytes;
 
+  /// Size of a page photo sent by the app, in pixels: portrait 4:5, the
+  /// shape of the carousel cards. App side only.
+  static const int pagePhotoWidthPixels = 1080;
+  static const int pagePhotoHeightPixels = 1350;
+
   /// Accepted page photo formats. Also enforced in SQL (profile-photos
   /// bucket).
   static const List<String> profilePhotoMimeTypes = avatarMimeTypes;

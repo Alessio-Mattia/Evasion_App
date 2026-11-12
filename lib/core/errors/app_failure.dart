@@ -45,6 +45,12 @@ final class InvalidCodeFailure extends AppFailure {
   const InvalidCodeFailure({super.cause, super.stackTrace});
 }
 
+/// A maximum set by the product rules is reached, for example the number of
+/// profile pages.
+final class LimitReachedFailure extends AppFailure {
+  const LimitReachedFailure({super.cause, super.stackTrace});
+}
+
 /// Too many attempts in a short time: the server asks to wait.
 final class TooManyRequestsFailure extends AppFailure {
   const TooManyRequestsFailure({super.cause, super.stackTrace});

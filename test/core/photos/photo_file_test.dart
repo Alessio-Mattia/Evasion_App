@@ -1,10 +1,10 @@
 import 'dart:typed_data';
 
 import 'package:evasion/core/config/business_rules.dart';
-import 'package:evasion/features/onboarding/domain/profile_photo.dart';
+import 'package:evasion/core/photos/photo_file.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../../helpers/fake_photo_picker.dart';
+import '../../helpers/fake_photo_picker.dart';
 
 Uint8List bytesOf(List<int> start, {int totalLength = 16}) =>
     Uint8List(totalLength)..setRange(0, start.length, start);
@@ -75,12 +75,25 @@ void main() {
     );
 
     for (final format in PhotoFormat.values) {
-      final path = avatarPath(
+      final path = userPhotoPath(
         userId: userId,
-        fileName: '1762862400000-42',
+        fileName: uniquePhotoFileName(),
         format: format,
       );
       expect(path, matches(serverRule), reason: format.name);
     }
+  });
+
+  test('page photos accept the same formats as avatars', () {
+    expect(
+      BusinessRules.profilePhotoMimeTypes,
+      unorderedEquals(BusinessRules.avatarMimeTypes),
+    );
+    expect(BusinessRules.profilePhotoMaxBytes, BusinessRules.avatarMaxBytes);
+  });
+
+  test('each upload gets a new file name', () {
+    final names = {for (var i = 0; i < 100; i++) uniquePhotoFileName()};
+    expect(names, hasLength(100));
   });
 }

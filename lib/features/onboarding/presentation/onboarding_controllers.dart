@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:evasion/core/models/gender.dart';
+import 'package:evasion/core/photos/photo_file.dart';
 import 'package:evasion/features/onboarding/data/supabase_onboarding_repository.dart';
 import 'package:evasion/features/onboarding/domain/onboarding_progress.dart';
-import 'package:evasion/features/onboarding/domain/profile_photo.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

@@ -1,8 +1,8 @@
 import 'dart:typed_data';
 
 import 'package:evasion/core/models/gender.dart';
+import 'package:evasion/core/photos/photo_file.dart';
 import 'package:evasion/features/onboarding/domain/onboarding_progress.dart';
-import 'package:evasion/features/onboarding/domain/profile_photo.dart';
 
 /// Fills the required fields of the signed-in user's profile. Every method
 /// throws an `AppFailure` on error.

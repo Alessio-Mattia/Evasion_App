@@ -11,6 +11,8 @@ import 'package:evasion/features/chat/presentation/messaging_screen.dart';
 import 'package:evasion/features/map/presentation/home_screen.dart';
 import 'package:evasion/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:evasion/features/posts/presentation/add_post_screen.dart';
+import 'package:evasion/features/profile/domain/page_draft.dart';
+import 'package:evasion/features/profile/presentation/editor/new_page_screen.dart';
 import 'package:evasion/features/profile/presentation/own_profile.dart';
 import 'package:evasion/features/profile/presentation/profile_screen.dart';
 import 'package:evasion/features/settings/presentation/settings_button.dart';
@@ -107,6 +109,20 @@ GoRouter appRouter(Ref ref) {
                   null => const SizedBox.shrink(),
                 },
                 routes: [
+                  GoRoute(
+                    path: 'pages/new/:${AppRoutes.pageTypeParameter}',
+                    builder: (context, state) {
+                      final type = PageType.fromCode(
+                        state.pathParameters[AppRoutes.pageTypeParameter]!,
+                      );
+                      final user = ref.read(currentUserProvider);
+                      // An unknown template, or signing out: nothing to edit.
+                      if (type == null || user == null) {
+                        return const SizedBox.shrink();
+                      }
+                      return NewPageScreen(userId: user.id, type: type);
+                    },
+                  ),
                   // Inside the profile tab, so that the tab bar stays visible.
                   GoRoute(
                     path: 'settings',

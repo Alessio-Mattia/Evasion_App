@@ -8,6 +8,32 @@ part 'photo_picker.g.dart';
 
 enum PhotoSource { gallery, camera }
 
+/// How the photo is cropped.
+enum PhotoShape {
+  /// Square, shown in a round frame: the profile photo.
+  round(
+    BusinessRules.avatarSizePixels,
+    BusinessRules.avatarSizePixels,
+    CameraDevice.front,
+  ),
+
+  /// Portrait 4:5, the shape of the carousel cards: the page photos.
+  portrait(
+    BusinessRules.pagePhotoWidthPixels,
+    BusinessRules.pagePhotoHeightPixels,
+    CameraDevice.rear,
+  );
+
+  const PhotoShape(this.width, this.height, this.camera);
+
+  /// Size of the cropped photo, in pixels.
+  final int width;
+  final int height;
+
+  /// A profile photo is usually a selfie; a page photo rather not.
+  final CameraDevice camera;
+}
+
 /// The user refused access to their photos or camera.
 class PhotoAccessDenied implements Exception {
   const PhotoAccessDenied();
@@ -30,12 +56,13 @@ class CropAppearance {
   final Color accentColor;
 }
 
-/// Lets the user take or choose a photo, then crop it square.
+/// Lets the user take or choose a photo, then crop it to [PhotoShape].
 abstract interface class PhotoPicker {
   /// The cropped photo, or null if the user cancelled. Throws
   /// [PhotoAccessDenied] when access to the photos or camera is refused.
-  Future<Uint8List?> pickSquarePhoto(
+  Future<Uint8List?> pickPhoto(
     PhotoSource source,
+    PhotoShape shape,
     CropAppearance appearance,
   );
 }
@@ -45,14 +72,20 @@ PhotoPicker photoPicker(Ref ref) => DevicePhotoPicker();
 
 /// Uses the system photo picker and camera, then the native crop screen.
 ///
-/// The crop screen always re-encodes the photo as a JPEG of at most
-/// [BusinessRules.avatarSizePixels]: an iPhone HEIC photo comes out as a JPEG.
+/// The crop screen always re-encodes the photo as a JPEG of at most the size
+/// of the [PhotoShape]: an iPhone HEIC photo comes out as a JPEG.
 class DevicePhotoPicker implements PhotoPicker {
   @override
-  Future<Uint8List?> pickSquarePhoto(
+  Future<Uint8List?> pickPhoto(
     PhotoSource source,
+    PhotoShape shape,
     CropAppearance appearance,
   ) async {
+    final cropStyle = switch (shape) {
+      // A round frame shows how the photo will appear on the profile.
+      PhotoShape.round => CropStyle.circle,
+      PhotoShape.portrait => CropStyle.rectangle,
+    };
     try {
       final picked = await ImagePicker().pickImage(
         source: switch (source) {
@@ -60,17 +93,20 @@ class DevicePhotoPicker implements PhotoPicker {
           PhotoSource.camera => ImageSource.camera,
         },
         // Leaves room to crop, while keeping huge camera photos manageable.
-        maxWidth: BusinessRules.avatarSizePixels * 2,
-        maxHeight: BusinessRules.avatarSizePixels * 2,
-        preferredCameraDevice: CameraDevice.front,
+        maxWidth: shape.height * 2.0,
+        maxHeight: shape.height * 2.0,
+        preferredCameraDevice: shape.camera,
       );
       if (picked == null) return null;
 
       final cropped = await ImageCropper().cropImage(
         sourcePath: picked.path,
-        aspectRatio: const CropAspectRatio(ratioX: 1, ratioY: 1),
-        maxWidth: BusinessRules.avatarSizePixels,
-        maxHeight: BusinessRules.avatarSizePixels,
+        aspectRatio: CropAspectRatio(
+          ratioX: shape.width.toDouble(),
+          ratioY: shape.height.toDouble(),
+        ),
+        maxWidth: shape.width,
+        maxHeight: shape.height,
         compressQuality: 85,
         uiSettings: [
           AndroidUiSettings(
@@ -79,12 +115,12 @@ class DevicePhotoPicker implements PhotoPicker {
             toolbarWidgetColor: appearance.toolbarForeground,
             backgroundColor: appearance.backgroundColor,
             activeControlsWidgetColor: appearance.accentColor,
-            // A round frame shows how the photo will appear on the profile.
-            cropStyle: CropStyle.circle,
+            cropStyle: cropStyle,
+            lockAspectRatio: true,
           ),
           IOSUiSettings(
             title: appearance.title,
-            cropStyle: CropStyle.circle,
+            cropStyle: cropStyle,
             aspectRatioLockEnabled: true,
             resetAspectRatioEnabled: false,
             aspectRatioPickerButtonHidden: true,
