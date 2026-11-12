@@ -62,4 +62,25 @@ void main() {
       expect(compactedOrder(slotsAt([2, 3])), ['p2', 'p3']);
     });
   });
+
+  group('reorderedIds', () {
+    test('is the order chosen when every page is shown', () {
+      expect(reorderedIds(['p2', 'p1'], slotsAt([1, 2])), ['p2', 'p1']);
+    });
+
+    test('keeps the pages this version cannot show, after the others', () {
+      final slots = [
+        ...slotsAt([1, 3]),
+        (id: 'future-b', position: 4),
+        (id: 'future-a', position: 2),
+      ];
+
+      expect(reorderedIds(['p3', 'p1'], slots), [
+        'p3',
+        'p1',
+        'future-a',
+        'future-b',
+      ]);
+    });
+  });
 }

@@ -1,6 +1,7 @@
 import 'package:evasion/core/config/business_rules.dart';
 import 'package:evasion/core/models/interest.dart';
 import 'package:evasion/features/profile/domain/page_draft.dart';
+import 'package:evasion/features/profile/domain/profile_page.dart';
 import 'package:evasion/features/profile/presentation/editor/page_editor_scaffold.dart';
 import 'package:evasion/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +11,12 @@ class InterestsPageForm extends StatefulWidget {
   const InterestsPageForm({
     required this.isSaving,
     required this.onSave,
+    this.initial,
     super.key,
   });
 
+  /// The page being edited, or null for a new one.
+  final InterestsPage? initial;
   final bool isSaving;
   final ValueChanged<PageDraft> onSave;
 
@@ -21,7 +25,7 @@ class InterestsPageForm extends StatefulWidget {
 }
 
 class _InterestsPageFormState extends State<InterestsPageForm> {
-  final List<Interest> _selected = [];
+  late final List<Interest> _selected = [...?widget.initial?.interests];
 
   void _toggle(Interest interest) => setState(() {
     if (!_selected.remove(interest)) _selected.add(interest);
@@ -34,6 +38,7 @@ class _InterestsPageFormState extends State<InterestsPageForm> {
     final isFull = _selected.length >= max;
 
     return PageEditorScaffold(
+      isNew: widget.initial == null,
       isSaving: widget.isSaving,
       onSave: areInterestsValid(_selected)
           ? () => widget.onSave(InterestsPageDraft([..._selected]))

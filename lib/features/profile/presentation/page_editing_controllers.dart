@@ -73,3 +73,51 @@ class DeletePageController extends _$DeletePageController {
     return !result.hasError;
   }
 }
+
+/// Changes the content of a page of [userId]. The state is loading during the
+/// save, then an error holding an `AppFailure`, or data.
+@riverpod
+class UpdatePageController extends _$UpdatePageController {
+  @override
+  FutureOr<void> build(String userId) {}
+
+  /// Returns whether the page was saved.
+  Future<bool> save(ProfilePage page, PageDraft draft) async {
+    if (state.isLoading) return false;
+    state = const AsyncLoading();
+    final result = await AsyncValue.guard(
+      () => ref.read(profileRepositoryProvider).updatePage(userId, page, draft),
+    );
+    if (!ref.mounted) return false;
+    ref.invalidate(ownPagesProvider(userId));
+    state = result;
+    return !result.hasError;
+  }
+}
+
+/// Saves a new order of the pages of [userId]. The state is loading during the
+/// save, then an error holding an `AppFailure`, or data.
+@riverpod
+class ReorderPagesController extends _$ReorderPagesController {
+  @override
+  FutureOr<void> build(String userId) {}
+
+  /// Returns whether the order was saved. [pages] are the pages shown, in
+  /// their new order.
+  Future<bool> reorder(List<ProfilePage> pages) async {
+    // One order at a time, so that an older one cannot finish last.
+    if (state.isLoading) return false;
+    state = const AsyncLoading();
+    final repository = ref.read(profileRepositoryProvider);
+    final result = await AsyncValue.guard(() async {
+      final slots = await repository.fetchOwnPageSlots(userId);
+      await repository.reorderPages(
+        reorderedIds([for (final page in pages) page.id], slots),
+      );
+    });
+    if (!ref.mounted) return false;
+    ref.invalidate(ownPagesProvider(userId));
+    state = result;
+    return !result.hasError;
+  }
+}

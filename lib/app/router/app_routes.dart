@@ -9,6 +9,11 @@ abstract final class AppRoutes {
   /// Screen creating a page of the template [type] (`PageType.code`).
   static String newProfilePage(String type) => '$profile/pages/new/$type';
 
+  static const String pageIdParameter = 'pageId';
+
+  /// Screen editing the profile page [pageId].
+  static String editProfilePage(String pageId) => '$profile/pages/$pageId';
+
   static const String startup = '/startup';
   static const String onboarding = '/onboarding';
 

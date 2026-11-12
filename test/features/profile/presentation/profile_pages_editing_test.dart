@@ -1,7 +1,9 @@
 import 'package:evasion/core/errors/app_failure.dart';
 import 'package:evasion/core/services/photo_picker.dart';
 import 'package:evasion/features/profile/domain/profile_page.dart';
+import 'package:evasion/features/profile/presentation/editor/edit_page_screen.dart';
 import 'package:evasion/features/profile/presentation/editor/new_page_screen.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -275,4 +277,170 @@ void main() {
       expect(find.text('Fan de jazz'), findsOneWidget);
     });
   });
+
+  group('editing and moving pages', () {
+    /// Opens the edit mode on the text page.
+    Future<void> startEditing(WidgetTester tester) async {
+      await openProfile(tester);
+      await swipe(tester);
+      await tester.longPress(find.text('Fan de jazz'));
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('a tap opens the editor filled with the page', (tester) async {
+      store.pages = [jazz, lake];
+      await startEditing(tester);
+
+      await tester.tap(find.text('Fan de jazz'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(EditPageScreen), findsOneWidget);
+      expect(find.text('Modifier la page'), findsOneWidget);
+      expect(find.widgetWithText(TextField, 'Fan de jazz'), findsOneWidget);
+
+      await tester.enterText(find.byType(TextField), 'Fan de blues');
+      await tester.pump();
+      await tapText(tester, 'Enregistrer');
+
+      expect(find.byType(EditPageScreen), findsNothing);
+      expect(store.pageCalls, ['update p1']);
+      expect(find.text('Fan de blues'), findsOneWidget);
+    });
+
+    testWidgets('a photo page keeps its photo when only the caption changes', (
+      tester,
+    ) async {
+      store.pages = [jazz, lake];
+      await startEditing(tester);
+
+      await tester.tap(find.bySemanticsLabel('Modifier cette page').last);
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(find.byType(TextField), 100);
+      await tester.enterText(find.byType(TextField), 'Au lac');
+      await tester.pump();
+      await tapText(tester, 'Enregistrer');
+
+      expect(store.lastAddedContent, {'caption': 'Au lac'});
+      expect(
+        store.pages.last,
+        isA<PhotoPage>().having(
+          (page) => page.imagePath,
+          'imagePath',
+          'user-1/lake.jpg',
+        ),
+      );
+      expect(store.deletedPhotos, isEmpty);
+      expect(picker.requestedSources, isEmpty);
+    });
+
+    testWidgets('holding a page and moving it changes the order', (
+      tester,
+    ) async {
+      store.pages = [jazz, lake];
+      await startEditing(tester);
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.text('Fan de jazz')),
+      );
+      await tester.pump(kLongPressTimeout + const Duration(milliseconds: 100));
+      for (var i = 0; i < 4; i++) {
+        await gesture.moveBy(const Offset(40, 0));
+        await tester.pump();
+      }
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(store.pageCalls, ['reorder p2,p1']);
+      expect(
+        {for (final page in store.pages) page.id: page.position},
+        {'p2': 1, 'p1': 2},
+      );
+      // Still in the edit mode, ready for another change.
+      expect(find.text('Terminé'), findsOneWidget);
+    });
+
+    testWidgets('a failed move shows why and puts the pages back', (
+      tester,
+    ) async {
+      store
+        ..pages = [jazz, lake]
+        ..reorderFailure = const NetworkFailure();
+      await startEditing(tester);
+
+      final gesture = await tester.startGesture(
+        tester.getCenter(find.text('Fan de jazz')),
+      );
+      await tester.pump(kLongPressTimeout + const Duration(milliseconds: 100));
+      for (var i = 0; i < 4; i++) {
+        await gesture.moveBy(const Offset(40, 0));
+        await tester.pump();
+      }
+      await gesture.up();
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('Pas de connexion'), findsOneWidget);
+      final textLeft = tester.getCenter(find.text('Fan de jazz')).dx;
+      final photoLeft = tester
+          .getCenter(find.bySemanticsLabel('Modifier cette page').last)
+          .dx;
+      expect(textLeft, lessThan(photoLeft));
+    });
+  });
+
+  testWidgets('a move never flashes the carousel nor the previous order', (
+    tester,
+  ) async {
+    // As slow as a real server, so that every step shows on screen.
+    store = _SlowStore(completeProfile(testUser.id))..pages = [jazz, lake];
+    await openProfile(tester);
+    await swipe(tester);
+    await tester.longPress(find.text('Fan de jazz'));
+    await tester.pumpAndSettle();
+
+    final gesture = await tester.startGesture(
+      tester.getCenter(find.text('Fan de jazz')),
+    );
+    await tester.pump(kLongPressTimeout + const Duration(milliseconds: 100));
+    for (var i = 0; i < 4; i++) {
+      await gesture.moveBy(const Offset(40, 0));
+      await tester.pump();
+    }
+    await gesture.up();
+
+    // Every frame until everything is saved and reloaded.
+    for (var frame = 0; frame < 40; frame++) {
+      await tester.pump(const Duration(milliseconds: 16));
+      expect(find.byType(PageView), findsNothing, reason: 'frame $frame');
+      expect(
+        tester.getCenter(find.text('Fan de jazz')).dx,
+        greaterThan(
+          tester
+              .getCenter(find.bySemanticsLabel('Modifier cette page').first)
+              .dx,
+        ),
+        reason: 'frame $frame',
+      );
+    }
+    await tester.pumpAndSettle();
+    expect(store.pageCalls, ['reorder p2,p1']);
+  });
+}
+
+/// Answers after a delay, like a real server.
+class _SlowStore extends FakeProfileStore {
+  _SlowStore(super.profile);
+
+  static const _delay = Duration(milliseconds: 200);
+
+  @override
+  Future<List<ProfilePage>> fetchOwnPages(String userId) async {
+    await Future<void>.delayed(_delay);
+    return super.fetchOwnPages(userId);
+  }
+
+  @override
+  Future<void> reorderPages(List<String> pageIds) async {
+    await Future<void>.delayed(_delay);
+    return super.reorderPages(pageIds);
+  }
 }

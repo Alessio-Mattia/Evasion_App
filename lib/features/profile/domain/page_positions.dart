@@ -53,6 +53,15 @@ List<String>? compactedOrder(List<PageSlot> slots) {
   return null;
 }
 
+/// The full order to send after the user moved the pages shown into
+/// [shownOrder]. Pages this version of the app cannot show are not in it, yet
+/// the server needs every page: they keep their order, after the others.
+List<String> reorderedIds(List<String> shownOrder, List<PageSlot> slots) => [
+  ...shownOrder,
+  for (final id in _sortedIds(slots))
+    if (!shownOrder.contains(id)) id,
+];
+
 List<String> _sortedIds(List<PageSlot> slots) => [
   for (final slot in [
     ...slots,

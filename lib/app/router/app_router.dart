@@ -12,6 +12,7 @@ import 'package:evasion/features/map/presentation/home_screen.dart';
 import 'package:evasion/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:evasion/features/posts/presentation/add_post_screen.dart';
 import 'package:evasion/features/profile/domain/page_draft.dart';
+import 'package:evasion/features/profile/presentation/editor/edit_page_screen.dart';
 import 'package:evasion/features/profile/presentation/editor/new_page_screen.dart';
 import 'package:evasion/features/profile/presentation/own_profile.dart';
 import 'package:evasion/features/profile/presentation/profile_screen.dart';
@@ -121,6 +122,19 @@ GoRouter appRouter(Ref ref) {
                         return const SizedBox.shrink();
                       }
                       return NewPageScreen(userId: user.id, type: type);
+                    },
+                  ),
+                  GoRoute(
+                    path: 'pages/:${AppRoutes.pageIdParameter}',
+                    builder: (context, state) => switch (ref.read(
+                      currentUserProvider,
+                    )) {
+                      final user? => EditPageScreen(
+                        userId: user.id,
+                        pageId:
+                            state.pathParameters[AppRoutes.pageIdParameter]!,
+                      ),
+                      null => const SizedBox.shrink(),
                     },
                   ),
                   // Inside the profile tab, so that the tab bar stays visible.
