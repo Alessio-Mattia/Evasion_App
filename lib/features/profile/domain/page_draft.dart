@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:evasion/core/config/business_rules.dart';
 import 'package:evasion/core/models/interest.dart';
 import 'package:evasion/core/photos/photo_file.dart';
+import 'package:evasion/features/profile/domain/profile_page.dart';
 
 /// Templates of the free carousel pages, with their value in the database.
 enum PageType {
@@ -22,7 +23,15 @@ enum PageType {
   }
 }
 
-/// A page being created, before it is saved.
+extension ProfilePageType on ProfilePage {
+  PageType get type => switch (this) {
+    TextPage() => PageType.text,
+    PhotoPage() => PageType.photo,
+    InterestsPage() => PageType.interests,
+  };
+}
+
+/// A page being created or edited, before it is saved.
 sealed class PageDraft {
   const PageDraft();
 
@@ -59,13 +68,30 @@ final class PhotoPageDraft extends PageDraft {
   @override
   PageType get type => PageType.photo;
 
-  /// An empty caption is left out: the server refuses a null or blank one.
   @override
-  Map<String, Object> get content => {
-    if (caption.trim() case final caption when caption.isNotEmpty)
-      'caption': caption,
-  };
+  Map<String, Object> get content => _captionContent(caption);
 }
+
+/// A photo page being edited that keeps its photo, at [imagePath]: only the
+/// caption may change.
+final class KeptPhotoPageDraft extends PageDraft {
+  const KeptPhotoPageDraft({required this.imagePath, this.caption = ''});
+
+  final String imagePath;
+  final String caption;
+
+  @override
+  PageType get type => PageType.photo;
+
+  @override
+  Map<String, Object> get content => _captionContent(caption);
+}
+
+/// An empty caption is left out: the server refuses a null or blank one.
+Map<String, Object> _captionContent(String caption) => {
+  if (caption.trim() case final caption when caption.isNotEmpty)
+    'caption': caption,
+};
 
 final class InterestsPageDraft extends PageDraft {
   const InterestsPageDraft(this.interests);

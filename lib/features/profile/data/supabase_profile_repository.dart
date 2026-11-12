@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:evasion/core/errors/app_failure.dart';
 import 'package:evasion/core/errors/failure_mapper.dart';
 import 'package:evasion/core/photos/photo_file.dart';
 import 'package:evasion/core/supabase/supabase_client_provider.dart';
@@ -67,26 +68,44 @@ class SupabaseProfileRepository implements ProfileRepository {
     PageDraft draft, {
     required int position,
   }) => guard(() async {
-    final imagePath = switch (draft) {
-      PhotoPageDraft(:final bytes, :final format) => await _upload(
-        userId,
-        bytes,
-        format,
-      ),
-      _ => null,
-    };
+    final uploaded = await _uploadNewPhoto(userId, draft);
     try {
       await _client.from('profile_pages').insert({
         'position': position,
         'type': draft.type.code,
         'content': draft.content,
-        'image_path': ?imagePath,
+        'image_path': ?uploaded ?? _keptPhoto(draft),
       });
     } on Object {
-      if (imagePath != null) await _removeQuietly(imagePath);
+      if (uploaded != null) await _removeQuietly(uploaded);
       rethrow;
     }
   });
+
+  @override
+  Future<void> updatePage(String userId, ProfilePage page, PageDraft draft) =>
+      guard(() async {
+        // A page keeps its template: only its content changes.
+        if (draft.type != page.type) throw const InvalidInputFailure();
+        final uploaded = await _uploadNewPhoto(userId, draft);
+        try {
+          // Selecting the row makes an update that matched nothing, such as a
+          // page deleted from another phone, fail instead of doing nothing.
+          await _client
+              .from('profile_pages')
+              .update({'content': draft.content, 'image_path': ?uploaded})
+              .eq('id', page.id)
+              .select('id')
+              .single();
+        } on Object {
+          if (uploaded != null) await _removeQuietly(uploaded);
+          rethrow;
+        }
+        // The previous photo is no longer used, so the server lets it go.
+        if ((uploaded, page) case (_?, PhotoPage(:final imagePath))) {
+          await _removeQuietly(imagePath);
+        }
+      });
 
   @override
   Future<void> deletePage(ProfilePage page) => guard(() async {
@@ -102,6 +121,23 @@ class SupabaseProfileRepository implements ProfileRepository {
       params: {'page_ids': pageIds},
     ),
   );
+
+  /// Uploads the photo of [draft] if it brings a new one, and returns its
+  /// path.
+  Future<String?> _uploadNewPhoto(String userId, PageDraft draft) async =>
+      switch (draft) {
+        PhotoPageDraft(:final bytes, :final format) => await _upload(
+          userId,
+          bytes,
+          format,
+        ),
+        _ => null,
+      };
+
+  static String? _keptPhoto(PageDraft draft) => switch (draft) {
+    KeptPhotoPageDraft(:final imagePath) => imagePath,
+    _ => null,
+  };
 
   Future<String> _upload(
     String userId,

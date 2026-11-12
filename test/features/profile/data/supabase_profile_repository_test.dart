@@ -199,6 +199,106 @@ void main() {
     });
   });
 
+  group('updatePage', () {
+    const lakePage = ProfilePage.photo(
+      id: 'p1',
+      position: 1,
+      imagePath: '$userId/old.jpg',
+    );
+
+    test('changes the content of the page only', () async {
+      answer = (_) => (status: 200, body: {'id': 'p1'});
+
+      await repository.updatePage(
+        userId,
+        const ProfilePage.text(id: 'p1', position: 1, text: 'Avant'),
+        const TextPageDraft(' Après '),
+      );
+
+      final update = requests.single;
+      expect(update.method, 'PATCH');
+      expect(update.uri.path, '/rest/v1/profile_pages');
+      expect(update.uri.queryParameters['id'], 'eq.p1');
+      expect(update.body, {
+        'content': {'text': 'Après'},
+      });
+    });
+
+    test('keeping the photo changes only the caption', () async {
+      answer = (_) => (status: 200, body: {'id': 'p1'});
+
+      await repository.updatePage(
+        userId,
+        lakePage,
+        const KeptPhotoPageDraft(imagePath: '$userId/old.jpg', caption: 'Lac'),
+      );
+
+      expect(requests.single.body, {
+        'content': {'caption': 'Lac'},
+      });
+    });
+
+    test('a new photo is uploaded, used, then the old one deleted', () async {
+      answer = (request) => switch (request) {
+        (method: 'PATCH', uri: _, body: _) => (status: 200, body: {'id': 'p1'}),
+        (method: 'DELETE', uri: _, body: _) => (status: 200, body: <Object>[]),
+        _ => (status: 200, body: {'Key': 'profile-photos/x.png'}),
+      };
+
+      await repository.updatePage(
+        userId,
+        lakePage,
+        PhotoPageDraft(bytes: pngBytes, format: PhotoFormat.png),
+      );
+
+      final [upload, update, remove] = requests;
+      final newPath = upload.uri.path.replaceFirst(
+        '/storage/v1/object/profile-photos/',
+        '',
+      );
+      expect(update.body, {
+        'content': <String, Object>{},
+        'image_path': newPath,
+      });
+      expect((remove.body! as Map)['prefixes'], ['$userId/old.jpg']);
+    });
+
+    test('a page deleted meanwhile keeps nothing of the new photo', () async {
+      answer = (request) => switch (request) {
+        (method: 'PATCH', uri: _, body: _) => (
+          status: 406,
+          body: {'code': 'PGRST116', 'message': 'no rows'},
+        ),
+        (method: 'DELETE', uri: _, body: _) => (status: 200, body: <Object>[]),
+        _ => (status: 200, body: {'Key': 'profile-photos/x.png'}),
+      };
+
+      await expectLater(
+        repository.updatePage(
+          userId,
+          lakePage,
+          PhotoPageDraft(bytes: pngBytes, format: PhotoFormat.png),
+        ),
+        throwsA(isA<NotFoundFailure>()),
+      );
+
+      final [upload, _, remove] = requests;
+      // The new photo goes, the old one stays with its page.
+      expect((remove.body! as Map)['prefixes'], [
+        upload.uri.path.replaceFirst('/storage/v1/object/profile-photos/', ''),
+      ]);
+    });
+
+    test('refuses to change the template without calling the server', () async {
+      await expectLater(
+        repository.updatePage(userId, lakePage, const TextPageDraft('Hey')),
+        throwsA(isA<InvalidInputFailure>()),
+      );
+
+      expect(requests, isEmpty);
+    });
+  });
+
   test('deletePage deletes the row, then the photo it used', () async {
     await repository.deletePage(
       const ProfilePage.photo(

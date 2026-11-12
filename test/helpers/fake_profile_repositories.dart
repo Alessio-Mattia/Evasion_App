@@ -128,12 +128,66 @@ class FakeProfileStore implements ProfileRepository, OnboardingRepository {
         ),
         caption: draft.content['caption'] as String?,
       ),
+      KeptPhotoPageDraft(:final imagePath) => ProfilePage.photo(
+        id: id,
+        position: position,
+        imagePath: imagePath,
+        caption: draft.content['caption'] as String?,
+      ),
       InterestsPageDraft(:final interests) => ProfilePage.interests(
         id: id,
         position: position,
         interests: interests,
       ),
     });
+  }
+
+  /// Set to make the next page updates fail.
+  AppFailure? updateFailure;
+
+  @override
+  Future<void> updatePage(
+    String userId,
+    ProfilePage page,
+    PageDraft draft,
+  ) async {
+    pageCalls.add('update ${page.id}');
+    if (updateFailure case final failure?) throw failure;
+    final index = pages.indexWhere((existing) => existing.id == page.id);
+    if (index < 0) throw const NotFoundFailure();
+    lastAddedContent = draft.content;
+    final content = draft.content;
+    pages[index] = switch (draft) {
+      TextPageDraft() => ProfilePage.text(
+        id: page.id,
+        position: page.position,
+        text: content['text']! as String,
+      ),
+      PhotoPageDraft(:final format) => ProfilePage.photo(
+        id: page.id,
+        position: page.position,
+        imagePath: userPhotoPath(
+          userId: userId,
+          fileName: 'new-${pageCalls.length}',
+          format: format,
+        ),
+        caption: content['caption'] as String?,
+      ),
+      KeptPhotoPageDraft(:final imagePath) => ProfilePage.photo(
+        id: page.id,
+        position: page.position,
+        imagePath: imagePath,
+        caption: content['caption'] as String?,
+      ),
+      InterestsPageDraft(:final interests) => ProfilePage.interests(
+        id: page.id,
+        position: page.position,
+        interests: interests,
+      ),
+    };
+    if ((draft, page) case (PhotoPageDraft(), PhotoPage(:final imagePath))) {
+      deletedPhotos.add(imagePath);
+    }
   }
 
   @override

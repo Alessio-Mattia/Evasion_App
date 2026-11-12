@@ -22,6 +22,11 @@ abstract interface class ProfileRepository {
   /// saved.
   Future<void> addPage(String userId, PageDraft draft, {required int position});
 
+  /// Replaces the content of [page], a page of [userId], with [draft], of the
+  /// same template. A new photo is uploaded first; the previous one is then
+  /// deleted. Fails with `NotFoundFailure` if the page no longer exists.
+  Future<void> updatePage(String userId, ProfilePage page, PageDraft draft);
+
   /// Deletes [page], then its photo if it has one. A page already deleted,
   /// for example from another phone, counts as deleted.
   Future<void> deletePage(ProfilePage page);

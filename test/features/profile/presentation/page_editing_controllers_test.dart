@@ -136,4 +136,71 @@ void main() {
       );
     });
   });
+
+  group('UpdatePageController', () {
+    Future<bool> save(ProfilePage page, PageDraft draft) {
+      final provider = updatePageControllerProvider(userId);
+      container.listen(provider, (_, _) {});
+      return container.read(provider.notifier).save(page, draft);
+    }
+
+    test('saves the new content of the page', () async {
+      store.pages = [textAt(1)];
+
+      expect(
+        await save(store.pages.single, const TextPageDraft('Hey')),
+        isTrue,
+      );
+
+      expect(store.pageCalls, ['update p1']);
+      expect(
+        store.pages.single,
+        isA<TextPage>().having((p) => p.text, 'text', 'Hey'),
+      );
+    });
+
+    test('a page deleted meanwhile fails with its reason', () async {
+      expect(await save(textAt(1), const TextPageDraft('Hey')), isFalse);
+
+      expect(
+        container.read(updatePageControllerProvider(userId)).error,
+        isA<NotFoundFailure>(),
+      );
+    });
+  });
+
+  group('ReorderPagesController', () {
+    Future<bool> reorder(List<ProfilePage> pages) {
+      final provider = reorderPagesControllerProvider(userId);
+      container.listen(provider, (_, _) {});
+      return container.read(provider.notifier).reorder(pages);
+    }
+
+    test('sends the order chosen, hidden pages included', () async {
+      store
+        ..pages = [textAt(1), textAt(2)]
+        ..hiddenSlots = [(id: 'future', position: 3)];
+
+      expect(await reorder([store.pages[1], store.pages[0]]), isTrue);
+
+      expect(store.pageCalls, ['reorder p2,p1,future']);
+      expect(
+        {for (final page in store.pages) page.id: page.position},
+        {'p2': 1, 'p1': 2},
+      );
+    });
+
+    test('keeps the failure in its state', () async {
+      store
+        ..pages = [textAt(1), textAt(2)]
+        ..reorderFailure = const NetworkFailure();
+
+      expect(await reorder([store.pages[1], store.pages[0]]), isFalse);
+
+      expect(
+        container.read(reorderPagesControllerProvider(userId)).error,
+        isA<NetworkFailure>(),
+      );
+    });
+  });
 }

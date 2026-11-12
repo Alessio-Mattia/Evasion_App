@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:evasion/app/router/app_routes.dart';
 import 'package:evasion/core/config/business_rules.dart';
 import 'package:evasion/core/widgets/failure_snack_bar.dart';
-import 'package:evasion/features/profile/domain/profile.dart';
 import 'package:evasion/features/profile/domain/profile_page.dart';
 import 'package:evasion/features/profile/presentation/carousel/profile_carousel.dart';
 import 'package:evasion/features/profile/presentation/edit/confirm_page_deletion.dart';
@@ -11,6 +10,7 @@ import 'package:evasion/features/profile/presentation/edit/pages_edit_strip.dart
 import 'package:evasion/features/profile/presentation/editor/page_type_sheet.dart';
 import 'package:evasion/features/profile/presentation/own_profile.dart';
 import 'package:evasion/features/profile/presentation/page_editing_controllers.dart';
+import 'package:evasion/features/profile/presentation/profile_sections.dart';
 import 'package:evasion/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -37,6 +37,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   bool _editing = false;
   String? _deletingId;
 
+  /// The order just chosen by the user, shown while it is being saved.
+  List<ProfilePage>? _pendingOrder;
+
   String get _userId => widget.userId;
 
   Future<void> _reload() async {
@@ -57,6 +60,27 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     await context.push(AppRoutes.newProfilePage(type.code));
   }
 
+  Future<void> _edit(ProfilePage page) =>
+      context.push(AppRoutes.editProfilePage(page.id));
+
+  Future<void> _reorder(List<ProfilePage> pages) async {
+    setState(() => _pendingOrder = pages);
+    await ref
+        .read(reorderPagesControllerProvider(_userId).notifier)
+        .reorder(pages);
+    if (!mounted) return;
+    // Keeps the chosen order until the pages are reloaded, so that the
+    // previous one does not show in between.
+    try {
+      await ref.read(ownPagesProvider(_userId).future);
+    } on Object {
+      // Shown by the profile itself; the pages loaded before stay.
+    }
+    // The reloaded pages show the saved order, or the previous one if saving
+    // failed.
+    if (mounted) setState(() => _pendingOrder = null);
+  }
+
   Future<void> _delete(ProfilePage page) async {
     if (!await confirmPageDeletion(context) || !mounted) return;
     setState(() => _deletingId = page.id);
@@ -67,13 +91,23 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    ref.listen(deletePageControllerProvider(_userId), (_, next) {
+    void showFailure(AsyncValue<void>? _, AsyncValue<void> next) {
       if (next case AsyncError(:final error)) {
         showFailureSnackBar(context, error);
       }
-    });
+    }
+
+    ref
+      ..listen(deletePageControllerProvider(_userId), showFailure)
+      ..listen(reorderPagesControllerProvider(_userId), showFailure);
+    final isReordering = ref
+        .watch(reorderPagesControllerProvider(_userId))
+        .isLoading;
+    // Always watched, even while a new order is shown: a provider nobody
+    // watches is disposed, and would reload from nothing.
+    final loadedPages = ref.watch(ownPagesProvider(_userId)).value;
     // Pages that fail to load leave the page built from the profile.
-    final pages = ref.watch(ownPagesProvider(_userId)).value ?? const [];
+    final pages = _pendingOrder ?? loadedPages ?? const <ProfilePage>[];
     // Nothing left to edit once the last page is deleted.
     final editing = _editing && pages.isNotEmpty;
 
@@ -100,9 +134,12 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   avatarPath: value.avatarPath,
                   pages: pages,
                   deletingId: _deletingId,
+                  isBusy: _deletingId != null || isReordering,
+                  onEdit: _edit,
                   onDelete: _delete,
+                  onReorder: _reorder,
                 ),
-                _Hint(l10n.profileEditHint),
+                ProfileHint(l10n.profileEditHint),
               ] else ...[
                 ProfileCarousel(
                   profile: value,
@@ -112,9 +149,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       : null,
                   onLongPressPage: _startEditing,
                 ),
-                if (pages.isNotEmpty) _Hint(l10n.profileEditTip),
+                if (pages.isNotEmpty) ProfileHint(l10n.profileEditTip),
               ],
-              _AboutSection(profile: value),
+              AboutSection(profile: value),
             ],
           ),
         ),
@@ -130,54 +167,6 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ),
         _ => const Center(child: CircularProgressIndicator()),
       },
-    );
-  }
-}
-
-class _Hint extends StatelessWidget {
-  const _Hint(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 12, 20, 0),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
-      ),
-    );
-  }
-}
-
-class _AboutSection extends StatelessWidget {
-  const _AboutSection({required this.profile});
-
-  final Profile profile;
-
-  @override
-  Widget build(BuildContext context) {
-    final bio = profile.bio?.trim() ?? '';
-    if (bio.isEmpty) return const SizedBox.shrink();
-    final textTheme = Theme.of(context).textTheme;
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 24, 20, 0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 8,
-        children: [
-          Text(
-            AppLocalizations.of(context).profileAboutTitle,
-            style: textTheme.titleMedium,
-          ),
-          Text(bio, style: textTheme.bodyLarge),
-        ],
-      ),
     );
   }
 }

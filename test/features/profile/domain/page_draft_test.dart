@@ -2,6 +2,7 @@ import 'package:evasion/core/config/business_rules.dart';
 import 'package:evasion/core/models/interest.dart';
 import 'package:evasion/core/photos/photo_file.dart';
 import 'package:evasion/features/profile/domain/page_draft.dart';
+import 'package:evasion/features/profile/domain/profile_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../helpers/fake_photo_picker.dart';
@@ -22,6 +23,43 @@ void main() {
       expect(photo('').content, isEmpty);
       expect(photo('   ').content, isEmpty);
       expect(photo('  Au lac ').content, {'caption': 'Au lac'});
+    });
+
+    test('a photo page keeping its photo sends only the caption', () {
+      expect(
+        const KeptPhotoPageDraft(
+          imagePath: 'user-1/a.jpg',
+          caption: ' Lac ',
+        ).content,
+        {'caption': 'Lac'},
+      );
+      expect(
+        const KeptPhotoPageDraft(imagePath: 'user-1/a.jpg').content,
+        isEmpty,
+      );
+    });
+
+    test('a page knows its template', () {
+      expect(
+        const ProfilePage.text(id: 'p', position: 1, text: 'a').type,
+        PageType.text,
+      );
+      expect(
+        const ProfilePage.photo(
+          id: 'p',
+          position: 1,
+          imagePath: 'u/a.jpg',
+        ).type,
+        PageType.photo,
+      );
+      expect(
+        const ProfilePage.interests(
+          id: 'p',
+          position: 1,
+          interests: [Interest.art],
+        ).type,
+        PageType.interests,
+      );
     });
 
     test('an interests page keeps the order chosen', () {
