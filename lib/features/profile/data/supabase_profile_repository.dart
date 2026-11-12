@@ -1,5 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:evasion/core/errors/failure_mapper.dart';
+import 'package:evasion/core/photos/photo_file.dart';
 import 'package:evasion/core/supabase/supabase_client_provider.dart';
+import 'package:evasion/features/profile/domain/page_draft.dart';
+import 'package:evasion/features/profile/domain/page_positions.dart';
 import 'package:evasion/features/profile/domain/profile.dart';
 import 'package:evasion/features/profile/domain/profile_page.dart';
 import 'package:evasion/features/profile/domain/profile_repository.dart';
@@ -21,6 +26,8 @@ class SupabaseProfileRepository implements ProfileRepository {
       'id, display_name, birth_date, gender, avatar_path, '
       'occupation, university, bio, is_student_verified, is_complete';
 
+  StorageFileApi get _photos => _client.storage.from('profile-photos');
+
   @override
   Future<Profile> fetchOwnProfile(String userId) => guard(() async {
     final row = await _client
@@ -41,4 +48,86 @@ class SupabaseProfileRepository implements ProfileRepository {
         .order('position', ascending: true);
     return [for (final row in rows) ?profilePageFromRow(row)];
   });
+
+  @override
+  Future<List<PageSlot>> fetchOwnPageSlots(String userId) => guard(() async {
+    final rows = await _client
+        .from('profile_pages')
+        .select('id, position')
+        .eq('profile_id', userId);
+    return [
+      for (final row in rows)
+        (id: row['id'] as String, position: row['position'] as int),
+    ];
+  });
+
+  @override
+  Future<void> addPage(
+    String userId,
+    PageDraft draft, {
+    required int position,
+  }) => guard(() async {
+    final imagePath = switch (draft) {
+      PhotoPageDraft(:final bytes, :final format) => await _upload(
+        userId,
+        bytes,
+        format,
+      ),
+      _ => null,
+    };
+    try {
+      await _client.from('profile_pages').insert({
+        'position': position,
+        'type': draft.type.code,
+        'content': draft.content,
+        'image_path': ?imagePath,
+      });
+    } on Object {
+      if (imagePath != null) await _removeQuietly(imagePath);
+      rethrow;
+    }
+  });
+
+  @override
+  Future<void> deletePage(ProfilePage page) => guard(() async {
+    await _client.from('profile_pages').delete().eq('id', page.id);
+    // The photo can only be deleted once no page uses it.
+    if (page case PhotoPage(:final imagePath)) await _removeQuietly(imagePath);
+  });
+
+  @override
+  Future<void> reorderPages(List<String> pageIds) => guard(
+    () => _client.rpc<void>(
+      'reorder_profile_pages',
+      params: {'page_ids': pageIds},
+    ),
+  );
+
+  Future<String> _upload(
+    String userId,
+    Uint8List bytes,
+    PhotoFormat format,
+  ) async {
+    // A photo in use cannot be overwritten: always a new file name.
+    final path = userPhotoPath(
+      userId: userId,
+      fileName: uniquePhotoFileName(),
+      format: format,
+    );
+    await _photos.uploadBinary(
+      path,
+      bytes,
+      fileOptions: FileOptions(contentType: format.mimeType),
+    );
+    return path;
+  }
+
+  Future<void> _removeQuietly(String path) async {
+    try {
+      await _photos.remove([path]);
+    } on Object {
+      // A leftover file stays in the user's private folder, unseen by others,
+      // until the account is deleted, which is harmless.
+    }
+  }
 }

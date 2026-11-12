@@ -1,13 +1,12 @@
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:evasion/core/errors/app_failure.dart';
 import 'package:evasion/core/errors/failure_mapper.dart';
 import 'package:evasion/core/models/gender.dart';
+import 'package:evasion/core/photos/photo_file.dart';
 import 'package:evasion/core/supabase/supabase_client_provider.dart';
 import 'package:evasion/features/onboarding/domain/onboarding_progress.dart';
 import 'package:evasion/features/onboarding/domain/onboarding_repository.dart';
-import 'package:evasion/features/onboarding/domain/profile_photo.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -74,9 +73,9 @@ class SupabaseOnboardingRepository implements OnboardingRepository {
         final previousPath = row['avatar_path'] as String?;
 
         // The current photo cannot be overwritten: always a new file name.
-        final path = avatarPath(
+        final path = userPhotoPath(
           userId: userId,
-          fileName: _uniqueFileName(),
+          fileName: uniquePhotoFileName(),
           format: format,
         );
         await _avatars.uploadBinary(
@@ -102,11 +101,6 @@ class SupabaseOnboardingRepository implements OnboardingRepository {
       });
 
   StorageFileApi get _avatars => _client.storage.from('avatars');
-
-  static final _random = Random();
-
-  static String _uniqueFileName() =>
-      '${DateTime.now().millisecondsSinceEpoch}-${_random.nextInt(1 << 32)}';
 
   static String? _toSqlDate(DateTime? date) => date == null
       ? null

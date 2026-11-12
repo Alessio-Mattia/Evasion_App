@@ -1,9 +1,10 @@
 import 'dart:typed_data';
 
+import 'package:evasion/core/photos/photo_file.dart';
 import 'package:evasion/core/services/photo_picker.dart';
 import 'package:evasion/core/widgets/failure_snack_bar.dart';
 import 'package:evasion/core/widgets/form_page_layout.dart';
-import 'package:evasion/features/onboarding/domain/profile_photo.dart';
+import 'package:evasion/core/widgets/pick_photo.dart';
 import 'package:evasion/features/onboarding/presentation/onboarding_app_bar.dart';
 import 'package:evasion/features/onboarding/presentation/onboarding_controllers.dart';
 import 'package:evasion/l10n/generated/app_localizations.dart';
@@ -25,38 +26,14 @@ class _PhotoStepState extends ConsumerState<PhotoStep> {
   Uint8List? _photo;
 
   Future<void> _pick(PhotoSource source) async {
-    final l10n = AppLocalizations.of(context);
-    final colors = Theme.of(context).colorScheme;
-    final appearance = CropAppearance(
-      title: l10n.onboardingPhotoCropTitle,
-      toolbarColor: colors.surface,
-      toolbarForeground: colors.onSurface,
-      backgroundColor: colors.surface,
-      accentColor: colors.primary,
+    final picked = await pickCheckedPhoto(
+      context,
+      ref,
+      source: source,
+      shape: PhotoShape.round,
+      cropTitle: AppLocalizations.of(context).onboardingPhotoCropTitle,
     );
-
-    final Uint8List? picked;
-    try {
-      picked = await ref
-          .read(photoPickerProvider)
-          .pickSquarePhoto(source, appearance);
-    } on PhotoAccessDenied {
-      if (mounted) _showMessage(l10n.photoAccessDenied);
-      return;
-    } on Object catch (error) {
-      if (mounted) showFailureSnackBar(context, error);
-      return;
-    }
-    if (picked == null || !mounted) return;
-
-    switch (checkPhoto(picked)) {
-      case PhotoProblem.unsupportedFormat:
-        _showMessage(l10n.photoUnsupportedFormat);
-      case PhotoProblem.tooLarge:
-        _showMessage(l10n.photoTooLarge);
-      case null:
-        setState(() => _photo = picked);
-    }
+    if (picked != null && mounted) setState(() => _photo = picked);
   }
 
   Future<void> _confirm() async {
@@ -68,12 +45,6 @@ class _PhotoStepState extends ConsumerState<PhotoStep> {
         .read(savePhotoControllerProvider.notifier)
         .save(photo, detectPhotoFormat(photo)!);
     if (saved) widget.onPhotoSaved();
-  }
-
-  void _showMessage(String message) {
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override

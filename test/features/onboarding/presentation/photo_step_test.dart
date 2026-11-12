@@ -1,7 +1,7 @@
 import 'package:evasion/core/errors/app_failure.dart';
+import 'package:evasion/core/photos/photo_file.dart';
 import 'package:evasion/core/services/photo_picker.dart';
 import 'package:evasion/features/map/presentation/home_screen.dart';
-import 'package:evasion/features/onboarding/domain/profile_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

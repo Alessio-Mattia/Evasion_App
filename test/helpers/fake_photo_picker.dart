@@ -23,13 +23,16 @@ class FakePhotoPicker implements PhotoPicker {
   Uint8List? result = pngBytes;
   Exception? error;
   final List<PhotoSource> requestedSources = [];
+  final List<PhotoShape> requestedShapes = [];
 
   @override
-  Future<Uint8List?> pickSquarePhoto(
+  Future<Uint8List?> pickPhoto(
     PhotoSource source,
+    PhotoShape shape,
     CropAppearance appearance,
   ) async {
     requestedSources.add(source);
+    requestedShapes.add(shape);
     if (error case final error?) throw error;
     return result;
   }

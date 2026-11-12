@@ -11,6 +11,7 @@ extension AppFailureMessage on AppFailure {
       NotFoundFailure() => l10n.errorNotFound,
       ConflictFailure() => l10n.errorConflict,
       InvalidCodeFailure() => l10n.errorInvalidCode,
+      LimitReachedFailure() => l10n.errorLimitReached,
       TooManyRequestsFailure() => l10n.errorTooManyRequests,
       InvalidInputFailure() => l10n.errorInvalidInput,
       UnexpectedFailure() => l10n.errorUnexpected,

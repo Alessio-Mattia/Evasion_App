@@ -66,14 +66,13 @@ void main() {
 
     expect(find.text('Étudiant·e'), findsNothing);
     expect(find.text('À propos'), findsNothing);
-    // A single page needs no dots.
-    expect(find.bySemanticsLabel(RegExp('^Page ')), findsNothing);
+    // Without free pages, there is nothing to edit yet.
+    expect(find.textContaining('Appuie longuement'), findsNothing);
   });
 
   testWidgets('shows the bio below the carousel', (tester) async {
-    profiles.profile = completeProfile(
-      testUser.id,
-    ).copyWith(bio: 'Toujours partant pour un café.');
+    profiles.profile = completeProfile(testUser.id)
+        .copyWith(bio: 'Toujours partant pour un café.');
 
     await openProfile(tester);
     await showText(tester, 'Toujours partant pour un café.');
@@ -99,27 +98,29 @@ void main() {
     ];
 
     await openProfile(tester);
-    expect(find.bySemanticsLabel('Page 1 sur 4'), findsOneWidget);
+    expect(find.bySemanticsLabel('Page 1 sur 5'), findsOneWidget);
 
     await swipeToNextPage(tester);
     expect(find.text('Fan de jazz'), findsOneWidget);
-    expect(find.bySemanticsLabel('Page 2 sur 4'), findsOneWidget);
+    expect(find.bySemanticsLabel('Page 2 sur 5'), findsOneWidget);
 
     await swipeToNextPage(tester);
     expect(find.text('Au bord du lac'), findsOneWidget);
-    expect(
-      images.requested.last,
-      (StorageBucket.profilePhotos, 'user-1/lake.jpg'),
-    );
+    expect(images.requested.last, (
+      StorageBucket.profilePhotos,
+      'user-1/lake.jpg',
+    ));
 
     await swipeToNextPage(tester);
     expect(find.text('Musique'), findsOneWidget);
     expect(find.text('Voyages'), findsOneWidget);
-    expect(find.bySemanticsLabel('Page 4 sur 4'), findsOneWidget);
+    expect(find.bySemanticsLabel('Page 4 sur 5'), findsOneWidget);
 
-    // The carousel does not loop.
+    // Then the card to add a page, the last one: the carousel does not loop.
     await swipeToNextPage(tester);
-    expect(find.bySemanticsLabel('Page 4 sur 4'), findsOneWidget);
+    expect(find.text('Ajouter une page'), findsOneWidget);
+    await swipeToNextPage(tester);
+    expect(find.bySemanticsLabel('Page 5 sur 5'), findsOneWidget);
   });
 
   testWidgets('still shows the profile when the pages fail to load', (
@@ -143,9 +144,7 @@ void main() {
     expect(find.byIcon(Icons.image_not_supported_outlined), findsOneWidget);
   });
 
-  testWidgets('pulling down reloads the profile and the pages', (
-    tester,
-  ) async {
+  testWidgets('pulling down reloads the profile and the pages', (tester) async {
     await openProfile(tester);
     profiles
       ..profile = completeProfile(testUser.id).copyWith(bio: 'Nouvelle bio')
@@ -156,7 +155,7 @@ void main() {
     await showText(tester, 'Nouvelle bio');
 
     expect(find.text('Nouvelle bio'), findsOneWidget);
-    expect(find.bySemanticsLabel('Page 1 sur 2'), findsOneWidget);
+    expect(find.bySemanticsLabel('Page 1 sur 3'), findsOneWidget);
   });
 
   testWidgets('keeps the settings button', (tester) async {

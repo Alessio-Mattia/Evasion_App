@@ -4,6 +4,10 @@ abstract final class AppRoutes {
   static const String add = '/add';
   static const String profile = '/profile';
   static const String settings = '/profile/settings';
+  static const String pageTypeParameter = 'type';
+
+  /// Screen creating a page of the template [type] (`PageType.code`).
+  static String newProfilePage(String type) => '$profile/pages/new/$type';
 
   static const String startup = '/startup';
   static const String onboarding = '/onboarding';
