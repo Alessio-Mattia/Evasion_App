@@ -37,3 +37,7 @@ DateTime _yearsBefore(DateTime day, int years) {
   final lastDayOfMonth = DateTime(year, day.month + 1, 0).day;
   return DateTime(year, day.month, min(day.day, lastDayOfMonth));
 }
+
+/// Whether [text], once trimmed, has at most [max] code points, as the server
+/// counts them with `char_length`.
+bool fitsLength(String text, int max) => text.trim().runes.length <= max;

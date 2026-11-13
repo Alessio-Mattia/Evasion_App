@@ -25,6 +25,18 @@ void main() {
     expect(profile.gender, Gender.woman);
     expect(profile.isStudentVerified, isTrue);
     expect(profile.isComplete, isTrue);
+    expect(profile.birthDateCorrected, isFalse);
+  });
+
+  test('reads whether the birth date correction was used', () {
+    final profile = Profile.fromJson(const {
+      'id': 'user-1',
+      'is_student_verified': false,
+      'is_complete': false,
+      'birth_date_corrected': true,
+    });
+
+    expect(profile.birthDateCorrected, isTrue);
   });
 
   test('reads a profile right after sign-up, with empty fields', () {

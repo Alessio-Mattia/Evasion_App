@@ -60,6 +60,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     await context.push(AppRoutes.newProfilePage(type.code));
   }
 
+  Future<void> _editProfile() => context.push(AppRoutes.editProfile);
+
   Future<void> _edit(ProfilePage page) =>
       context.push(AppRoutes.editProfilePage(page.id));
 
@@ -119,8 +121,14 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               onPressed: () => setState(() => _editing = false),
               child: Text(l10n.profileEditDone),
             )
-          else
+          else ...[
+            IconButton(
+              onPressed: _editProfile,
+              tooltip: l10n.profileEditTitle,
+              icon: const Icon(Icons.edit_outlined),
+            ),
             ?widget.settingsButton,
+          ],
         ],
       ),
       body: switch (ref.watch(ownProfileProvider(_userId))) {
@@ -148,6 +156,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       ? _addPage
                       : null,
                   onLongPressPage: _startEditing,
+                  onTapMainPage: _editProfile,
                 ),
                 if (pages.isNotEmpty) ProfileHint(l10n.profileEditTip),
               ],

@@ -18,6 +18,7 @@ class ProfileCarousel extends StatefulWidget {
     required this.pages,
     this.onAddPage,
     this.onLongPressPage,
+    this.onTapMainPage,
     super.key,
   });
 
@@ -30,6 +31,10 @@ class ProfileCarousel extends StatefulWidget {
   /// Called on a long press on a free page. Null on the profile of someone
   /// else.
   final VoidCallback? onLongPressPage;
+
+  /// Called on a tap on the page built from the profile. Null on the profile
+  /// of someone else.
+  final VoidCallback? onTapMainPage;
 
   @override
   State<ProfileCarousel> createState() => _ProfileCarouselState();
@@ -65,7 +70,10 @@ class _ProfileCarouselState extends State<ProfileCarousel> {
             itemCount: count,
             onPageChanged: (index) => setState(() => _current = index),
             itemBuilder: (context, index) => switch (index) {
-              0 => MainPageCard(profile: widget.profile),
+              0 => GestureDetector(
+                onTap: widget.onTapMainPage,
+                child: MainPageCard(profile: widget.profile),
+              ),
               _ when index < pageCount => GestureDetector(
                 onLongPress: widget.onLongPressPage,
                 child: PageCard(page: widget.pages[index - 1]),

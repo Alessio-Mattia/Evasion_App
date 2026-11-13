@@ -15,6 +15,7 @@ import 'package:evasion/features/profile/domain/page_draft.dart';
 import 'package:evasion/features/profile/presentation/editor/edit_page_screen.dart';
 import 'package:evasion/features/profile/presentation/editor/new_page_screen.dart';
 import 'package:evasion/features/profile/presentation/own_profile.dart';
+import 'package:evasion/features/profile/presentation/profile_edit/edit_profile_screen.dart';
 import 'package:evasion/features/profile/presentation/profile_screen.dart';
 import 'package:evasion/features/settings/presentation/settings_button.dart';
 import 'package:evasion/features/settings/presentation/settings_screen.dart';
@@ -110,6 +111,14 @@ GoRouter appRouter(Ref ref) {
                   null => const SizedBox.shrink(),
                 },
                 routes: [
+                  GoRoute(
+                    path: 'edit',
+                    builder: (context, state) =>
+                        switch (ref.read(currentUserProvider)) {
+                          final user? => EditProfileScreen(userId: user.id),
+                          null => const SizedBox.shrink(),
+                        },
+                  ),
                   GoRoute(
                     path: 'pages/new/:${AppRoutes.pageTypeParameter}',
                     builder: (context, state) {

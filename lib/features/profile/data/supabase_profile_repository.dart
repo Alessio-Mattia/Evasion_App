@@ -3,10 +3,13 @@ import 'dart:typed_data';
 import 'package:evasion/core/errors/app_failure.dart';
 import 'package:evasion/core/errors/failure_mapper.dart';
 import 'package:evasion/core/photos/photo_file.dart';
+import 'package:evasion/core/storage/avatar_upload.dart' as avatar_upload;
 import 'package:evasion/core/supabase/supabase_client_provider.dart';
+import 'package:evasion/core/utils/server_date.dart';
 import 'package:evasion/features/profile/domain/page_draft.dart';
 import 'package:evasion/features/profile/domain/page_positions.dart';
 import 'package:evasion/features/profile/domain/profile.dart';
+import 'package:evasion/features/profile/domain/profile_details.dart';
 import 'package:evasion/features/profile/domain/profile_page.dart';
 import 'package:evasion/features/profile/domain/profile_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -25,7 +28,8 @@ class SupabaseProfileRepository implements ProfileRepository {
 
   static const _columns =
       'id, display_name, birth_date, gender, avatar_path, '
-      'occupation, university, bio, is_student_verified, is_complete';
+      'occupation, university, bio, is_student_verified, is_complete, '
+      'birth_date_corrected';
 
   StorageFileApi get _photos => _client.storage.from('profile-photos');
 
@@ -38,6 +42,40 @@ class SupabaseProfileRepository implements ProfileRepository {
         .single();
     return Profile.fromJson(row);
   });
+
+  @override
+  Future<void> updateDetails(String userId, ProfileDetails details) =>
+      _updateProfile(userId, {
+        'display_name': details.displayName,
+        // Null clears a text the user emptied.
+        'occupation': details.occupation,
+        'university': details.university,
+        'bio': details.bio,
+      });
+
+  @override
+  Future<void> replaceAvatar(
+    String userId,
+    Uint8List bytes,
+    PhotoFormat format,
+  ) => guard(() => avatar_upload.replaceAvatar(_client, userId, bytes, format));
+
+  @override
+  Future<void> correctBirthDate(String userId, DateTime birthDate) =>
+      // The server allows one correction only, and refuses the next ones.
+      _updateProfile(userId, {'birth_date': toSqlDate(birthDate)});
+
+  /// Selecting the row makes an update that matched nothing fail, instead of
+  /// silently doing nothing.
+  Future<void> _updateProfile(String userId, Map<String, Object?> changes) =>
+      guard(
+        () => _client
+            .from('profiles')
+            .update(changes)
+            .eq('id', userId)
+            .select('id')
+            .single(),
+      );
 
   @override
   Future<List<ProfilePage>> fetchOwnPages(String userId) => guard(() async {

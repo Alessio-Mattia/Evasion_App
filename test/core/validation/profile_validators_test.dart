@@ -1,5 +1,5 @@
 import 'package:evasion/core/utils/server_date.dart';
-import 'package:evasion/features/onboarding/domain/onboarding_validators.dart';
+import 'package:evasion/core/validation/profile_validators.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -66,5 +66,18 @@ void main() {
       // 1 March 2010.
       expect(isAllowedBirthDate(DateTime(2010, 3), leapDay), isFalse);
     });
+  });
+
+  group('fitsLength', () {
+    test('counts the trimmed text, in code points like Postgres', () {
+      expect(fitsLength('  ${'a' * 10}  ', 10), isTrue);
+      expect(fitsLength('a' * 11, 10), isFalse);
+      // 👨‍👩‍👧 is one character on screen but 5 code points.
+      expect(fitsLength('👨‍👩‍👧', 4), isFalse);
+    });
+  });
+
+  test('toSqlDate writes a Postgres date, padded', () {
+    expect(toSqlDate(DateTime(2001, 2, 3, 23, 59)), '2001-02-03');
   });
 }
