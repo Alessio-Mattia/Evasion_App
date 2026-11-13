@@ -1,6 +1,7 @@
 import 'package:evasion/core/errors/app_failure.dart';
 import 'package:evasion/core/services/photo_picker.dart';
 import 'package:evasion/features/profile/presentation/carousel/main_page_card.dart';
+import 'package:evasion/features/profile/presentation/edit/page_thumbnail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -20,11 +21,18 @@ void main() {
     picker = FakePhotoPicker();
   });
 
+  /// Long press on the carousel, then a tap on the first page. The pages
+  /// shake in the edit mode, which never settles: reduced motion is asked.
   Future<void> openEditScreen(WidgetTester tester) async {
+    tester.platformDispatcher.accessibilityFeaturesTestValue =
+        const FakeAccessibilityFeatures(disableAnimations: true);
+    addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
     await pumpEvasionApp(tester, profiles: profiles, photoPicker: picker);
     await tester.tap(find.text('Profil'));
     await tester.pumpAndSettle();
-    await tester.tap(find.byTooltip('Modifier le profil'));
+    await tester.longPress(find.byType(MainPageCard));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(PageThumbnail).first);
     await tester.pumpAndSettle();
   }
 
@@ -55,18 +63,6 @@ void main() {
     expect(canSave(tester), isFalse);
   });
 
-  testWidgets('a tap on the main page also opens it', (tester) async {
-    await pumpEvasionApp(tester, profiles: profiles);
-    await tester.tap(find.text('Profil'));
-    await tester.pumpAndSettle();
-
-    // Its center: the name, at the bottom, is below the test window.
-    await tester.tap(find.byType(MainPageCard));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Modifier le profil'), findsOneWidget);
-  });
-
   testWidgets('saves the texts and goes back to the profile', (tester) async {
     await openEditScreen(tester);
 
@@ -79,7 +75,10 @@ void main() {
     expect(profiles.profileCalls, ['details']);
     expect(profiles.profile.displayName, 'Sam');
     expect(profiles.profile.occupation, isNull);
+    // Back to the edit mode, as after editing a page.
     expect(find.text('Modifier le profil'), findsNothing);
+    await tester.tap(find.text('Terminé'));
+    await tester.pumpAndSettle();
     expect(find.textContaining('Sam,'), findsOneWidget);
   });
 

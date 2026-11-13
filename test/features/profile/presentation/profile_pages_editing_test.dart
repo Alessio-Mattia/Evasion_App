@@ -1,6 +1,8 @@
 import 'package:evasion/core/errors/app_failure.dart';
 import 'package:evasion/core/services/photo_picker.dart';
 import 'package:evasion/features/profile/domain/profile_page.dart';
+import 'package:evasion/features/profile/presentation/carousel/main_page_card.dart';
+import 'package:evasion/features/profile/presentation/edit/page_thumbnail.dart';
 import 'package:evasion/features/profile/presentation/editor/edit_page_screen.dart';
 import 'package:evasion/features/profile/presentation/editor/new_page_screen.dart';
 import 'package:flutter/gestures.dart';
@@ -188,14 +190,42 @@ void main() {
       expect(find.byTooltip('Paramètres'), findsOneWidget);
     });
 
-    testWidgets('not on the page built from the profile', (tester) async {
-      store.pages = [jazz];
+    testWidgets('also on the page built from the profile, without pages', (
+      tester,
+    ) async {
       await openProfile(tester);
 
-      await tester.longPress(find.textContaining('Alex'));
+      // Its center: the name, at the bottom, is below the test window.
+      await tester.longPress(find.byType(MainPageCard));
       await tester.pumpAndSettle();
 
-      expect(find.text('Terminé'), findsNothing);
+      expect(find.text('Terminé'), findsOneWidget);
+      expect(find.textContaining('La première page ne bouge pas'), findsOne);
+      // The page built from the profile cannot be deleted.
+      expect(find.byTooltip('Supprimer cette page'), findsNothing);
+    });
+
+    testWidgets('a tap on the first page opens the profile edit screen', (
+      tester,
+    ) async {
+      store.pages = [jazz];
+      await startEditing(tester);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byType(PageThumbnail).first);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Modifier le profil'), findsOneWidget);
+    });
+
+    testWidgets('a tap on the carousel does not open it', (tester) async {
+      await openProfile(tester);
+
+      await tester.tap(find.byType(MainPageCard));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Modifier le profil'), findsNothing);
+      expect(find.byTooltip('Modifier le profil'), findsNothing);
     });
 
     testWidgets('pages shake, unless the phone reduces motion', (tester) async {
@@ -245,7 +275,9 @@ void main() {
       expect(store.deletedPhotos, ['user-1/lake.jpg']);
     });
 
-    testWidgets('closes once the last page is deleted', (tester) async {
+    testWidgets('stays open on the first page once the last is deleted', (
+      tester,
+    ) async {
       store.pages = [jazz];
       await startEditing(tester);
       await tester.pumpAndSettle();
@@ -255,8 +287,9 @@ void main() {
       await tester.tap(find.text('Supprimer'));
       await tester.pumpAndSettle();
 
-      expect(find.text('Terminé'), findsNothing);
-      expect(find.byTooltip('Paramètres'), findsOneWidget);
+      expect(find.text('Terminé'), findsOneWidget);
+      expect(find.byType(PageThumbnail), findsOneWidget);
+      expect(find.byTooltip('Supprimer cette page'), findsNothing);
     });
 
     testWidgets('a failed deletion shows why and keeps the page', (
