@@ -9,7 +9,7 @@ Application mobile (iOS + Android) qui sert à se rencontrer **dans la vraie vie
 Principes non négociables :
 - **Le réel débloque le virtuel** : le like n'est possible qu'après une rencontre réelle validée ; après un match, un quota de messages s'applique et une nouvelle rencontre réelle le recharge.
 - **Tout le monde au même niveau** : aucun compteur public (abonnés, likes, vues), pas de like sur les posts (on les épingle).
-- **Sécurité par défaut** : aucune position précise n'est jamais exposée à un autre utilisateur.
+- **Sécurité par défaut** : aucune position précise d'un utilisateur n'est exposée sans son choix explicite ; par défaut, tout est flou.
 
 ## Langue
 
@@ -46,7 +46,7 @@ lib/
         └── presentation/  # écrans, widgets, controllers Riverpod
 ```
 
-Fonctionnalités : `auth`, `onboarding`, `profile`, `map`, `posts`, `groups`, `chat`, `encounters`, `connections` (likes, matchs, rencontres réelles), `moderation`, `notifications`, `settings`.
+Fonctionnalités : `auth`, `onboarding`, `profile`, `map`, `posts`, `groups`, `chat`, `encounters`, `connections` (amis, likes, matchs, rencontres réelles), `moderation`, `notifications`, `settings`.
 
 Règles :
 - **Les widgets n'appellent jamais Supabase directement.** Widget → controller (Riverpod) → repository → Supabase.
@@ -62,7 +62,7 @@ Règles :
 - **Row Level Security activée sur toutes les tables**, avec des politiques explicites. Chaque nouvelle table arrive avec ses politiques dans la même migration.
 - Positions : type `geography(Point, 4326)` ; requêtes de distance avec `ST_DWithin`.
 - Paires d'utilisateurs stockées avec `user_a < user_b`.
-- La position exacte des utilisateurs (`user_locations`) et des posts (`posts.exact_geog`) n'est **jamais** lisible par les autres : lecture via la vue `posts_public` et des fonctions RPC.
+- La position exacte des utilisateurs (`user_locations`) et des posts (`posts.exact_geog`) n'est **jamais** lisible directement : les autres ne voient d'un post que sa position affichée (zone floue, ou point exact si l'auteur l'a choisi), via la vue `posts_public` et des fonctions RPC.
 - Logique sensible côté serveur (fonctions SQL, triggers, Edge Functions) : détection des croisements, création des matchs, décompte des quotas de messages, expiration des posts. Le client ne doit jamais pouvoir contourner ces règles.
 - Deux projets : `dev` et `prod`. Ne jamais exécuter de commande sur `prod` sans que je le demande explicitement.
 - Les clés (URL, publishable key) viennent de `--dart-define-from-file` ; aucun secret dans le code ni dans Git. La `service_role` key n'est jamais utilisée dans l'application.
@@ -74,7 +74,8 @@ Règles :
 - Rencontre réelle : validée par QR code scanné par les deux personnes (MVP). Débloque le like pendant une durée limitée.
 - Like secret ; message rédigé au like, révélé seulement au match. Like retirable, match annulable.
 - Quota de messages après match, rechargé par une nouvelle rencontre réelle.
-- Post : image obligatoire ; lieu par défaut = zone floue de quelques centaines de mètres ; lieu choisi limité à un rayon autour de la position réelle ; option « masquer de la carte » ; expiration supprime le post ET l'image.
+- Post : image obligatoire. Lieu saisi à la main (limité à un rayon autour de la position réelle) ou, à défaut, position actuelle. Précision au choix : zone floue de quelques centaines de mètres (par défaut) ou exacte, avec un avertissement dans l'app. Public au choix : tout le monde, amis, ou une liste d'amis ; un post est toujours sur la carte pour son public. Durée choisie par l'auteur, bornée. Seuls le public et la durée sont modifiables ; le reste demande de supprimer et de reposter. L'expiration supprime le post ET l'image.
+- Amis : ajout mutuel depuis le profil (les deux doivent s'ajouter), possible seulement après une rencontre réelle (QR code, ou bouton quand les deux sont à moins d'une certaine distance). Servent au public des posts, aux conversations privées et aux groupes. Ami et amour (like, match) sont deux notions séparées : le quota de messages ne s'applique qu'à l'amour, et un amour peut aussi être un ami.
 - Groupe public = événement sur la carte, avec lieu, date/heure de début, fin optionnelle, catégorie, ouvert ou sur demande, max de participants.
 - Blocage : l'utilisateur bloqué disparaît partout (carte, croisements, messagerie, profils).
 
