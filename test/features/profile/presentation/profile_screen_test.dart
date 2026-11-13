@@ -61,6 +61,28 @@ void main() {
     ]);
   });
 
+  testWidgets('the badge comes from the verified email, not the university', (
+    tester,
+  ) async {
+    // A verified student who cleared the university keeps the badge.
+    profiles.profile = completeProfile(testUser.id)
+        .copyWith(isStudentVerified: true);
+
+    await openProfile(tester);
+
+    expect(find.text('Étudiant·e'), findsOneWidget);
+  });
+
+  testWidgets('typing a university does not show the badge', (tester) async {
+    profiles.profile = completeProfile(testUser.id)
+        .copyWith(university: 'EPFL');
+
+    await openProfile(tester);
+
+    expect(find.text('EPFL'), findsOneWidget);
+    expect(find.text('Étudiant·e'), findsNothing);
+  });
+
   testWidgets('hides what the profile does not have', (tester) async {
     await openProfile(tester);
 
