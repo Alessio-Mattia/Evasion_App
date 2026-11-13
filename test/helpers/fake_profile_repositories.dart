@@ -4,11 +4,13 @@ import 'package:evasion/core/config/business_rules.dart';
 import 'package:evasion/core/errors/app_failure.dart';
 import 'package:evasion/core/models/gender.dart';
 import 'package:evasion/core/photos/photo_file.dart';
+import 'package:evasion/core/utils/server_date.dart';
 import 'package:evasion/features/onboarding/domain/onboarding_progress.dart';
 import 'package:evasion/features/onboarding/domain/onboarding_repository.dart';
 import 'package:evasion/features/profile/domain/page_draft.dart';
 import 'package:evasion/features/profile/domain/page_positions.dart';
 import 'package:evasion/features/profile/domain/profile.dart';
+import 'package:evasion/features/profile/domain/profile_details.dart';
 import 'package:evasion/features/profile/domain/profile_page.dart';
 import 'package:evasion/features/profile/domain/profile_repository.dart';
 
@@ -77,6 +79,48 @@ class FakeProfileStore implements ProfileRepository, OnboardingRepository {
     fetchCount++;
     if (fetchFailure case final failure?) throw failure;
     return profile;
+  }
+
+  /// Profile edits, in the order they were made, such as `details` or
+  /// `birth date 2001-02-03`.
+  final List<String> profileCalls = [];
+
+  @override
+  Future<void> updateDetails(String userId, ProfileDetails details) async {
+    profileCalls.add('details');
+    if (saveFailure case final failure?) throw failure;
+    profile = profile.copyWith(
+      displayName: details.displayName,
+      occupation: details.occupation,
+      university: details.university,
+      bio: details.bio,
+    );
+  }
+
+  @override
+  Future<void> replaceAvatar(
+    String userId,
+    Uint8List bytes,
+    PhotoFormat format,
+  ) async {
+    profileCalls.add('avatar');
+    if (saveFailure case final failure?) throw failure;
+    profile = profile.copyWith(
+      avatarPath: userPhotoPath(
+        userId: userId,
+        fileName: 'avatar-${profileCalls.length}',
+        format: format,
+      ),
+    );
+  }
+
+  @override
+  Future<void> correctBirthDate(String userId, DateTime birthDate) async {
+    profileCalls.add('birth date ${toSqlDate(birthDate)}');
+    if (saveFailure case final failure?) throw failure;
+    // Same rule as the birth date trigger.
+    if (profile.birthDateCorrected) throw const InvalidInputFailure();
+    profile = profile.copyWith(birthDate: birthDate, birthDateCorrected: true);
   }
 
   @override

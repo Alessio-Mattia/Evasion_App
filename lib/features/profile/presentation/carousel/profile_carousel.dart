@@ -27,8 +27,8 @@ class ProfileCarousel extends StatefulWidget {
   /// Shows the add card at the end. Null on the profile of someone else.
   final VoidCallback? onAddPage;
 
-  /// Called on a long press on a free page. Null on the profile of someone
-  /// else.
+  /// Called on a long press on any page, including the one built from the
+  /// profile. Null on the profile of someone else.
   final VoidCallback? onLongPressPage;
 
   @override
@@ -65,10 +65,11 @@ class _ProfileCarouselState extends State<ProfileCarousel> {
             itemCount: count,
             onPageChanged: (index) => setState(() => _current = index),
             itemBuilder: (context, index) => switch (index) {
-              0 => MainPageCard(profile: widget.profile),
-              _ when index < pageCount => GestureDetector(
+              _ when index < pageCount => _LongPressable(
                 onLongPress: widget.onLongPressPage,
-                child: PageCard(page: widget.pages[index - 1]),
+                child: index == 0
+                    ? MainPageCard(profile: widget.profile)
+                    : PageCard(page: widget.pages[index - 1]),
               ),
               _ => AddPageCard(onTap: onAddPage!),
             },
@@ -82,6 +83,25 @@ class _ProfileCarouselState extends State<ProfileCarousel> {
                 .profilePageIndicator(current + 1, count),
           ),
       ],
+    );
+  }
+}
+
+/// A page that opens the edit mode on a long press. Screen readers announce
+/// it, since the gesture is not visible.
+class _LongPressable extends StatelessWidget {
+  const _LongPressable({required this.onLongPress, required this.child});
+
+  final VoidCallback? onLongPress;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final onLongPress = this.onLongPress;
+    if (onLongPress == null) return child;
+    return Semantics(
+      onLongPressHint: AppLocalizations.of(context).profileManageHint,
+      child: GestureDetector(onLongPress: onLongPress, child: child),
     );
   }
 }

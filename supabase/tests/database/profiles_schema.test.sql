@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(47);
+select plan(49);
 
 -- Fixtures --------------------------------------------------------------------
 
@@ -110,6 +110,32 @@ select is(
 
 update auth.users set email = 'alice@example.com'
 where id = '00000000-0000-0000-0000-000000000001';
+
+-- The badge comes from the confirmed email only, never from the university
+-- typed in the profile.
+select pg_temp.act_as('00000000-0000-0000-0000-000000000004');
+update public.profiles set university = null
+where id = '00000000-0000-0000-0000-000000000004';
+reset role;
+
+select is(
+  (select is_student_verified from public.profiles
+   where id = '00000000-0000-0000-0000-000000000004'),
+  true,
+  'clearing the university keeps the badge'
+);
+
+select pg_temp.act_as('00000000-0000-0000-0000-000000000001');
+update public.profiles set university = 'EPFL'
+where id = '00000000-0000-0000-0000-000000000001';
+reset role;
+
+select is(
+  (select is_student_verified from public.profiles
+   where id = '00000000-0000-0000-0000-000000000001'),
+  false,
+  'typing a university does not give the badge'
+);
 
 -- Domain matching -------------------------------------------------------------
 

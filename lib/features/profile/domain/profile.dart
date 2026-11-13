@@ -21,6 +21,9 @@ abstract class Profile with _$Profile {
     String? occupation,
     String? university,
     String? bio,
+
+    /// Whether the only birth date correction allowed has been used.
+    @Default(false) bool birthDateCorrected,
   }) = _Profile;
 
   factory Profile.fromJson(Map<String, dynamic> json) =>

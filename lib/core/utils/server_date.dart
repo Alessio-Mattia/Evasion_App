@@ -15,3 +15,9 @@ int ageOn(DateTime birthDate, DateTime today) {
       (today.month == birthDate.month && today.day >= birthDate.day);
   return today.year - birthDate.year - (hadBirthday ? 0 : 1);
 }
+
+/// [date] as a Postgres `date` value (`2000-01-31`), whatever its time zone.
+String toSqlDate(DateTime date) =>
+    '${date.year.toString().padLeft(4, '0')}-'
+    '${date.month.toString().padLeft(2, '0')}-'
+    '${date.day.toString().padLeft(2, '0')}';

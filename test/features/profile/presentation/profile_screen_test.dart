@@ -61,13 +61,38 @@ void main() {
     ]);
   });
 
+  testWidgets('the badge comes from the verified email, not the university', (
+    tester,
+  ) async {
+    // A verified student who cleared the university keeps the badge.
+    profiles.profile = completeProfile(testUser.id)
+        .copyWith(isStudentVerified: true);
+
+    await openProfile(tester);
+
+    expect(find.text('Étudiant·e'), findsOneWidget);
+  });
+
+  testWidgets('typing a university does not show the badge', (tester) async {
+    profiles.profile = completeProfile(testUser.id)
+        .copyWith(university: 'EPFL');
+
+    await openProfile(tester);
+
+    expect(find.text('EPFL'), findsOneWidget);
+    expect(find.text('Étudiant·e'), findsNothing);
+  });
+
   testWidgets('hides what the profile does not have', (tester) async {
     await openProfile(tester);
 
     expect(find.text('Étudiant·e'), findsNothing);
     expect(find.text('À propos'), findsNothing);
-    // Without free pages, there is nothing to edit yet.
-    expect(find.textContaining('Appuie longuement'), findsNothing);
+    // Even without free pages, the profile itself can be edited.
+    await showText(
+      tester,
+      'Appuie longuement sur une page pour modifier ton profil et tes pages.',
+    );
   });
 
   testWidgets('shows the bio below the carousel', (tester) async {

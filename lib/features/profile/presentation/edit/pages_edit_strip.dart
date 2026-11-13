@@ -8,11 +8,12 @@ import 'package:flutter/material.dart';
 /// The edit mode of the own carousel: every page side by side, gently
 /// shaking. A tap edits a page, holding it lets the user move it, and its
 /// button deletes it. The page built from the profile comes first and stays
-/// there.
+/// there: a tap edits the profile, and it can be neither moved nor deleted.
 class PagesEditStrip extends StatefulWidget {
   const PagesEditStrip({
     required this.avatarPath,
     required this.pages,
+    required this.onEditProfile,
     required this.onEdit,
     required this.onDelete,
     required this.onReorder,
@@ -23,6 +24,9 @@ class PagesEditStrip extends StatefulWidget {
 
   final String? avatarPath;
   final List<ProfilePage> pages;
+
+  /// Called on a tap on the page built from the profile.
+  final VoidCallback onEditProfile;
   final ValueChanged<ProfilePage> onEdit;
   final ValueChanged<ProfilePage> onDelete;
 
@@ -71,6 +75,17 @@ class _PagesEditStripState extends State<PagesEditStrip>
     widget.onReorder(pages);
   }
 
+  /// Neighbours move in opposite directions, like on a phone's home screen.
+  Widget _shaking({required int index, required Widget child}) =>
+      AnimatedBuilder(
+        animation: _shake,
+        builder: (context, child) => Transform.rotate(
+          angle: sin(_shake.value * 2 * pi + index * pi) * 0.025,
+          child: child,
+        ),
+        child: child,
+      );
+
   @override
   Widget build(BuildContext context) {
     final busy = widget.isBusy;
@@ -81,7 +96,18 @@ class _PagesEditStripState extends State<PagesEditStrip>
         padding: const EdgeInsets.fromLTRB(4, 12, 20, 12),
         // Holding a page picks it up, on every platform.
         buildDefaultDragHandles: false,
-        header: PageThumbnail(avatarPath: widget.avatarPath),
+        header: _shaking(
+          // Opposite to the first free page, like its other neighbours.
+          index: -1,
+          child: Semantics(
+            button: true,
+            label: AppLocalizations.of(context).profileEditTitle,
+            child: GestureDetector(
+              onTap: busy ? null : widget.onEditProfile,
+              child: PageThumbnail(avatarPath: widget.avatarPath),
+            ),
+          ),
+        ),
         itemCount: widget.pages.length,
         onReorderItem: _move,
         // The page being moved keeps its shape, slightly raised.
@@ -94,14 +120,8 @@ class _PagesEditStripState extends State<PagesEditStrip>
           final page = widget.pages[index];
           final thumbnail = Padding(
             padding: const EdgeInsets.only(left: 16),
-            child: AnimatedBuilder(
-              animation: _shake,
-              // Neighbours move in opposite directions, like on a phone's
-              // home screen.
-              builder: (context, child) => Transform.rotate(
-                angle: sin(_shake.value * 2 * pi + index * pi) * 0.025,
-                child: child,
-              ),
+            child: _shaking(
+              index: index,
               child: _EditableThumbnail(
                 page: page,
                 isDeleting: widget.deletingId == page.id,

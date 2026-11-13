@@ -4,7 +4,9 @@ import 'package:evasion/core/errors/app_failure.dart';
 import 'package:evasion/core/errors/failure_mapper.dart';
 import 'package:evasion/core/models/gender.dart';
 import 'package:evasion/core/photos/photo_file.dart';
+import 'package:evasion/core/storage/avatar_upload.dart';
 import 'package:evasion/core/supabase/supabase_client_provider.dart';
+import 'package:evasion/core/utils/server_date.dart';
 import 'package:evasion/features/onboarding/domain/onboarding_progress.dart';
 import 'package:evasion/features/onboarding/domain/onboarding_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -47,7 +49,7 @@ class SupabaseOnboardingRepository implements OnboardingRepository {
   }) => guard(() async {
     final changes = {
       'display_name': ?displayName,
-      'birth_date': ?_toSqlDate(birthDate),
+      'birth_date': ?(birthDate == null ? null : toSqlDate(birthDate)),
       'gender': ?gender?.databaseValue,
     };
     if (changes.isEmpty) return;
@@ -63,48 +65,5 @@ class SupabaseOnboardingRepository implements OnboardingRepository {
 
   @override
   Future<void> savePhoto(Uint8List bytes, PhotoFormat format) =>
-      guard(() async {
-        final userId = _userId;
-        final row = await _client
-            .from('profiles')
-            .select('avatar_path')
-            .eq('id', userId)
-            .single();
-        final previousPath = row['avatar_path'] as String?;
-
-        // The current photo cannot be overwritten: always a new file name.
-        final path = userPhotoPath(
-          userId: userId,
-          fileName: uniquePhotoFileName(),
-          format: format,
-        );
-        await _avatars.uploadBinary(
-          path,
-          bytes,
-          fileOptions: FileOptions(contentType: format.mimeType),
-        );
-        await _client
-            .from('profiles')
-            .update({'avatar_path': path})
-            .eq('id', userId)
-            .select('id')
-            .single();
-
-        if (previousPath != null) {
-          try {
-            await _avatars.remove([previousPath]);
-          } on Object {
-            // The new photo is saved: a leftover file stays in the user's
-            // private folder until the account is deleted, which is harmless.
-          }
-        }
-      });
-
-  StorageFileApi get _avatars => _client.storage.from('avatars');
-
-  static String? _toSqlDate(DateTime? date) => date == null
-      ? null
-      : '${date.year.toString().padLeft(4, '0')}-'
-            '${date.month.toString().padLeft(2, '0')}-'
-            '${date.day.toString().padLeft(2, '0')}';
+      guard(() => replaceAvatar(_client, _userId, bytes, format));
 }

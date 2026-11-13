@@ -18,7 +18,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 /// The signed-in user's profile, as others will see it: the carousel, then the
-/// bio. A long press on a page opens the edit mode.
+/// bio. A long press on any page opens the edit mode, where the first page
+/// leads to the profile edit screen.
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({required this.userId, this.settingsButton, super.key});
 
@@ -59,6 +60,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     if (type == null || !mounted) return;
     await context.push(AppRoutes.newProfilePage(type.code));
   }
+
+  Future<void> _editProfile() => context.push(AppRoutes.editProfile);
 
   Future<void> _edit(ProfilePage page) =>
       context.push(AppRoutes.editProfilePage(page.id));
@@ -108,13 +111,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final loadedPages = ref.watch(ownPagesProvider(_userId)).value;
     // Pages that fail to load leave the page built from the profile.
     final pages = _pendingOrder ?? loadedPages ?? const <ProfilePage>[];
-    // Nothing left to edit once the last page is deleted.
-    final editing = _editing && pages.isNotEmpty;
 
     return Scaffold(
       appBar: AppBar(
         actions: [
-          if (editing)
+          if (_editing)
             TextButton(
               onPressed: () => setState(() => _editing = false),
               child: Text(l10n.profileEditDone),
@@ -129,12 +130,13 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           child: ListView(
             padding: const EdgeInsets.only(left: 16, top: 8, bottom: 24),
             children: [
-              if (editing) ...[
+              if (_editing) ...[
                 PagesEditStrip(
                   avatarPath: value.avatarPath,
                   pages: pages,
                   deletingId: _deletingId,
                   isBusy: _deletingId != null || isReordering,
+                  onEditProfile: _editProfile,
                   onEdit: _edit,
                   onDelete: _delete,
                   onReorder: _reorder,
@@ -149,7 +151,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       : null,
                   onLongPressPage: _startEditing,
                 ),
-                if (pages.isNotEmpty) ProfileHint(l10n.profileEditTip),
+                ProfileHint(l10n.profileEditTip),
               ],
               AboutSection(profile: value),
             ],

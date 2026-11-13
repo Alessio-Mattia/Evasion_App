@@ -5,6 +5,7 @@ import 'package:evasion/core/errors/app_failure.dart';
 import 'package:evasion/core/photos/photo_file.dart';
 import 'package:evasion/features/profile/data/supabase_profile_repository.dart';
 import 'package:evasion/features/profile/domain/page_draft.dart';
+import 'package:evasion/features/profile/domain/profile_details.dart';
 import 'package:evasion/features/profile/domain/profile_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -325,5 +326,162 @@ void main() {
     expect(requests.single.body, {
       'page_ids': ['p2', 'p1'],
     });
+  });
+
+  test('fetchOwnProfile reads whether the birth date was corrected', () async {
+    answer = (_) => (
+      status: 200,
+      body: {
+        'id': userId,
+        'is_student_verified': false,
+        'is_complete': true,
+        'birth_date_corrected': true,
+      },
+    );
+
+    final profile = await repository.fetchOwnProfile(userId);
+
+    expect(
+      requests.single.uri.queryParameters['select'],
+      contains('birth_date_corrected'),
+    );
+    expect(profile.birthDateCorrected, isTrue);
+  });
+
+  group('updateDetails', () {
+    test('saves the four texts, null for the emptied ones', () async {
+      answer = (_) => (status: 200, body: {'id': userId});
+
+      await repository.updateDetails(
+        userId,
+        ProfileDetails(
+          displayName: ' Alex ',
+          occupation: 'Biologie',
+          university: '  ',
+          bio: '',
+        ),
+      );
+
+      final update = requests.single;
+      expect(update.method, 'PATCH');
+      expect(update.uri.path, '/rest/v1/profiles');
+      expect(update.uri.queryParameters['id'], 'eq.$userId');
+      expect(update.body, {
+        'display_name': 'Alex',
+        'occupation': 'Biologie',
+        'university': null,
+        'bio': null,
+      });
+    });
+
+    test(
+      'a text over the limit refused by the server is an invalid input',
+      () async {
+        answer = (_) => (
+          status: 400,
+          body: {'code': '23514', 'message': 'profiles_bio_length'},
+        );
+
+        await expectLater(
+          repository.updateDetails(
+            userId,
+            ProfileDetails(
+              displayName: 'Alex',
+              occupation: '',
+              university: '',
+              bio: 'a' * 501,
+            ),
+          ),
+          throwsA(isA<InvalidInputFailure>()),
+        );
+      },
+    );
+  });
+
+  group('correctBirthDate', () {
+    test('sends the date alone, as a Postgres date', () async {
+      answer = (_) => (status: 200, body: {'id': userId});
+
+      await repository.correctBirthDate(userId, DateTime(2001, 2, 3));
+
+      expect(requests.single.method, 'PATCH');
+      expect(requests.single.body, {'birth_date': '2001-02-03'});
+    });
+
+    test(
+      'a second correction refused by the trigger is an invalid input',
+      () async {
+        answer = (_) => (
+          status: 400,
+          body: {
+            'code': '23514',
+            'message': 'birth_date can only be corrected once',
+          },
+        );
+
+        await expectLater(
+          repository.correctBirthDate(userId, DateTime(2001, 2, 3)),
+          throwsA(isA<InvalidInputFailure>()),
+        );
+      },
+    );
+  });
+
+  group('replaceAvatar', () {
+    const oldPath = '$userId/old.jpg';
+
+    Answer avatarServer(Received request, {int updateStatus = 200}) =>
+        switch (request) {
+          (method: 'GET', uri: _, body: _) => (
+            status: 200,
+            body: {'avatar_path': oldPath},
+          ),
+          (method: 'PATCH', uri: _, body: _) => (
+            status: updateStatus,
+            body: updateStatus == 200
+                ? {'id': userId}
+                : {'code': '23514', 'message': 'avatar_path'},
+          ),
+          (method: 'DELETE', uri: _, body: _) => (
+            status: 200,
+            body: <Object>[],
+          ),
+          _ => (status: 200, body: {'Key': 'avatars/x.png'}),
+        };
+
+    String uploadedPath(Received upload) =>
+        upload.uri.path.replaceFirst('/storage/v1/object/avatars/', '');
+
+    test('uploads a new file, uses it, then deletes the old one', () async {
+      answer = avatarServer;
+
+      await repository.replaceAvatar(userId, pngBytes, PhotoFormat.png);
+
+      final [read, upload, update, remove] = requests;
+      expect(read.uri.queryParameters['select'], 'avatar_path');
+      expect(upload.method, 'POST');
+      expect(
+        upload.uri.path,
+        matches(RegExp('^/storage/v1/object/avatars/$userId/[^/]+\\.png\$')),
+      );
+      expect(update.body, {'avatar_path': uploadedPath(upload)});
+      expect(remove.uri.path, '/storage/v1/object/avatars');
+      expect((remove.body! as Map)['prefixes'], [oldPath]);
+    });
+
+    test(
+      'a refused update deletes the new file and keeps the old one',
+      () async {
+        answer = (request) => avatarServer(request, updateStatus: 400);
+
+        await expectLater(
+          repository.replaceAvatar(userId, pngBytes, PhotoFormat.png),
+          throwsA(isA<InvalidInputFailure>()),
+        );
+
+        final [_, upload, _, remove] = requests;
+        expect((remove.body! as Map)['prefixes'], [uploadedPath(upload)]);
+      },
+    );
   });
 }
