@@ -2,173 +2,173 @@
 
 # Evasion
 
-**L'application pour se rencontrer dans la vraie vie.**
+**The app for meeting people in real life.**
 
-Croisements par proximité, posts géolocalisés éphémères, groupes qui deviennent des événements sur une carte,
-et un like qui ne se débloque qu'après une vraie rencontre.
+Proximity encounters, ephemeral geolocated posts, groups that become events on a map,
+and a like that only unlocks after a real meetup.
 
 [![Flutter](https://img.shields.io/badge/Flutter-stable-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
 [![Supabase](https://img.shields.io/badge/Supabase-Postgres%20%2B%20PostGIS-3FCF8E?logo=supabase&logoColor=white)](https://supabase.com)
-[![Plateformes](https://img.shields.io/badge/plateformes-iOS%20%7C%20Android-lightgrey)](#prérequis)
-[![Licence](https://img.shields.io/badge/licence-tous%20droits%20r%C3%A9serv%C3%A9s-red)](LICENSE)
+[![Platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20Android-lightgrey)](#prerequisites)
+[![License](https://img.shields.io/badge/license-all%20rights%20reserved-red)](LICENSE)
 
 </div>
 
-> **Statut : en développement.** L'application n'est pas encore disponible sur l'App Store ni sur le Google Play Store.
-> Le lancement est prévu d'abord sur un seul campus, puis pour tout le monde.
+> **Status: in development.** The app is not yet available on the App Store or the Google Play Store.
+> It will launch on a single campus first, then for everyone.
 >
-> Ce dépôt est public pour présenter l'application et notre travail. Le code reste notre propriété : il peut être consulté, mais pas réutilisé (voir [Licence](#licence)).
+> This repository is public to showcase the app and our work. The code remains our property: you may read it, but not reuse it (see [License](#license)).
 
 ---
 
-## Sommaire
+## Contents
 
-- [Le concept](#le-concept)
-- [Fonctionnalités](#fonctionnalités)
-- [Stack technique](#stack-technique)
+- [The concept](#the-concept)
+- [Features](#features)
+- [Tech stack](#tech-stack)
 - [Architecture](#architecture)
-- [Sécurité et vie privée](#sécurité-et-vie-privée)
-- [Démarrer](#démarrer)
+- [Security and privacy](#security-and-privacy)
+- [Getting started](#getting-started)
 - [Tests](#tests)
-- [Base de données](#base-de-données)
-- [Façon de travailler](#façon-de-travailler)
-- [Auteurs](#auteurs)
-- [Licence](#licence)
+- [Database](#database)
+- [How we work](#how-we-work)
+- [Authors](#authors)
+- [License](#license)
 
 ---
 
-## Le concept
+## The concept
 
-La plupart des applications de rencontre gardent les gens derrière leur écran. Evasion fait l'inverse : **le réel débloque le virtuel**.
+Most dating and social apps keep people behind their screens. Evasion does the opposite: **real life unlocks the virtual**.
 
-Trois principes guident toutes les décisions :
+Three principles drive every decision:
 
-| Principe | En pratique |
+| Principle | In practice |
 |---|---|
-| **Le réel débloque le virtuel** | On ne peut liker quelqu'un qu'après une rencontre réelle, validée par un QR code scanné par les deux personnes. Après un match, un quota de messages s'applique, et une nouvelle rencontre le recharge. |
-| **Tout le monde au même niveau** | Aucun compteur public : pas d'abonnés, pas de likes, pas de vues. Les posts ne se likent pas, ils s'épinglent. |
-| **Sécurité par défaut** | Aucune position précise n'est exposée sans le choix explicite de la personne. Par défaut, tout est flou. |
+| **Real life unlocks the virtual** | You can only like someone after a real meetup, confirmed by a QR code scanned by both people. After a match, a message quota applies, and a new meetup refills it. |
+| **Everyone on the same level** | No public counters: no followers, no likes, no views. Posts are not liked, they are pinned. |
+| **Safe by default** | No precise location is ever shown without the person's explicit choice. By default, everything is blurred. |
 
 ---
 
-## Fonctionnalités
+## Features
 
-| Fonctionnalité | Description | État |
+| Feature | Description | Status |
 |---|---|---|
-| Connexion | Par code à usage unique envoyé par e-mail, sans mot de passe | ✅ Fait |
-| Création du profil | Prénom, date de naissance, genre et photo, étape par étape | ✅ Fait |
-| Badge étudiant | Accordé automatiquement si l'adresse e-mail confirmée appartient à une université reconnue | ✅ Fait |
-| Profil en carrousel | Une page principale, puis jusqu'à 5 pages libres (texte, photo, centres d'intérêt) à ajouter, modifier et réordonner | ✅ Fait |
-| Modification du profil | Textes, photo, et une seule correction de la date de naissance | ✅ Fait |
-| Réglages | Mode de position (invisible, au premier plan, en arrière-plan), rayon de détection, critères de croisement | ✅ Fait |
-| Blocage | Une personne bloquée disparaît partout : carte, croisements, messagerie, profils | ✅ Côté serveur |
-| Suppression du compte | Supprime le compte, les données et les photos, après confirmation par un code récent | ✅ Fait |
-| Posts | Photo obligatoire, lieu flou par défaut, public au choix (tout le monde, amis, liste d'amis), durée limitée | 🚧 En cours |
-| Carte | Posts et événements autour de soi | 📋 Prévu |
-| Croisements | Détection des personnes croisées selon des critères mutuels ; historique avec zone et heure arrondies | 📋 Prévu |
-| Rencontres réelles | Validation par QR code, qui débloque le like pendant une durée limitée | 📋 Prévu |
-| Amis | Ajout mutuel après une rencontre réelle | 📋 Prévu |
-| Likes et matchs | Like secret avec un message révélé seulement au match | 📋 Prévu |
-| Messagerie | Conversations privées et de groupe | 📋 Prévu |
-| Groupes et événements | Un groupe public devient un événement sur la carte | 📋 Prévu |
-| Notifications push | Via Firebase Cloud Messaging | 📋 Prévu |
-| Modération | Signalements et outils d'administration | 📋 Prévu |
+| Sign-in | One-time code sent by email, no password | ✅ Done |
+| Profile setup | First name, birth date, gender and photo, step by step | ✅ Done |
+| Student badge | Granted automatically when the confirmed email address belongs to a recognised university | ✅ Done |
+| Profile carousel | A main page, plus up to 5 free pages (text, photo, interests) to add, edit and reorder | ✅ Done |
+| Profile editing | Texts, photo, and a single correction of the birth date | ✅ Done |
+| Settings | Location mode (invisible, foreground, background), detection radius, encounter criteria | ✅ Done |
+| Blocking | A blocked person disappears everywhere: map, encounters, messages, profiles | ✅ Server side |
+| Account deletion | Deletes the account, its data and photos, after confirmation with a recent code | ✅ Done |
+| Posts | Mandatory photo, blurred location by default, chosen audience (everyone, friends, a list of friends), limited lifetime | 🚧 In progress |
+| Map | Posts and events around you | 📋 Planned |
+| Encounters | Detection of people you cross paths with, based on mutual criteria; history with rounded area and time | 📋 Planned |
+| Real meetups | Confirmed by QR code, which unlocks the like for a limited time | 📋 Planned |
+| Friends | Mutual add after a real meetup | 📋 Planned |
+| Likes and matches | Secret like with a message revealed only on a match | 📋 Planned |
+| Messaging | Private and group conversations | 📋 Planned |
+| Groups and events | A public group becomes an event on the map | 📋 Planned |
+| Push notifications | Through Firebase Cloud Messaging | 📋 Planned |
+| Moderation | Reports and admin tools | 📋 Planned |
 
 ---
 
-## Stack technique
+## Tech stack
 
-| Couche | Technologie |
+| Layer | Technology |
 |---|---|
-| Application | [Flutter](https://flutter.dev) (stable), Dart avec null safety |
-| État | [Riverpod](https://riverpod.dev) avec `riverpod_generator` |
+| App | [Flutter](https://flutter.dev) (stable), Dart with null safety |
+| State | [Riverpod](https://riverpod.dev) with `riverpod_generator` |
 | Navigation | [go_router](https://pub.dev/packages/go_router) |
-| Modèles | [freezed](https://pub.dev/packages/freezed) et `json_serializable` |
-| Backend | [Supabase](https://supabase.com) : PostgreSQL et PostGIS, Auth, Storage, Realtime, Edge Functions, pg_cron |
-| Notifications push | Firebase Cloud Messaging (prévu, uniquement pour le push) |
-| Tests | `flutter_test`, `mocktail`, et [pgTAP](https://pgtap.org) pour la base de données |
-| Langue | Français, via les fichiers de traduction de `lib/l10n/` |
+| Models | [freezed](https://pub.dev/packages/freezed) and `json_serializable` |
+| Backend | [Supabase](https://supabase.com): PostgreSQL and PostGIS, Auth, Storage, Realtime, Edge Functions, pg_cron |
+| Push notifications | Firebase Cloud Messaging (planned, push only) |
+| Tests | `flutter_test`, `mocktail`, and [pgTAP](https://pgtap.org) for the database |
+| Language | The app is in French, through the translation files in `lib/l10n/` |
 
 ---
 
 ## Architecture
 
-### Application
+### App
 
-Le code est organisé **par fonctionnalité**, chacune découpée en trois couches :
+The code is organised **by feature**, each split into three layers:
 
 ```
 lib/
-├── main_dev.dart / main_prod.dart   # points d'entrée, un par environnement
-├── app/                             # thème, router, configuration
-├── core/                            # code partagé : erreurs, stockage, validation, widgets communs
-├── l10n/                            # textes de l'application (app_fr.arb)
+├── main_dev.dart / main_prod.dart   # entry points, one per environment
+├── app/                             # theme, router, configuration
+├── core/                            # shared code: errors, storage, validation, common widgets
+├── l10n/                            # app texts (app_fr.arb)
 └── features/
-    └── <fonctionnalité>/
-        ├── data/                    # repositories : les seuls fichiers qui appellent Supabase
-        ├── domain/                  # modèles et règles métier, sans dépendance à Supabase
-        └── presentation/            # écrans, widgets et controllers Riverpod
+    └── <feature>/
+        ├── data/                    # repositories: the only files that call Supabase
+        ├── domain/                  # models and business rules, with no Supabase dependency
+        └── presentation/            # screens, widgets and Riverpod controllers
 ```
 
-Fonctionnalités : `auth`, `onboarding`, `profile`, `map`, `posts`, `groups`, `chat`, `encounters`, `connections`, `moderation`, `notifications`, `settings`.
+Features: `auth`, `onboarding`, `profile`, `map`, `posts`, `groups`, `chat`, `encounters`, `connections`, `moderation`, `notifications`, `settings`.
 
-Quelques règles :
+A few rules:
 
-- **Un widget n'appelle jamais Supabase.** Le chemin est toujours : widget → controller → repository → Supabase.
-- **Chaque repository est une interface** dans `domain/`, avec son implémentation Supabase dans `data/`. Les tests remplacent l'implémentation par une fausse.
-- **Les erreurs remontent typées** (`AppFailure`), jamais sous forme d'exception brute jusqu'à l'écran.
-- **Une fonctionnalité n'importe pas les fichiers internes d'une autre.** Ce qui est partagé va dans `core/`.
-- **Tous les seuils** (durées, quotas, rayons, longueurs) sont regroupés dans [`lib/core/config/business_rules.dart`](lib/core/config/business_rules.dart). Ceux qui protègent les données sont aussi imposés par la base.
+- **A widget never calls Supabase.** The path is always: widget → controller → repository → Supabase.
+- **Each repository is an interface** in `domain/`, with its Supabase implementation in `data/`. Tests replace the implementation with a fake one.
+- **Errors are typed** (`AppFailure`), never raw exceptions reaching the screen.
+- **A feature never imports another feature's internal files.** Shared code goes in `core/`.
+- **All thresholds** (durations, quotas, radii, lengths) live in [`lib/core/config/business_rules.dart`](lib/core/config/business_rules.dart). Those that protect data are also enforced by the database.
 
-### Serveur
+### Server
 
 ```
 supabase/
-├── migrations/       # le schéma complet, une migration par changement
-├── tests/database/   # tests pgTAP : politiques d'accès, contraintes, triggers
-├── functions/        # Edge Functions (par exemple delete-account)
-├── templates/        # e-mails d'authentification
-└── config.toml       # configuration de la pile locale
+├── migrations/       # the whole schema, one migration per change
+├── tests/database/   # pgTAP tests: access policies, constraints, triggers
+├── functions/        # Edge Functions (for example delete-account)
+├── templates/        # authentication emails
+└── config.toml       # local stack configuration
 ```
 
-Toutes les règles sensibles sont appliquées **côté serveur** : contraintes, triggers, fonctions SQL et Edge Functions. L'application ne peut pas les contourner, même modifiée.
+Every sensitive rule is enforced **on the server**: constraints, triggers, SQL functions and Edge Functions. The app cannot bypass them, even if modified.
 
 ---
 
-## Sécurité et vie privée
+## Security and privacy
 
-- **Row Level Security sur toutes les tables**, avec des politiques explicites et testées.
-- **Les positions précises ne sont jamais lisibles directement.** Les autres utilisateurs ne voient qu'une position affichée, floue par défaut, à travers des vues et des fonctions dédiées.
-- **Le blocage est vérifié par la base** dans chaque requête qui montre un utilisateur à un autre. Une personne bloquée ne sait pas qui l'a bloquée.
-- **Photos privées** : chaque bucket de stockage est privé. Une photo n'est lisible que par ceux qui ont le droit de voir le profil ou le post concerné, par des liens temporaires.
-- **Aucun secret dans le dépôt.** L'application n'utilise que l'URL du projet et sa clé publique (publishable key). La clé `service_role` n'est jamais utilisée dans l'application.
+- **Row Level Security on every table**, with explicit and tested policies.
+- **Precise locations are never directly readable.** Other users only see a displayed location, blurred by default, through dedicated views and functions.
+- **Blocking is checked by the database** in every query that shows one user to another. A blocked person never learns who blocked them.
+- **Private photos**: every storage bucket is private. A photo can only be read by people allowed to see the related profile or post, through temporary links.
+- **No secrets in the repository.** The app only uses the project URL and its publishable key. The `service_role` key is never used in the app.
 
-Vous avez trouvé une faille ? Merci de **ne pas ouvrir d'issue publique** : utilisez le [signalement privé de vulnérabilité](https://github.com/Alessio-Mattia/Evasion_App/security/advisories/new) de GitHub.
+Found a vulnerability? Please **do not open a public issue**: use GitHub's [private vulnerability reporting](https://github.com/Alessio-Mattia/Evasion_App/security/advisories/new).
 
 ---
 
-## Démarrer
+## Getting started
 
-Ces instructions servent aux deux auteurs pour leur environnement de développement. Elles montrent aussi comment le projet est outillé.
+These instructions are for the two authors' development environment. They also show how the project is set up.
 
-### Prérequis
+### Prerequisites
 
-- [Flutter](https://docs.flutter.dev/get-started/install) (canal stable, Dart 3.13 ou plus récent)
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/), pour la pile Supabase locale
+- [Flutter](https://docs.flutter.dev/get-started/install) (stable channel, Dart 3.13 or later)
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/), for the local Supabase stack
 - [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started) 3.x
-- Pour Android : Android Studio et un émulateur ou un téléphone
-- Pour iOS : un Mac avec Xcode ; iOS 15 minimum
+- For Android: Android Studio and an emulator or a phone
+- For iOS: a Mac with Xcode; iOS 15 or later
 
-### 1. Récupérer le projet
+### 1. Get the project
 
 ```bash
 git clone https://github.com/Alessio-Mattia/Evasion_App.git
 cd Evasion_App
 ```
 
-### 2. Générer le code
+### 2. Generate the code
 
-Le code généré (traductions, modèles, providers) n'est pas versionné. À relancer après chaque clone ou pull :
+Generated code (translations, models, providers) is not versioned. Run this after every clone or pull:
 
 ```bash
 flutter pub get
@@ -176,110 +176,110 @@ flutter gen-l10n
 dart run build_runner build -d
 ```
 
-### 3. Lancer Supabase en local
+### 3. Start Supabase locally
 
-Avec Docker démarré :
+With Docker running:
 
 ```bash
-supabase start      # démarre la pile locale et affiche l'URL et la publishable key
-supabase db reset   # applique toutes les migrations sur une base vide
+supabase start      # starts the local stack and prints the URL and the publishable key
+supabase db reset   # applies every migration to an empty database
 ```
 
-> `supabase start` réutilise la base existante. Après un pull qui ajoute des migrations, relancez `supabase db reset`. Attention, cela efface les comptes de test locaux.
+> `supabase start` reuses the existing database. After a pull that adds migrations, run `supabase db reset` again. Note that it deletes the local test accounts.
 
-Les e-mails de connexion (codes) n'arrivent pas dans une vraie boîte : ils sont visibles dans Mailpit, sur http://127.0.0.1:54324.
+Sign-in emails (codes) do not reach a real inbox: you can read them in Mailpit, at http://127.0.0.1:54324.
 
-### 4. Configurer l'environnement
+### 4. Configure the environment
 
-Les clés sont passées à l'application au lancement, à partir d'un fichier JSON qui n'est jamais versionné. Copiez le modèle :
+Keys are passed to the app at launch, from a JSON file that is never versioned. Copy the template:
 
 ```bash
 cp env/example.json env/local.json
 ```
 
-Puis renseignez-y la publishable key affichée par `supabase start`, et l'URL de l'API selon l'appareil :
+Then fill in the publishable key printed by `supabase start`, and the API URL for your device:
 
-| Appareil | `SUPABASE_URL` |
+| Device | `SUPABASE_URL` |
 |---|---|
-| Simulateur iOS | `http://127.0.0.1:54321` |
-| Émulateur Android | `http://10.0.2.2:54321` |
+| iOS simulator | `http://127.0.0.1:54321` |
+| Android emulator | `http://10.0.2.2:54321` |
 
-Sur un téléphone réel, utilisez plutôt un projet Supabase hébergé : créez de la même façon `env/dev.json` ou `env/prod.json` avec l'URL `https://<ref>.supabase.co` et la publishable key du projet.
+On a real phone, use a hosted Supabase project instead: create `env/dev.json` or `env/prod.json` the same way, with the URL `https://<ref>.supabase.co` and the project's publishable key.
 
-### 5. Lancer l'application
+### 5. Run the app
 
-L'option `--flavor` est obligatoire : sans elle, la compilation échoue.
+The `--flavor` option is required: the build fails without it.
 
 ```bash
-# Avec la pile locale
+# With the local stack
 flutter run --flavor dev -t lib/main_dev.dart --dart-define-from-file=env/local.json
 
-# Avec un projet hébergé
+# With a hosted project
 flutter run --flavor dev -t lib/main_dev.dart --dart-define-from-file=env/dev.json
 flutter run --flavor prod -t lib/main_prod.dart --dart-define-from-file=env/prod.json
 ```
 
-Les flavors `dev` et `prod` installent deux applications distinctes sur le même appareil.
+The `dev` and `prod` flavors install two separate apps on the same device.
 
 ---
 
 ## Tests
 
 ```bash
-flutter analyze     # doit finir sans aucun avertissement
-flutter test        # tests unitaires et de widgets
-supabase test db    # tests pgTAP de la base (pile locale démarrée)
+flutter analyze     # must finish without any warning
+flutter test        # unit and widget tests
+supabase test db    # pgTAP database tests (local stack running)
 ```
 
-- **Règles métier et controllers** : testés en Dart, avec des repositories remplacés par des faux (`mocktail`).
-- **Politiques d'accès, contraintes et triggers** : testés en SQL avec pgTAP, en se connectant comme différents utilisateurs.
+- **Business rules and controllers**: tested in Dart, with repositories replaced by fakes (`mocktail`).
+- **Access policies, constraints and triggers**: tested in SQL with pgTAP, signed in as different users.
 
 ---
 
-## Base de données
+## Database
 
-**Le schéma n'est modifié que par des migrations**, jamais depuis le tableau de bord Supabase.
+**The schema only changes through migrations**, never from the Supabase dashboard.
 
 ```bash
-supabase migration new <nom_de_la_migration>   # crée un fichier vide dans supabase/migrations/
-supabase db reset                              # rejoue toutes les migrations en local
-supabase test db                               # vérifie que les tests passent toujours
+supabase migration new <migration_name>   # creates an empty file in supabase/migrations/
+supabase db reset                         # replays every migration locally
+supabase test db                          # checks that the tests still pass
 ```
 
-Chaque nouvelle table arrive avec ses politiques Row Level Security et ses tests, dans la même migration.
+Every new table comes with its Row Level Security policies and its tests, in the same migration.
 
-Les migrations ne sont appliquées sur les projets hébergés (`dev`, puis `prod`) qu'après leur fusion dans `main`.
+Migrations are applied to the hosted projects (`dev`, then `prod`) only after being merged into `main`.
 
 ---
 
-## Façon de travailler
+## How we work
 
-- **`main` est la branche de référence.** Chaque changement part d'une branche (`feat/…`, `fix/…`, `docs/…`) et revient dans `main` par une pull request.
-- **Chaque pull request est relue** par l'autre développeur avant d'être fusionnée, avec `flutter analyze`, `flutter test` et `supabase test db` au vert.
-- **Code, commentaires et messages de commit en anglais**. Textes de l'application, discussions et revues en français.
-- Les idées et les tâches à venir sont suivies dans un tableau GitHub Projects.
+- **`main` is the reference branch.** Every change starts on a branch (`feat/…`, `fix/…`, `docs/…`) and comes back into `main` through a pull request.
+- **Every pull request is reviewed** by the other developer before being merged, with `flutter analyze`, `flutter test` and `supabase test db` passing.
+- **Code, comments and commit messages in English.** App texts, discussions and reviews in French.
+- Ideas and upcoming tasks are tracked on a GitHub Projects board.
 
 ### Contributions
 
-Evasion est développé uniquement par ses deux auteurs : **les contributions extérieures ne sont pas acceptées**, et les pull requests ouvertes par d'autres personnes seront fermées sans être fusionnées.
+Evasion is developed by its two authors only: **outside contributions are not accepted**, and pull requests opened by other people will be closed without being merged.
 
 ---
 
-## Auteurs
+## Authors
 
-Evasion est développé par deux frères :
+Evasion is built by two brothers:
 
-| | Rôle | GitHub |
+| | Role | GitHub |
 |---|---|---|
-| **Sirio Mattia** | Serveur et base de données : schéma, sécurité, Edge Functions | [@Sirio-Mattia](https://github.com/Sirio-Mattia) |
-| **Alessio Mattia** | Application : écrans, navigation, expérience utilisateur | [@Alessio-Mattia](https://github.com/Alessio-Mattia) |
+| **Sirio Mattia** | Server and database: schema, security, Edge Functions | [@Sirio-Mattia](https://github.com/Sirio-Mattia) |
+| **Alessio Mattia** | App: screens, navigation, user experience | [@Alessio-Mattia](https://github.com/Alessio-Mattia) |
 
 ---
 
-## Licence
+## License
 
-© 2026 Alessio Mattia et Sirio Mattia. **Tous droits réservés.**
+© 2026 Alessio Mattia and Sirio Mattia. **All rights reserved.**
 
-Ce dépôt est public uniquement pour être consulté. Aucune licence n'est accordée : sans notre autorisation écrite, il est interdit d'utiliser, de copier, de modifier, de distribuer ou de réutiliser tout ou partie du code, du schéma de base de données ou de la documentation. Voir le fichier [LICENSE](LICENSE).
+This repository is public for viewing only. No license is granted: without our written permission, you may not use, copy, modify, distribute or reuse all or part of the code, the database schema or the documentation. See the [LICENSE](LICENSE) file.
 
-Les bibliothèques externes utilisées par le projet ne font pas partie de ce dépôt et restent sous leur propre licence.
+Third-party libraries used by the project are not part of this repository and remain under their own licenses.
