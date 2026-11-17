@@ -60,9 +60,9 @@ Three principles drive every decision:
 | Student badge | Granted automatically when the confirmed email address belongs to a recognised university | ✅ Done |
 | Profile carousel | A main page, plus up to 5 free pages (text, photo, interests) to add, edit and reorder | ✅ Done |
 | Profile editing | Texts, photo, and a single correction of the birth date | ✅ Done |
-| Settings | Location mode (invisible, foreground, background), detection radius, encounter criteria | ✅ Done |
+| Settings | Location mode (invisible, foreground; background later), detection radius, encounter criteria | ✅ Done |
 | Blocking | A blocked person disappears everywhere: map, encounters, messages, profiles | ✅ Server side |
-| Account deletion | Deletes the account, its data and photos, after confirmation with a recent code | ✅ Done |
+| Account deletion | Deletes the account, its data and photos, after confirmation with a recent code | ✅ Server side |
 | Posts | Mandatory photo, blurred location by default, chosen audience (everyone, friends, a list of friends), limited lifetime | 🚧 In progress |
 | Map | Posts and events around you | 📋 Planned |
 | Encounters | Detection of people you cross paths with, based on mutual criteria; history with rounded area and time | 📋 Planned |
@@ -231,7 +231,7 @@ flutter test        # unit and widget tests
 supabase test db    # pgTAP database tests (local stack running)
 ```
 
-- **Business rules and controllers**: tested in Dart, with repositories replaced by fakes (`mocktail`).
+- **Business rules and controllers**: tested in Dart, with repositories replaced by hand-written fakes.
 - **Access policies, constraints and triggers**: tested in SQL with pgTAP, signed in as different users.
 
 ---
@@ -280,6 +280,6 @@ Evasion is built by two brothers:
 
 © 2026 Alessio Mattia and Sirio Mattia. **All rights reserved.**
 
-This repository is public for viewing only. No license is granted: without our written permission, you may not use, copy, modify, distribute or reuse all or part of the code, the database schema or the documentation. See the [LICENSE](LICENSE) file.
+This repository is public for viewing only. No license is granted: apart from viewing and forking on GitHub, as allowed by GitHub's Terms of Service, and without our written permission, you may not use, copy, modify, distribute or reuse all or part of the code, the database schema or the documentation. See the [LICENSE](LICENSE) file.
 
 Third-party libraries used by the project are not part of this repository and remain under their own licenses.
