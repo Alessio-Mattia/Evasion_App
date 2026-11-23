@@ -95,6 +95,10 @@ AppFailure _fromPostgrestCode(
     '23505' => ConflictFailure(cause: error, stackTrace: stackTrace),
     // check_violation: a check constraint or a trigger refused a value.
     '23514' => InvalidInputFailure(cause: error, stackTrace: stackTrace),
+    // program_limit_exceeded: a quota is reached, such as the active posts.
+    '54000' => LimitReachedFailure(cause: error, stackTrace: stackTrace),
+    // no_data_found: raised by functions such as update_post.
+    'P0002' => NotFoundFailure(cause: error, stackTrace: stackTrace),
     // A single row was requested but none was found.
     'PGRST116' => NotFoundFailure(cause: error, stackTrace: stackTrace),
     // Missing, invalid or expired JWT.

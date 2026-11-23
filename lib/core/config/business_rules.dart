@@ -119,11 +119,34 @@ abstract final class BusinessRules {
 
   // Posts
 
-  /// Radius of the fuzzy area shown instead of the post's exact location.
-  /// Also enforced in SQL (blurring).
-  static const int postFuzzyRadiusMeters = 300;
+  /// Side of the grid cells of fuzzy posts: a fuzzy post shows at the centre
+  /// of its cell, so at most about 0.7 times this distance from its real
+  /// point. Also enforced in SQL (private.fuzzy_point).
+  static const int postFuzzyCellSizeMeters = 300;
 
   /// Maximum distance between a chosen post location and the author's real
   /// position, to prevent fake posts. Also enforced in SQL.
   static const int postChosenLocationMaxDistanceMeters = 5000;
+
+  /// Lifetime of a post when the author does not choose one.
+  /// Also the default in SQL (create_post).
+  static const Duration postDefaultLifetime = Duration(hours: 24);
+
+  /// Shortest and longest lifetime of a post, counted from its creation, also
+  /// when the author changes it later. Also enforced in SQL.
+  static const Duration postMinLifetime = Duration(hours: 1);
+  static const Duration postMaxLifetime = Duration(days: 30);
+
+  /// Posts a user can have at once; expired posts do not count.
+  /// Also enforced in SQL (create_post).
+  static const int activePostsMax = 5;
+
+  /// Also enforced in SQL. Counted in code points, like the texts above.
+  static const int postCaptionMaxLength = 300;
+
+  /// Largest post photo, in bytes. Also enforced in SQL (post-photos bucket).
+  static const int postPhotoMaxBytes = avatarMaxBytes;
+
+  /// Accepted post photo formats. Also enforced in SQL (post-photos bucket).
+  static const List<String> postPhotoMimeTypes = avatarMimeTypes;
 }

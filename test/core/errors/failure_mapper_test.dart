@@ -109,6 +109,14 @@ void main() {
         expect(mapCode('23514'), isA<InvalidInputFailure>());
       });
 
+      test('54000 is a reached limit', () {
+        expect(mapCode('54000'), isA<LimitReachedFailure>());
+      });
+
+      test('P0002 is not found', () {
+        expect(mapCode('P0002'), isA<NotFoundFailure>());
+      });
+
       test('PGRST116 is not found', () {
         expect(mapCode('PGRST116'), isA<NotFoundFailure>());
       });
