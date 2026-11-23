@@ -149,4 +149,15 @@ abstract final class BusinessRules {
 
   /// Accepted post photo formats. Also enforced in SQL (post-photos bucket).
   static const List<String> postPhotoMimeTypes = avatarMimeTypes;
+
+  // Map
+
+  /// Largest area the map can ask posts for, in metres on each side: zoomed
+  /// out further, the app must not ask. Keeps anyone from downloading every
+  /// post at once. Also enforced in SQL (map_feed).
+  static const int mapFeedMaxAreaSideMeters = 50000;
+
+  /// Posts the map receives for an area at most, the most recent first.
+  /// Also enforced in SQL (map_feed).
+  static const int mapFeedMaxPosts = 200;
 }
