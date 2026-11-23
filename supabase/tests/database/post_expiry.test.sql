@@ -6,8 +6,8 @@ select plan(14);
 
 -- Fixtures --------------------------------------------------------------------
 -- Alice has a live post (live.jpg) and an expired one (old.jpg), pinned by
--- Bob. She also uploaded fresh.jpg a minute ago and stale.jpg two hours ago,
--- for posts she never created.
+-- Bob, both uploaded two days ago. She also uploaded recent.jpg two hours ago
+-- and stale.jpg 25 hours ago, for posts she never created.
 
 insert into auth.users (id, email, email_confirmed_at) values
   ('00000000-0000-0000-0000-000000000001', 'alice@example.com', now()),
@@ -27,10 +27,10 @@ select 'post-photos', '00000000-0000-0000-0000-000000000001/' || file,
   '00000000-0000-0000-0000-000000000001', '{"mimetype": "image/jpeg"}',
   now() - uploaded_ago
 from (values
-  ('live.jpg', interval '3 hours'),
-  ('old.jpg', interval '3 hours'),
-  ('fresh.jpg', interval '1 minute'),
-  ('stale.jpg', interval '2 hours')
+  ('live.jpg', interval '2 days'),
+  ('old.jpg', interval '2 days'),
+  ('recent.jpg', interval '2 hours'),
+  ('stale.jpg', interval '25 hours')
 ) as upload(file, uploaded_ago);
 
 insert into public.posts (author_id, image_path, exact_geog, created_at,
@@ -73,7 +73,7 @@ set local role service_role;
 select results_eq(
   'select * from public.list_orphan_post_photos()',
   $$values ('00000000-0000-0000-0000-000000000001/stale.jpg')$$,
-  'only old photos that no post uses are orphans'
+  'only photos unused for over a day are orphans'
 );
 
 -- Purge -----------------------------------------------------------------------

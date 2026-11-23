@@ -36,9 +36,10 @@ as $$
 $$;
 
 -- Up to batch_size post-photos files that no post uses and that were uploaded
--- more than an hour ago: an upload whose post was never created, or the photo
--- of a post deleted while its file could not be removed. The hour leaves time
--- to create the post after uploading its photo.
+-- more than a day ago: an upload whose post was never created, or the photo
+-- of a post deleted while its file could not be removed. The day leaves time
+-- to create the post after uploading its photo: with a shorter delay, a photo
+-- could be listed here just as its post is being created, then removed.
 create function public.list_orphan_post_photos(batch_size integer default 500)
 returns setof text
 language sql
@@ -48,7 +49,7 @@ as $$
   select object.name
   from storage.objects as object
   where object.bucket_id = 'post-photos'
-    and object.created_at < now() - interval '1 hour'
+    and object.created_at < now() - interval '24 hours'
     and not exists (
       select 1 from public.posts as post where post.image_path = object.name
     )
