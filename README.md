@@ -14,7 +14,7 @@ and a like that only unlocks after a real meetup.
 
 <br>
 
-<img src="docs/images/screens.png" alt="Four app screens: the map around you, the list of encounters, a profile with the like locked until a real meetup, and a match" width="100%">
+<img src="docs/images/screens.png" alt="Four app screens in four steps: 1. see what is around you on the map, 2. cross paths with people nearby, 3. meet in person to unlock the like, 4. match" width="100%">
 
 <sub>Design mockups with fictional content. See <a href="#design-preview">Design preview</a>.</sub>
 
@@ -66,11 +66,11 @@ The direction, called *Night neon*: a deep violet background rather than pure bl
 
 <img src="docs/images/visual-identity.png" alt="Visual identity board: logo, colours, typography, components and design rules" width="100%">
 
-The screens above follow a meetup from start to finish:
+The four screens at the top follow a meetup from start to finish:
 
-1. **Map**: posts and events around you, always shown as a blurred area by default.
-2. **Encounters**: people you crossed paths with, with rounded place and time. The like stays locked.
-3. **Profile**: the like unlocks only after a real meetup, confirmed by scanning each other's QR code.
+1. **See what's around you**: posts and events nearby, always shown as a blurred area by default.
+2. **Cross paths**: people you passed by, with rounded places and times. The like stays locked.
+3. **Meet in person**: the like unlocks only after a real meetup, confirmed by scanning each other's QR code.
 4. **Match**: the message written with the like is revealed, and a message quota encourages meeting again.
 
 ---
