@@ -12,6 +12,12 @@ and a like that only unlocks after a real meetup.
 [![Platforms](https://img.shields.io/badge/platforms-iOS%20%7C%20Android-lightgrey)](#prerequisites)
 [![License](https://img.shields.io/badge/license-all%20rights%20reserved-red)](LICENSE)
 
+<br>
+
+<img src="docs/images/screens.png" alt="Four app screens in four steps: 1. see what is around you on the map, 2. cross paths with people nearby, 3. meet in person to unlock the like, 4. match" width="100%">
+
+<sub>Design mockups with fictional content. See <a href="#design-preview">Design preview</a>.</sub>
+
 </div>
 
 > **Status: in development.** The app is not yet available on the App Store or the Google Play Store.
@@ -24,6 +30,7 @@ and a like that only unlocks after a real meetup.
 ## Contents
 
 - [The concept](#the-concept)
+- [Design preview](#design-preview)
 - [Features](#features)
 - [Tech stack](#tech-stack)
 - [Architecture](#architecture)
@@ -48,6 +55,23 @@ Three principles drive every decision:
 | **Real life unlocks the virtual** | You can only like someone after a real meetup, confirmed by a QR code scanned by both people. After a match, a message quota applies, and a new meetup refills it. |
 | **Everyone on the same level** | No public counters: no followers, no likes, no views. Posts are not liked, they are pinned. |
 | **Safe by default** | No precise location is ever shown without the person's explicit choice. By default, everything is blurred. |
+
+---
+
+## Design preview
+
+> These are **early design mockups**, made to explore the visual direction. The content is fictional, and the final app may look different.
+
+The direction, called *Night neon*: a deep violet background rather than pure black, one bright green action per screen for what happens in real life, and a logo made of two detection circles that cross. Their intersection is the meetup.
+
+<img src="docs/images/visual-identity.png" alt="Visual identity board: logo, colours, typography, components and design rules" width="100%">
+
+The four screens at the top follow a meetup from start to finish:
+
+1. **See what's around you**: posts and events nearby, always shown as a blurred area by default.
+2. **Cross paths**: people you passed by, with rounded places and times. The like stays locked.
+3. **Meet in person**: the like unlocks only after a real meetup, confirmed by scanning each other's QR code.
+4. **Match**: the message written with the like is revealed, and a message quota encourages meeting again.
 
 ---
 
