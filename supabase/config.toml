@@ -441,3 +441,11 @@ enabled = true
 verify_jwt = false
 import_map = "./functions/delete-account/deno.json"
 entrypoint = "./functions/delete-account/index.ts"
+
+[functions.purge-expired-posts]
+enabled = true
+# Called by pg_cron with the project's secret key, which the function checks
+# itself (withSupabase, auth "secret"): it is not a user token.
+verify_jwt = false
+import_map = "./functions/purge-expired-posts/deno.json"
+entrypoint = "./functions/purge-expired-posts/index.ts"
