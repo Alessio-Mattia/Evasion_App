@@ -15,8 +15,19 @@ void main() {
 
   test('the fuzzy area is smaller than the chosen location limit', () {
     expect(
-      BusinessRules.postFuzzyRadiusMeters,
+      BusinessRules.postFuzzyCellSizeMeters,
       lessThan(BusinessRules.postChosenLocationMaxDistanceMeters),
+    );
+  });
+
+  test('the default post lifetime is within the limits', () {
+    expect(
+      BusinessRules.postDefaultLifetime,
+      greaterThanOrEqualTo(BusinessRules.postMinLifetime),
+    );
+    expect(
+      BusinessRules.postDefaultLifetime,
+      lessThanOrEqualTo(BusinessRules.postMaxLifetime),
     );
   });
 }

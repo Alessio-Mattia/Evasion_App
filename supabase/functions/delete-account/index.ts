@@ -10,7 +10,7 @@ import { withSupabase } from "@supabase/server";
 // new bucket holding user files must be added here. Tables are covered by
 // "on delete cascade" from auth.users: every new table holding user data
 // must have it.
-const USER_BUCKETS = ["avatars", "profile-photos"];
+const USER_BUCKETS = ["avatars", "profile-photos", "post-photos"];
 
 // Storage lists at most this many entries per call.
 const PAGE_SIZE = 1000;
