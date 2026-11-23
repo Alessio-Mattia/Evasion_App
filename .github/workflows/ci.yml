@@ -23,3 +23,19 @@ jobs:
       - run: dart run build_runner build
       - run: flutter analyze
       - run: flutter test
+
+  # pgTAP tests of supabase/tests/database, on a local Supabase stack built
+  # from the migrations. Only the database, Auth and Storage start: the tests
+  # use their tables, not the other services. No secret is needed.
+  database-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: supabase/setup-cli@v1
+        with:
+          # Same version as on the development machines: update them together.
+          version: 3.3.0
+      - run: >-
+          supabase start
+          -x realtime,imgproxy,kong,mailpit,postgrest,postgres-meta,studio,edge-runtime,logflare,vector,supavisor
+      - run: supabase test db
