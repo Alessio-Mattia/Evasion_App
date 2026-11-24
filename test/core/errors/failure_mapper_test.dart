@@ -163,6 +163,27 @@ void main() {
         expect(mapStatus(429), isA<TooManyRequestsFailure>());
         expect(mapStatus(500), isA<UnexpectedFailure>());
       });
+
+      test('reads the reauthentication error of delete-account', () {
+        expect(
+          map(
+            const FunctionException(
+              status: 403,
+              details: {'error': 'reauthentication_required'},
+            ),
+          ),
+          isA<ReauthenticationRequiredFailure>(),
+        );
+        expect(
+          map(
+            const FunctionException(
+              status: 403,
+              details: {'error': 'something_else'},
+            ),
+          ),
+          isA<PermissionDeniedFailure>(),
+        );
+      });
     });
 
     test('maps unknown errors to UnexpectedFailure', () {

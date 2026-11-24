@@ -4,6 +4,8 @@ import 'package:evasion/app/router/app_routes.dart';
 import 'package:evasion/app/router/app_shell.dart';
 import 'package:evasion/app/startup/startup_screen.dart';
 import 'package:evasion/features/auth/presentation/current_user.dart';
+import 'package:evasion/features/auth/presentation/delete_account/delete_account_button.dart';
+import 'package:evasion/features/auth/presentation/delete_account/delete_account_screen.dart';
 import 'package:evasion/features/auth/presentation/sign_in_code_screen.dart';
 import 'package:evasion/features/auth/presentation/sign_in_email_screen.dart';
 import 'package:evasion/features/auth/presentation/sign_out_button.dart';
@@ -149,8 +151,17 @@ GoRouter appRouter(Ref ref) {
                   // Inside the profile tab, so that the tab bar stays visible.
                   GoRoute(
                     path: 'settings',
-                    builder: (context, state) =>
-                        const SettingsScreen(signOutButton: SignOutButton()),
+                    builder: (context, state) => const SettingsScreen(
+                      signOutButton: SignOutButton(),
+                      deleteAccountButton: DeleteAccountButton(),
+                    ),
+                    routes: [
+                      GoRoute(
+                        path: 'delete-account',
+                        builder: (context, state) =>
+                            const DeleteAccountScreen(),
+                      ),
+                    ],
                   ),
                 ],
               ),

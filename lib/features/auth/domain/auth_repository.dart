@@ -18,4 +18,14 @@ abstract interface class AuthRepository {
   Future<void> verifyCode({required String email, required String code});
 
   Future<void> signOut();
+
+  /// Sends a new code to the signed-in user's email, to confirm a sensitive
+  /// action such as deleting the account. Never creates an account.
+  Future<void> sendReauthenticationCode();
+
+  /// Deletes the signed-in user's account, its data and its photos, then
+  /// signs out. The user must have entered a code (see [verifyCode]) a few
+  /// minutes ago at most, else it fails with
+  /// `ReauthenticationRequiredFailure`.
+  Future<void> deleteAccount();
 }

@@ -86,7 +86,7 @@ The four screens at the top follow a meetup from start to finish:
 | Profile editing | Texts, photo, and a single correction of the birth date | ✅ Done |
 | Settings | Location mode (invisible, foreground; background later), detection radius, encounter criteria | ✅ Done |
 | Blocking | A blocked person disappears everywhere: map, encounters, messages, profiles | ✅ Server side |
-| Account deletion | Deletes the account, its data and photos, after confirmation with a recent code | ✅ Server side |
+| Account deletion | Deletes the account, its data and photos, after confirmation with a new email code | ✅ Done |
 | Posts | Mandatory photo, blurred location by default, chosen audience (everyone, friends, a list of friends), limited lifetime | 🚧 In progress |
 | Map | Posts and events around you | 📋 Planned |
 | Encounters | Detection of people you cross paths with, based on mutual criteria; history with rounded area and time | 📋 Planned |

@@ -11,10 +11,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Visibility, encounter criteria and account. Every change is saved at once.
 class SettingsScreen extends ConsumerWidget {
-  const SettingsScreen({required this.signOutButton, super.key});
+  const SettingsScreen({
+    required this.signOutButton,
+    required this.deleteAccountButton,
+    super.key,
+  });
 
   /// Provided by the router, so that this feature does not depend on auth.
   final Widget signOutButton;
+  final Widget deleteAccountButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -35,7 +40,7 @@ class SettingsScreen extends ConsumerWidget {
             const Divider(),
             SettingsSection(
               title: l10n.settingsAccountTitle,
-              children: [signOutButton],
+              children: [signOutButton, deleteAccountButton],
             ),
           ],
         ),

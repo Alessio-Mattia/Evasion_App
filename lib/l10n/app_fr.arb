@@ -44,6 +44,8 @@
   "@errorUnexpected": {
     "description": "Generic error shown when no more specific message applies."
   },
+  "errorReauthenticationRequired": "Ton code date de plus de {minutes} minutes : demande-en un nouveau.",
+  "@errorReauthenticationRequired": {"description": "Error when a sensitive action needs a code entered a few minutes ago at most.", "placeholders": {"minutes": {"type": "int", "example": "5"}}},
   "errorInvalidCode": "Ce code est incorrect ou a expiré.",
   "@errorInvalidCode": {
     "description": "Error shown when the sign-in code entered is wrong or expired."
@@ -117,6 +119,20 @@
   "@signInChangeEmail": {
     "description": "Button that goes back to the email screen to use another address."
   },
+  "deleteAccountButton": "Supprimer mon compte",
+  "@deleteAccountButton": {"description": "Button of the settings opening the account deletion screen."},
+  "deleteAccountTitle": "Supprimer ton compte",
+  "@deleteAccountTitle": {"description": "Title of the account deletion screen."},
+  "deleteAccountSubtitle": "Ton profil, tes pages, tes photos et tes posts seront supprimés définitivement. Personne ne pourra les récupérer, pas même nous.",
+  "@deleteAccountSubtitle": {"description": "Explanation of what the account deletion removes."},
+  "deleteAccountSendCode": "Recevoir un code",
+  "@deleteAccountSendCode": {"description": "Button sending a code to confirm the account deletion."},
+  "deleteAccountCodeSentTo": "Pour confirmer que c'est bien toi, saisis le code envoyé à {email}.",
+  "@deleteAccountCodeSentTo": {"description": "Shown once the confirmation code is sent.", "placeholders": {"email": {"type": "String", "example": "alex@epfl.ch"}}},
+  "deleteAccountConfirm": "Supprimer définitivement",
+  "@deleteAccountConfirm": {"description": "Button deleting the account for good."},
+  "deleteAccountDone": "Ton compte a été supprimé.",
+  "@deleteAccountDone": {"description": "Shown on the sign-in screen once the account is deleted."},
   "signOut": "Se déconnecter",
   "@signOut": {
     "description": "Button that signs the user out."

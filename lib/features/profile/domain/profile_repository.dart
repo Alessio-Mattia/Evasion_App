@@ -7,8 +7,9 @@ import 'package:evasion/features/profile/domain/profile.dart';
 import 'package:evasion/features/profile/domain/profile_details.dart';
 import 'package:evasion/features/profile/domain/profile_page.dart';
 
-/// Reads profiles, and edits the signed-in user's profile and pages. Every method throws an
-/// `AppFailure` on error.
+/// Reads profiles, and edits the signed-in user's profile and pages.
+///
+/// Every method throws an `AppFailure` on error.
 abstract interface class ProfileRepository {
   /// The profile of [userId], who must be the signed-in user.
   Future<Profile> fetchOwnProfile(String userId);

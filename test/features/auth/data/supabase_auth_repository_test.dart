@@ -9,6 +9,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class _MockGoTrueClient extends Mock implements GoTrueClient {}
 
+class _MockFunctionsClient extends Mock implements FunctionsClient {}
+
 User _user({String id = 'user-1', String? email = 'alex@epfl.ch'}) => User(
   id: id,
   email: email,
@@ -20,11 +22,13 @@ User _user({String id = 'user-1', String? email = 'alex@epfl.ch'}) => User(
 
 void main() {
   late _MockGoTrueClient auth;
+  late _MockFunctionsClient functions;
   late SupabaseAuthRepository repository;
 
   setUp(() {
     auth = _MockGoTrueClient();
-    repository = SupabaseAuthRepository(auth);
+    functions = _MockFunctionsClient();
+    repository = SupabaseAuthRepository(auth, functions);
   });
 
   group('currentUser', () {
@@ -151,5 +155,81 @@ void main() {
     await repository.signOut();
 
     verify(() => auth.signOut()).called(1);
+  });
+
+  group('sendReauthenticationCode', () {
+    test('sends a code to the account email, never creating one', () async {
+      when(() => auth.currentUser).thenReturn(_user());
+      when(
+        () => auth.signInWithOtp(
+          email: any(named: 'email'),
+          shouldCreateUser: any(named: 'shouldCreateUser'),
+        ),
+      ).thenAnswer((_) async {});
+
+      await repository.sendReauthenticationCode();
+
+      verify(
+        () =>
+            auth.signInWithOtp(email: 'alex@epfl.ch', shouldCreateUser: false),
+      ).called(1);
+    });
+
+    test('needs a signed-in user', () async {
+      when(() => auth.currentUser).thenReturn(null);
+
+      await expectLater(
+        repository.sendReauthenticationCode(),
+        throwsA(isA<UnauthenticatedFailure>()),
+      );
+    });
+  });
+
+  group('deleteAccount', () {
+    test('calls delete-account, then signs out of this phone', () async {
+      when(() => functions.invoke('delete-account'))
+          .thenAnswer((_) async => const FunctionResponse(status: 200));
+      when(() => auth.signOut()).thenAnswer((_) async {});
+
+      await repository.deleteAccount();
+
+      verifyInOrder([
+        () => functions.invoke('delete-account'),
+        () => auth.signOut(),
+      ]);
+    });
+
+    test('a code entered too long ago needs a new one', () async {
+      when(() => functions.invoke('delete-account')).thenThrow(
+        const FunctionException(
+          status: 403,
+          details: {'error': 'reauthentication_required'},
+        ),
+      );
+
+      await expectLater(
+        repository.deleteAccount(),
+        throwsA(isA<ReauthenticationRequiredFailure>()),
+      );
+      verifyNever(() => auth.signOut());
+    });
+
+    test('another refusal stays a permission failure', () async {
+      when(() => functions.invoke('delete-account'))
+          .thenThrow(const FunctionException(status: 403));
+
+      await expectLater(
+        repository.deleteAccount(),
+        throwsA(isA<PermissionDeniedFailure>()),
+      );
+    });
+
+    test('a failed sign-out after the deletion is not an error', () async {
+      when(() => functions.invoke('delete-account'))
+          .thenAnswer((_) async => const FunctionResponse(status: 200));
+      when(() => auth.signOut()).thenThrow(const AuthException('gone'));
+
+      await repository.deleteAccount();
+    });
   });
 }

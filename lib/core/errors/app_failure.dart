@@ -45,6 +45,12 @@ final class InvalidCodeFailure extends AppFailure {
   const InvalidCodeFailure({super.cause, super.stackTrace});
 }
 
+/// A sensitive action, such as deleting the account, needs a code entered a
+/// few minutes ago at most: the user must ask for a new one.
+final class ReauthenticationRequiredFailure extends AppFailure {
+  const ReauthenticationRequiredFailure({super.cause, super.stackTrace});
+}
+
 /// A maximum set by the product rules is reached, for example the number of
 /// profile pages.
 final class LimitReachedFailure extends AppFailure {

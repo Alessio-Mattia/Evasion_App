@@ -43,7 +43,12 @@ AppFailure toAppFailure(Object error, StackTrace stackTrace) {
       error,
       stackTrace,
     ),
-    // Edge Functions: the HTTP status of their response.
+    // Edge Functions: their own error codes first, then the HTTP status.
+    FunctionException(
+      status: 403,
+      details: {'error': 'reauthentication_required'},
+    ) =>
+      ReauthenticationRequiredFailure(cause: error, stackTrace: stackTrace),
     FunctionException(:final status) => _fromHttpStatus(
       '$status',
       error,

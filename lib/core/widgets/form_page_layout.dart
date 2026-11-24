@@ -51,19 +51,31 @@ class LoadingButton extends StatelessWidget {
     required this.label,
     required this.isLoading,
     required this.onPressed,
+    this.isDestructive = false,
     super.key,
   });
 
   final String label;
   final bool isLoading;
 
+  /// Shows the button in the error colours, for an action that cannot be
+  /// undone.
+  final bool isDestructive;
+
   /// Null disables the button, for example while the form is not filled.
   final VoidCallback? onPressed;
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return FilledButton(
       onPressed: isLoading ? null : onPressed,
+      style: isDestructive
+          ? FilledButton.styleFrom(
+              backgroundColor: colors.error,
+              foregroundColor: colors.onError,
+            )
+          : null,
       child: isLoading
           ? const SizedBox.square(
               dimension: 20,
