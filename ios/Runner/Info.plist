@@ -31,9 +31,11 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Evasion utilise l'appareil photo pour prendre ta photo de profil. Les autres la verront sur ton profil.</string>
+	<string>Evasion utilise l'appareil photo pour prendre les photos de ton profil et de tes posts.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Evasion accède à tes photos pour que tu choisisses ta photo de profil. Seule la photo choisie est envoyée.</string>
+	<string>Evasion accède à tes photos pour que tu choisisses celles de ton profil et de tes posts. Seules les photos choisies sont envoyées.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Evasion utilise ta position pour placer tes posts près de toi, uniquement quand l'app est ouverte. Par défaut, les autres ne voient qu'une zone floue.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

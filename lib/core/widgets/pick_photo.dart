@@ -60,3 +60,29 @@ Future<Uint8List?> pickCheckedPhoto(
       return picked;
   }
 }
+
+/// Asks whether to take a photo or choose one from the gallery. Null when
+/// the user dismissed the sheet.
+Future<PhotoSource?> choosePhotoSource(BuildContext context) {
+  final l10n = AppLocalizations.of(context);
+  return showModalBottomSheet<PhotoSource>(
+    context: context,
+    builder: (context) => SafeArea(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.photo_library_outlined),
+            title: Text(l10n.pagePhotoGallery),
+            onTap: () => Navigator.pop(context, PhotoSource.gallery),
+          ),
+          ListTile(
+            leading: const Icon(Icons.photo_camera_outlined),
+            title: Text(l10n.pagePhotoCamera),
+            onTap: () => Navigator.pop(context, PhotoSource.camera),
+          ),
+        ],
+      ),
+    ),
+  );
+}

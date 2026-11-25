@@ -1,6 +1,6 @@
 import 'package:evasion/features/chat/presentation/messaging_screen.dart';
 import 'package:evasion/features/map/presentation/home_screen.dart';
-import 'package:evasion/features/posts/presentation/add_post_screen.dart';
+import 'package:evasion/features/posts/presentation/create_post/create_post_screen.dart';
 import 'package:evasion/features/profile/presentation/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -24,7 +24,7 @@ void main() {
 
     final screensByLabel = {
       'Messagerie': MessagingScreen,
-      'Ajout': AddPostScreen,
+      'Ajout': CreatePostScreen,
       'Profil': ProfileScreen,
       'Accueil': HomeScreen,
     };
