@@ -3,7 +3,8 @@ import 'dart:typed_data';
 
 import 'package:evasion/core/config/business_rules.dart';
 
-/// Photo formats accepted by the `avatars` and `profile-photos` buckets.
+/// Photo formats accepted by the `avatars`, `profile-photos` and
+/// `post-photos` buckets.
 enum PhotoFormat {
   jpeg('image/jpeg', 'jpg'),
   png('image/png', 'png'),
@@ -41,14 +42,14 @@ PhotoFormat? detectPhotoFormat(Uint8List bytes) {
 enum PhotoProblem { unsupportedFormat, tooLarge }
 
 /// Why the server would refuse this photo, or null if it is acceptable. The
-/// avatars and the page photos have the same limits.
+/// avatars, page photos and post photos have the same limits.
 PhotoProblem? checkPhoto(Uint8List bytes) {
   if (detectPhotoFormat(bytes) == null) return PhotoProblem.unsupportedFormat;
   if (bytes.length > BusinessRules.avatarMaxBytes) return PhotoProblem.tooLarge;
   return null;
 }
 
-/// Path of a photo in the user's folder, as both buckets require:
+/// Path of a photo in the user's folder, as every photo bucket requires:
 /// `<user id>/<file name>.<extension>`.
 String userPhotoPath({
   required String userId,
