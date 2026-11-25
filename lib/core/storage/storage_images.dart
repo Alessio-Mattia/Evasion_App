@@ -12,7 +12,8 @@ part 'storage_images.g.dart';
 /// Private storage buckets holding images.
 enum StorageBucket {
   avatars('avatars'),
-  profilePhotos('profile-photos');
+  profilePhotos('profile-photos'),
+  postPhotos('post-photos');
 
   const StorageBucket(this.id);
 
