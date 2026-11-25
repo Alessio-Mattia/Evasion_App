@@ -24,7 +24,7 @@ class AvatarEditor extends ConsumerWidget {
   static const double _size = 160;
 
   Future<void> _change(BuildContext context, WidgetRef ref) async {
-    final source = await _chooseSource(context);
+    final source = await choosePhotoSource(context);
     if (source == null || !context.mounted) return;
     final photo = await pickCheckedPhoto(
       context,
@@ -80,28 +80,4 @@ class AvatarEditor extends ConsumerWidget {
       ],
     );
   }
-}
-
-Future<PhotoSource?> _chooseSource(BuildContext context) {
-  final l10n = AppLocalizations.of(context);
-  return showModalBottomSheet<PhotoSource>(
-    context: context,
-    builder: (context) => SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          ListTile(
-            leading: const Icon(Icons.photo_library_outlined),
-            title: Text(l10n.pagePhotoGallery),
-            onTap: () => Navigator.pop(context, PhotoSource.gallery),
-          ),
-          ListTile(
-            leading: const Icon(Icons.photo_camera_outlined),
-            title: Text(l10n.pagePhotoCamera),
-            onTap: () => Navigator.pop(context, PhotoSource.camera),
-          ),
-        ],
-      ),
-    ),
-  );
 }

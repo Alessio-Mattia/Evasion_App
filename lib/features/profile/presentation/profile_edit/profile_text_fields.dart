@@ -1,6 +1,6 @@
 import 'package:evasion/core/config/business_rules.dart';
 import 'package:evasion/core/validation/profile_validators.dart';
-import 'package:evasion/features/profile/presentation/editor/page_editor_scaffold.dart';
+import 'package:evasion/core/widgets/limited_text_decoration.dart';
 import 'package:evasion/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 

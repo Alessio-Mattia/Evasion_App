@@ -12,7 +12,7 @@ import 'package:evasion/features/auth/presentation/sign_out_button.dart';
 import 'package:evasion/features/chat/presentation/messaging_screen.dart';
 import 'package:evasion/features/map/presentation/home_screen.dart';
 import 'package:evasion/features/onboarding/presentation/onboarding_screen.dart';
-import 'package:evasion/features/posts/presentation/add_post_screen.dart';
+import 'package:evasion/features/posts/presentation/create_post/create_post_screen.dart';
 import 'package:evasion/features/profile/domain/page_draft.dart';
 import 'package:evasion/features/profile/presentation/editor/edit_page_screen.dart';
 import 'package:evasion/features/profile/presentation/editor/new_page_screen.dart';
@@ -94,7 +94,13 @@ GoRouter appRouter(Ref ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.add,
-                builder: (context, state) => const AddPostScreen(),
+                builder: (context, state) => switch (ref.read(
+                  currentUserProvider,
+                )) {
+                  final user? => CreatePostScreen(userId: user.id),
+                  // Only while signing out: the redirect then leaves the tabs.
+                  null => const SizedBox.shrink(),
+                },
               ),
             ],
           ),

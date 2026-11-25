@@ -43,10 +43,7 @@ class SupabaseStorageImages implements StorageImages {
       guard(() async {
         final url = await _client.storage
             .from(bucket.id)
-            .createSignedUrl(
-              path,
-              BusinessRules.signedUrlLifetime.inSeconds,
-            );
+            .createSignedUrl(path, BusinessRules.signedUrlLifetime.inSeconds);
         return NetworkImage(url);
       });
 }

@@ -142,6 +142,16 @@ abstract final class BusinessRules {
   static const Duration postMinLifetime = Duration(hours: 1);
   static const Duration postMaxLifetime = Duration(days: 30);
 
+  /// Lifetimes offered when posting, within postMinLifetime and
+  /// postMaxLifetime; postDefaultLifetime is selected first. App side only.
+  static const List<Duration> postLifetimeChoices = [
+    Duration(hours: 1),
+    Duration(hours: 6),
+    Duration(hours: 24),
+    Duration(days: 3),
+    Duration(days: 7),
+  ];
+
   /// Posts a user can have at once; expired posts do not count.
   /// Also enforced in SQL (create_post).
   static const int activePostsMax = 5;
