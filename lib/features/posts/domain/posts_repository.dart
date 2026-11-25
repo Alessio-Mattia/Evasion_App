@@ -52,7 +52,8 @@ abstract interface class PostsRepository {
   Future<List<Post>> fetchMapFeed(GeoBounds area);
 
   /// Pins the post [postId] for the signed-in user. Pinning a post twice
-  /// does nothing.
+  /// does nothing. Fails with `NotFoundFailure` if the post expired, was
+  /// deleted or can no longer be seen.
   Future<void> pin(String postId);
 
   /// Unpins the post [postId]. Unpinning a post that is not pinned does

@@ -360,16 +360,16 @@ void main() {
       await repository.pin('post-1');
     });
 
-    test('pinning a post the user cannot see is refused', () async {
-      answer = (_) => (
-        status: 403,
-        body: {'code': '42501', 'message': 'row-level security'},
-      );
+    test('pinning a post that is no longer visible is not found', () async {
+      for (final code in ['42501', '23503']) {
+        answer = (_) => (status: 403, body: {'code': code, 'message': 'no'});
 
-      await expectLater(
-        repository.pin('post-1'),
-        throwsA(isA<PermissionDeniedFailure>()),
-      );
+        await expectLater(
+          repository.pin('post-1'),
+          throwsA(isA<NotFoundFailure>()),
+          reason: code,
+        );
+      }
     });
 
     test('unpin deletes the pin of the post', () async {

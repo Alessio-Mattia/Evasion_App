@@ -135,8 +135,18 @@ class SupabasePostsRepository implements PostsRepository {
     try {
       await _client.from('pins').insert({'post_id': postId});
     } on PostgrestException catch (error) {
-      // unique_violation: already pinned, which is what the user wants.
-      if (error.code != '23505') rethrow;
+      switch (error.code) {
+        // unique_violation: already pinned, which is what the user wants.
+        case '23505':
+          return;
+        // insufficient_privilege: the policy only lets visible posts be
+        // pinned, so the post just expired or became hidden.
+        // foreign_key_violation: the post was deleted.
+        case '42501' || '23503':
+          throw NotFoundFailure(cause: error);
+        default:
+          rethrow;
+      }
     }
   });
 
