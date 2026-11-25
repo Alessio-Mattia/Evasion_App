@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(27);
+select plan(29);
 
 -- Fixtures --------------------------------------------------------------------
 -- Alice (woman, 26) reports her position at the EPFL. Around her:
@@ -171,9 +171,9 @@ select ok(
 select ok(not pg_temp.crossed('ivan'), 'nobody in a vehicle');
 select ok(
   (select zone = private.grid_point(
-     private.point_from(46.5191, 6.5668), 100)
+     private.point_from(46.5191 + 10 / 111320.0, 6.5668), 100)
    from public.crossings),
-  'the zone is the centre of the 100 m cell, not the point'
+  'the zone is the 100 m cell of the midpoint, not a position'
 );
 
 -- Repeats ---------------------------------------------------------------------
@@ -322,6 +322,23 @@ select ok(
   (select private.fuzzy_point(point) = private.grid_point(point, 300)
    from (select private.point_from(46.5191, 6.5668) as point) as p),
   'posts keep their 300 m cells'
+);
+
+-- Large radii -----------------------------------------------------------------
+-- With 5 km radii, Alice and Carol, 200 m apart, cross. The zone must not
+-- tell Carol where Alice was within 100 m: it is a 5 km cell.
+
+update public.user_settings set detection_radius_m = 5000
+where user_id in (pg_temp.user_id('alice'), pg_temp.user_id('carol'));
+select pg_temp.place('carol', 200, 0);
+select pg_temp.alice_reports();
+
+select ok(pg_temp.crossed('carol'), 'with 5 km radii, 200 m is a crossing');
+select ok(
+  (select zone = private.grid_point(
+     private.point_from(46.5191 + 100 / 111320.0, 6.5668), 5000)
+   from public.crossings),
+  'the zone is as large as the radius of the crossing'
 );
 
 select * from finish();

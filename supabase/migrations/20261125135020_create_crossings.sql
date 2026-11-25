@@ -12,7 +12,10 @@
 --
 -- A pair gets at most one crossing per hour, and crossings are kept a week.
 -- Users only read their own through my_crossings, with the time rounded to
--- the half hour and a zone of about 100 m, never a precise point.
+-- the half hour and a zone, never a precise point. The zone is the cell
+-- holding the midpoint of the two positions, at least as large as the radius
+-- that made the crossing: it never tells more than the crossing itself, so
+-- a 5 km radius cannot reveal where the other was within 100 m.
 --
 -- The numbers below mirror BusinessRules (business_rules.dart); they are
 -- provisional until the release.
@@ -73,8 +76,9 @@ create table public.crossings (
   user_a uuid not null references auth.users (id) on delete cascade,
   user_b uuid not null references auth.users (id) on delete cascade,
   crossed_at timestamptz not null default now(),
-  -- Centre of the 100 m cell where the crossing happened
-  -- (BusinessRules.crossingZoneCellSizeMeters), never a precise point.
+  -- Centre of the cell holding the midpoint of the two positions, as large
+  -- as the radius that made the crossing and at least 100 m
+  -- (BusinessRules.crossingZoneCellSizeMeters): never a precise point.
   zone extensions.geography(Point, 4326) not null,
   -- A pair is stored once, whoever reported.
   check (user_a < user_b)
@@ -122,7 +126,20 @@ as $$
   select
     least(reporter, other.user_id),
     greatest(reporter, other.user_id),
-    private.grid_point(mine.geog, 100)
+    private.grid_point(
+      -- The midpoint: the two positions are at most 5 km apart, so their
+      -- plain average in degrees is close enough.
+      extensions.st_centroid(
+        extensions.st_collect(
+          mine.geog::extensions.geometry,
+          other.geog::extensions.geometry
+        )
+      )::extensions.geography,
+      greatest(
+        100,
+        least(my_settings.detection_radius_m, other_settings.detection_radius_m)
+      )
+    )
   from public.user_locations as mine
   join public.user_settings as my_settings
     on my_settings.user_id = mine.user_id
@@ -270,8 +287,9 @@ grant execute on function public.report_location(
 -- The signed-in user's crossings of the last week, the most recent first:
 -- who, and around when and where. The time is rounded to the nearest half
 -- hour (BusinessRules.crossingTimeRounding), and the zone is the centre of a
--- 100 m cell. People the user can no longer see (blocked either way, or
--- with an incomplete profile) are left out, through get_public_profile.
+-- cell at least as large as the radius of the crossing. People the user can
+-- no longer see (blocked either way, or with an incomplete profile) are left
+-- out, through get_public_profile.
 create function public.my_crossings()
 returns table (
   id uuid,

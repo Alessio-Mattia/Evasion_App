@@ -135,9 +135,10 @@ abstract final class BusinessRules {
   /// How long crossings are kept and shown. Also enforced in SQL.
   static const Duration crossingHistory = Duration(days: 7);
 
-  /// Side of the grid cells of crossing zones: a crossing shows at the
-  /// centre of its cell, never at a precise point. Also enforced in SQL
-  /// (detect_crossings).
+  /// Smallest side of the grid cells of crossing zones. A crossing shows at
+  /// the centre of the cell holding the midpoint of the two positions, as
+  /// large as the radius that made the crossing and never smaller than this:
+  /// never a precise point. Also enforced in SQL (detect_crossings).
   static const int crossingZoneCellSizeMeters = 100;
 
   /// Crossing times are shown rounded to the nearest multiple of this.
