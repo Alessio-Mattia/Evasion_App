@@ -108,9 +108,41 @@ abstract final class BusinessRules {
   /// (`pref_age_max` null). App side only.
   static const int prefAgeSliderMax = 80;
 
-  /// How long raw positions are kept before being purged.
-  /// Also enforced in SQL (purge job).
+  /// How long the latest position of a user is kept before being purged.
+  /// Only the latest one is ever kept. Also enforced in SQL (purge job).
   static const Duration rawLocationRetention = Duration(hours: 24);
+
+  /// Shortest time between two positions sent by the app: a position sent
+  /// sooner is ignored. Also enforced in SQL (report_location).
+  static const Duration locationReportMinInterval = Duration(seconds: 30);
+
+  /// Worst GPS accuracy accepted, in metres: a less precise position, as
+  /// often indoors, is ignored rather than create false crossings.
+  /// Also enforced in SQL (report_location).
+  static const int locationMaxAccuracyMeters = 100;
+
+  /// Above this speed since the previous position, the user is in a vehicle:
+  /// the position is kept but creates no crossing. Also enforced in SQL.
+  static const int crossingMaxSpeedKmh = 50;
+
+  /// How old the other person's latest position may be for two people to
+  /// count as there at the same time. Also enforced in SQL.
+  static const Duration crossingMaxPositionAge = Duration(minutes: 3);
+
+  /// Two people cross at most once in this time. Also enforced in SQL.
+  static const Duration crossingRepeatInterval = Duration(hours: 1);
+
+  /// How long crossings are kept and shown. Also enforced in SQL.
+  static const Duration crossingHistory = Duration(days: 7);
+
+  /// Side of the grid cells of crossing zones: a crossing shows at the
+  /// centre of its cell, never at a precise point. Also enforced in SQL
+  /// (detect_crossings).
+  static const int crossingZoneCellSizeMeters = 100;
+
+  /// Crossing times are shown rounded to the nearest multiple of this.
+  /// Also enforced in SQL (my_crossings).
+  static const Duration crossingTimeRounding = Duration(minutes: 30);
 
   // Meetups, likes and matches
 
