@@ -8,7 +8,11 @@ by GitHub's Terms of Service, and without the prior written permission of the
 authors, no one may use, copy, modify, merge, publish, distribute, sublicense, sell or
 create derivative works from this software, its source code, its database
 schema, its documentation or any other content of this repository, in whole
-or in part.
+or in part, except as stated below.
 
 Third-party packages used by this project are not part of this repository
 and remain under their own licenses.
+
+The fonts in assets/fonts/ (Bricolage Grotesque and Inter) are not covered
+by this notice: they belong to their authors and remain under the SIL Open
+Font License, Version 1.1, given in the OFL.txt file next to each of them.

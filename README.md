@@ -306,4 +306,4 @@ Evasion is built by two brothers:
 
 This repository is public for viewing only. No license is granted: apart from viewing and forking on GitHub, as allowed by GitHub's Terms of Service, and without our written permission, you may not use, copy, modify, distribute or reuse all or part of the code, the database schema or the documentation. See the [LICENSE](LICENSE) file.
 
-Third-party libraries used by the project are not part of this repository and remain under their own licenses.
+Third-party libraries used by the project are not part of this repository and remain under their own licenses. The fonts in `assets/fonts/` (Bricolage Grotesque and Inter) are not covered by our rights either: they remain under the [SIL Open Font License 1.1](https://openfontlicense.org), given in the `OFL.txt` file next to each of them.
