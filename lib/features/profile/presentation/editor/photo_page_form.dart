@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:evasion/app/theme/app_colors.dart';
 import 'package:evasion/core/config/business_rules.dart';
 import 'package:evasion/core/photos/photo_file.dart';
 import 'package:evasion/core/services/photo_picker.dart';
@@ -104,7 +105,7 @@ class _PhotoPageFormState extends ConsumerState<PhotoPageForm> {
               child: AspectRatio(
                 aspectRatio: 4 / 5,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(AppRadii.field),
                   child: newPhoto != null
                       ? Image.memory(newPhoto, fit: BoxFit.cover)
                       : StorageImage(

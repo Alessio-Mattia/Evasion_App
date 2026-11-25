@@ -1,3 +1,4 @@
+import 'package:evasion/app/theme/app_colors.dart';
 import 'package:evasion/core/storage/storage_images.dart';
 import 'package:evasion/core/widgets/storage_image.dart';
 import 'package:evasion/features/profile/domain/profile_page.dart';
@@ -22,7 +23,7 @@ class PageThumbnail extends StatelessWidget {
     final avatarPath = this.avatarPath;
 
     return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(AppRadii.thumbnail),
       child: SizedBox.fromSize(
         size: thumbnailSize,
         child: ColoredBox(

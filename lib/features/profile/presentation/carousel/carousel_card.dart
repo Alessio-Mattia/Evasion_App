@@ -1,3 +1,4 @@
+import 'package:evasion/app/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 /// Rounded frame of one carousel page, with a gap to the next page.
@@ -11,7 +12,7 @@ class CarouselCard extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(AppRadii.card),
         child: ColoredBox(
           color: Theme.of(context).colorScheme.surfaceContainerHigh,
           child: child,

@@ -71,7 +71,6 @@ InputDecoration limitedTextDecoration(
   return InputDecoration(
     labelText: label,
     alignLabelWithHint: true,
-    border: const OutlineInputBorder(),
     counterText: l10n.lengthCounter(length, max),
     errorText: length > max ? l10n.pageTextTooLong(max) : null,
   );
