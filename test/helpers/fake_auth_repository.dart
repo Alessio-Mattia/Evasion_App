@@ -48,6 +48,31 @@ class FakeAuthRepository implements AuthRepository {
   @override
   Future<void> signOut() async => _emit(null);
 
+  /// Reauthentication codes sent, and account deletions asked.
+  int reauthenticationCodesSent = 0;
+  int deleteAccountCalls = 0;
+
+  /// Set to make the next account deletions fail.
+  AppFailure? deleteAccountFailure;
+  bool get isDeleted => _deleted;
+  bool _deleted = false;
+
+  @override
+  Future<void> sendReauthenticationCode() async {
+    reauthenticationCodesSent++;
+    await pendingCall?.future;
+    if (sendCodeFailure case final failure?) throw failure;
+  }
+
+  @override
+  Future<void> deleteAccount() async {
+    deleteAccountCalls++;
+    await pendingCall?.future;
+    if (deleteAccountFailure case final failure?) throw failure;
+    _deleted = true;
+    _emit(null);
+  }
+
   void _emit(AppUser? user) {
     _currentUser = user;
     _changes.add(user);

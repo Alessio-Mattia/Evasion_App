@@ -14,6 +14,11 @@ abstract final class BusinessRules {
   /// Also enforced in SQL (birth date trigger).
   static const int maximumAge = 120;
 
+  /// How long after entering an email code the account can be deleted.
+  /// Also enforced by the delete-account Edge Function
+  /// (REAUTH_WINDOW_SECONDS).
+  static const Duration accountDeletionReauthWindow = Duration(minutes: 5);
+
   /// Number of digits of the sign-in code sent by email. Also configured in
   /// Supabase: `otp_length` in supabase/config.toml and in the dashboard.
   static const int signInCodeLength = 6;
