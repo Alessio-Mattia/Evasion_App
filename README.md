@@ -5,7 +5,7 @@
 **The app for meeting people in real life.**
 
 Proximity encounters, ephemeral geolocated posts, groups that become events on a map,
-and a like that only unlocks after a real meetup.
+and friends you can only make by meeting in person.
 
 [![Flutter](https://img.shields.io/badge/Flutter-stable-02569B?logo=flutter&logoColor=white)](https://flutter.dev)
 [![Supabase](https://img.shields.io/badge/Supabase-Postgres%20%2B%20PostGIS-3FCF8E?logo=supabase&logoColor=white)](https://supabase.com)
@@ -52,7 +52,7 @@ Three principles drive every decision:
 
 | Principle | In practice |
 |---|---|
-| **Real life unlocks the virtual** | You can only like someone after a real meetup, confirmed by a QR code scanned by both people. After a match, a message quota applies, and a new meetup refills it. |
+| **Real life unlocks the virtual** | You become friends only by meeting in person: one of you scans the other's QR code. Messages and likes are only possible between friends. |
 | **Everyone on the same level** | No public counters: no followers, no likes, no views. Posts are not liked, they are pinned. |
 | **Safe by default** | No precise location is ever shown without the person's explicit choice. By default, everything is blurred. |
 
@@ -70,8 +70,8 @@ The four screens at the top follow a meetup from start to finish:
 
 1. **See what's around you**: posts and events nearby, always shown as a blurred area by default.
 2. **Cross paths**: people you passed by, with rounded places and times. The like stays locked.
-3. **Meet in person**: the like unlocks only after a real meetup, confirmed by scanning each other's QR code.
-4. **Match**: the message written with the like is revealed, and a message quota encourages meeting again.
+3. **Meet in person**: scanning the other's QR code connects you. You become friends, and messages and the like unlock.
+4. **Match**: the message written with the like is revealed.
 
 ---
 
@@ -87,13 +87,12 @@ The four screens at the top follow a meetup from start to finish:
 | Settings | Location mode (invisible, foreground; background later), detection radius, encounter criteria | ✅ Done |
 | Blocking | A blocked person disappears everywhere: map, encounters, messages, profiles | ✅ Server side |
 | Account deletion | Deletes the account, its data and photos, after confirmation with a new email code | ✅ Done |
-| Posts | Mandatory photo, blurred location by default, chosen audience (everyone, friends, a list of friends), limited lifetime | 🚧 In progress |
-| Map | Posts and events around you | 📋 Planned |
-| Encounters | Detection of people you cross paths with, based on mutual criteria; history with rounded area and time | 📋 Planned |
-| Real meetups | Confirmed by QR code, which unlocks the like for a limited time | 📋 Planned |
-| Friends | Mutual add after a real meetup | 📋 Planned |
-| Likes and matches | Secret like with a message revealed only on a match | 📋 Planned |
-| Messaging | Private and group conversations | 📋 Planned |
+| Posts | Mandatory photo, blurred location by default, chosen audience (everyone, friends, a list of friends), limited lifetime | ✅ Done |
+| Map | Posts and events around you | 🚧 Server side |
+| Encounters | Detection of people you cross paths with, based on mutual criteria; a week of history with rounded area and time | 🚧 Server side |
+| Connections | Meeting in person and scanning the other's QR code makes you friends | 🚧 In progress |
+| Likes and matches | Secret like on a friend's profile, with a message revealed only on a match | 📋 Planned |
+| Messaging | Conversations between friends, private or in groups | 📋 Planned |
 | Groups and events | A public group becomes an event on the map | 📋 Planned |
 | Push notifications | Through Firebase Cloud Messaging | 📋 Planned |
 | Moderation | Reports and admin tools | 📋 Planned |
