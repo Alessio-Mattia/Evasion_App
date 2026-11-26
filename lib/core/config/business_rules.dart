@@ -145,15 +145,20 @@ abstract final class BusinessRules {
   /// Also enforced in SQL (my_crossings).
   static const Duration crossingTimeRounding = Duration(minutes: 30);
 
-  // Meetups, likes and matches
+  // Connections
+  //
+  // Meeting in person, one person scans the other's QR code: the two become
+  // friends, which unlocks messages and the like.
 
-  /// How long a validated meetup unlocks the like between two people.
-  /// Also enforced in SQL.
-  static const Duration meetupLikeUnlockDuration = Duration(days: 7);
+  /// How long the token of a QR code works, once: a screenshot sent later is
+  /// useless. The app asks for a new one before it expires.
+  /// Also enforced in SQL (create_connection_token).
+  static const Duration connectionTokenLifetime = Duration(minutes: 2);
 
-  /// Messages each person can send after a match, recharged by a new meetup.
-  /// Also enforced in SQL (messages trigger).
-  static const int messageQuotaPerMatch = 20;
+  /// When both people sent a recent position, they must be at most this far
+  /// apart to connect: a QR code shown in a video call connects nobody.
+  /// Also enforced in SQL (scan_connection_token).
+  static const int connectionMaxDistanceMeters = 500;
 
   // Posts
 

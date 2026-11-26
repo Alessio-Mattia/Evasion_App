@@ -17,6 +17,10 @@ class LocationServiceDisabled implements Exception {
   const LocationServiceDisabled();
 }
 
+/// A position read from the phone, with how precise it is: the radius, in
+/// metres, within which the phone is likely to be.
+typedef LocationFix = ({GeoPoint position, double accuracyMeters});
+
 /// The phone's position, read once, while the app is open: never in the
 /// background, and never stored by the app.
 abstract interface class LocationService {
@@ -24,6 +28,11 @@ abstract interface class LocationService {
   /// [LocationServiceDisabled] or [LocationAccessDenied], and a
   /// `TimeoutException` when no position comes in time.
   Future<GeoPoint> currentPosition();
+
+  /// The same as [currentPosition], with the accuracy of the position, which
+  /// crossings need: a position too imprecise, such as an approximate one
+  /// the user chose in the phone settings, creates no crossing.
+  Future<LocationFix> currentFix();
 
   /// Opens the app's page of the phone settings, where a permission refused
   /// for good can be granted again.
@@ -40,7 +49,10 @@ class DeviceLocationService implements LocationService {
   static const _timeLimit = Duration(seconds: 15);
 
   @override
-  Future<GeoPoint> currentPosition() async {
+  Future<GeoPoint> currentPosition() async => (await currentFix()).position;
+
+  @override
+  Future<LocationFix> currentFix() async {
     if (!await Geolocator.isLocationServiceEnabled()) {
       throw const LocationServiceDisabled();
     }
@@ -61,7 +73,10 @@ class DeviceLocationService implements LocationService {
     final position = await Geolocator.getCurrentPosition(
       locationSettings: const LocationSettings(timeLimit: _timeLimit),
     );
-    return (latitude: position.latitude, longitude: position.longitude);
+    return (
+      position: (latitude: position.latitude, longitude: position.longitude),
+      accuracyMeters: position.accuracy,
+    );
   }
 
   @override
