@@ -8,15 +8,21 @@ const GeoPoint testPosition = (latitude: 46.52, longitude: 6.63);
 /// next reads fail, for example with `LocationAccessDenied`.
 class FakeLocationService implements LocationService {
   GeoPoint position = testPosition;
+
+  /// Precise enough for crossings by default, as a phone outdoors.
+  double accuracyMeters = 10;
   Exception? error;
   int reads = 0;
   int settingsOpened = 0;
 
   @override
-  Future<GeoPoint> currentPosition() async {
+  Future<GeoPoint> currentPosition() async => (await currentFix()).position;
+
+  @override
+  Future<LocationFix> currentFix() async {
     reads++;
     if (error case final error?) throw error;
-    return position;
+    return (position: position, accuracyMeters: accuracyMeters);
   }
 
   @override
