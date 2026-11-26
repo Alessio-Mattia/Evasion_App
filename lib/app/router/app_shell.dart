@@ -21,19 +21,20 @@ class AppShell extends StatelessWidget {
         ),
         destinations: [
           NavigationDestination(
-            icon: const Icon(Icons.home_outlined),
-            selectedIcon: const Icon(Icons.home),
-            label: l10n.tabHome,
+            icon: const Icon(Icons.map_outlined),
+            selectedIcon: const Icon(Icons.map),
+            label: l10n.tabMap,
+          ),
+          NavigationDestination(
+            // Two circles that cross, like the logo.
+            icon: const Icon(Icons.join_inner_outlined),
+            selectedIcon: const Icon(Icons.join_inner),
+            label: l10n.tabCrossings,
           ),
           NavigationDestination(
             icon: const Icon(Icons.chat_bubble_outline),
             selectedIcon: const Icon(Icons.chat_bubble),
             label: l10n.tabMessages,
-          ),
-          NavigationDestination(
-            icon: const Icon(Icons.add_box_outlined),
-            selectedIcon: const Icon(Icons.add_box),
-            label: l10n.tabAdd,
           ),
           NavigationDestination(
             icon: const Icon(Icons.person_outline),

@@ -23,5 +23,5 @@ String? accessRedirect({
     AppRoutes.startup,
     AppRoutes.onboarding,
   ].any(location.startsWith);
-  return isOutsideApp ? AppRoutes.home : null;
+  return isOutsideApp ? AppRoutes.map : null;
 }

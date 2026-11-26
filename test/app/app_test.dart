@@ -1,4 +1,4 @@
-import 'package:evasion/features/map/presentation/home_screen.dart';
+import 'package:evasion/features/posts/presentation/map/posts_map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -10,9 +10,9 @@ void main() {
   ) async {
     await pumpEvasionApp(tester);
 
-    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(PostsMapScreen), findsOneWidget);
 
-    final context = tester.element(find.byType(HomeScreen));
+    final context = tester.element(find.byType(PostsMapScreen));
     expect(Theme.of(context).brightness, Brightness.dark);
     expect(Localizations.localeOf(context), const Locale('fr'));
   });

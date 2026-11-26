@@ -28,7 +28,7 @@ void main() {
       location: location,
       photoPicker: picker,
     );
-    await tester.tap(find.text('Ajout'));
+    await tester.tap(find.byTooltip('Créer un post'));
     await tester.pumpAndSettle();
   }
 

@@ -208,4 +208,19 @@ abstract final class BusinessRules {
   /// Posts the map receives for an area at most, the most recent first.
   /// Also enforced in SQL (map_feed).
   static const int mapFeedMaxPosts = 200;
+
+  /// Where the map opens when the phone's position is unknown: the campus
+  /// of the launch (Lausanne, between UNIL and EPFL). App side only.
+  static const ({double latitude, double longitude}) mapDefaultCenter = (
+    latitude: 46.5215,
+    longitude: 6.5735,
+  );
+
+  /// Zoom of the map when it opens: a few streets around. App side only.
+  static const double mapInitialZoom = 14;
+
+  /// Radius of the area drawn for a blurred post: it covers its whole grid
+  /// cell (half its diagonal), wherever the post really is. App side only.
+  static const double mapFuzzyAreaRadiusMeters =
+      postFuzzyCellSizeMeters * 0.71;
 }

@@ -10,9 +10,10 @@ import 'package:evasion/features/auth/presentation/sign_in_code_screen.dart';
 import 'package:evasion/features/auth/presentation/sign_in_email_screen.dart';
 import 'package:evasion/features/auth/presentation/sign_out_button.dart';
 import 'package:evasion/features/chat/presentation/messaging_screen.dart';
-import 'package:evasion/features/map/presentation/home_screen.dart';
+import 'package:evasion/features/encounters/presentation/crossings_screen.dart';
 import 'package:evasion/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:evasion/features/posts/presentation/create_post/create_post_screen.dart';
+import 'package:evasion/features/posts/presentation/map/posts_map_screen.dart';
 import 'package:evasion/features/profile/domain/page_draft.dart';
 import 'package:evasion/features/profile/presentation/editor/edit_page_screen.dart';
 import 'package:evasion/features/profile/presentation/editor/new_page_screen.dart';
@@ -36,7 +37,7 @@ GoRouter appRouter(Ref ref) {
   ref.listen(accessStatusProvider, (_, next) => status.value = next);
 
   final router = GoRouter(
-    initialLocation: AppRoutes.home,
+    initialLocation: AppRoutes.map,
     refreshListenable: status,
     redirect: (context, state) =>
         accessRedirect(status: status.value, location: state.matchedLocation),
@@ -69,6 +70,15 @@ GoRouter appRouter(Ref ref) {
           ),
         ],
       ),
+      // Over the tabs, without the tab bar, like in the design canvas.
+      GoRoute(
+        path: AppRoutes.newPost,
+        builder: (context, state) => switch (ref.read(currentUserProvider)) {
+          final user? => CreatePostScreen(userId: user.id),
+          // Only while signing out: the redirect then leaves the app.
+          null => const SizedBox.shrink(),
+        },
+      ),
       // indexedStack keeps each tab alive, so its state survives tab switches.
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
@@ -77,8 +87,16 @@ GoRouter appRouter(Ref ref) {
           StatefulShellBranch(
             routes: [
               GoRoute(
-                path: AppRoutes.home,
-                builder: (context, state) => const HomeScreen(),
+                path: AppRoutes.map,
+                builder: (context, state) => const PostsMapScreen(),
+              ),
+            ],
+          ),
+          StatefulShellBranch(
+            routes: [
+              GoRoute(
+                path: AppRoutes.crossings,
+                builder: (context, state) => const CrossingsScreen(),
               ),
             ],
           ),
@@ -87,20 +105,6 @@ GoRouter appRouter(Ref ref) {
               GoRoute(
                 path: AppRoutes.messages,
                 builder: (context, state) => const MessagingScreen(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: [
-              GoRoute(
-                path: AppRoutes.add,
-                builder: (context, state) => switch (ref.read(
-                  currentUserProvider,
-                )) {
-                  final user? => CreatePostScreen(userId: user.id),
-                  // Only while signing out: the redirect then leaves the tabs.
-                  null => const SizedBox.shrink(),
-                },
               ),
             ],
           ),

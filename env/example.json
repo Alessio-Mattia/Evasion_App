@@ -1,4 +1,6 @@
 {
   "SUPABASE_URL": "https://your-project-ref.supabase.co",
-  "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_your_key"
+  "SUPABASE_PUBLISHABLE_KEY": "sb_publishable_your_key",
+  "MAPBOX_ACCESS_TOKEN": "pk.your_public_mapbox_token",
+  "MAPBOX_STYLE_URL": "mapbox://styles/your_user/your_style_id"
 }

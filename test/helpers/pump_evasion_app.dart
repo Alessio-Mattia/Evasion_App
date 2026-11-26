@@ -1,5 +1,6 @@
 import 'package:evasion/app/app.dart';
 import 'package:evasion/app/config/app_environment.dart';
+import 'package:evasion/core/map/map_view.dart';
 import 'package:evasion/core/services/location_service.dart';
 import 'package:evasion/core/services/photo_picker.dart';
 import 'package:evasion/core/storage/storage_images.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_auth_repository.dart';
 import 'fake_location_service.dart';
+import 'fake_map_view.dart';
 import 'fake_photo_picker.dart';
 import 'fake_posts_repository.dart';
 import 'fake_profile_repositories.dart';
@@ -25,7 +27,7 @@ import 'fake_storage_images.dart';
 /// or [profiles] to change that, and [settings] to control the settings.
 /// [photoPicker] replaces the phone's gallery and camera, [storageImages]
 /// the links to private photos, [location] the phone's position and [posts]
-/// the posts.
+/// the posts, and [map] the native map.
 Future<void> pumpEvasionApp(
   WidgetTester tester, {
   AuthRepository? authRepository,
@@ -35,6 +37,7 @@ Future<void> pumpEvasionApp(
   FakeStorageImages? storageImages,
   FakeLocationService? location,
   FakePostsRepository? posts,
+  FakeMapView? map,
 }) async {
   final store = profiles ?? FakeProfileStore(completeProfile(testUser.id));
   await tester.pumpWidget(
@@ -61,6 +64,10 @@ Future<void> pumpEvasionApp(
         ),
         postsRepositoryProvider.overrideWithValue(
           posts ?? FakePostsRepository(),
+        ),
+        // The native Mapbox map cannot run in widget tests.
+        mapViewBuilderProvider.overrideWithValue(
+          (map ?? FakeMapView()).builder,
         ),
       ],
       child: const EvasionApp(),

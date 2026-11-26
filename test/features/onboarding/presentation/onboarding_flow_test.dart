@@ -1,8 +1,8 @@
 import 'package:evasion/app/startup/startup_screen.dart';
 import 'package:evasion/core/errors/app_failure.dart';
 import 'package:evasion/core/models/gender.dart';
-import 'package:evasion/features/map/presentation/home_screen.dart';
 import 'package:evasion/features/onboarding/presentation/onboarding_screen.dart';
+import 'package:evasion/features/posts/presentation/map/posts_map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -51,7 +51,7 @@ void main() {
     expect(store.savedChanges.single['birth_date'], isA<DateTime>());
     // Still no photo: the user stays in the onboarding, on the last step.
     expect(find.text("Plus qu'une étape : ta photo"), findsOneWidget);
-    expect(find.byType(HomeScreen), findsNothing);
+    expect(find.byType(PostsMapScreen), findsNothing);
     // The saved answers cannot be reached again: changing the birth date
     // would silently use its only correction.
     expect(find.byType(BackButton), findsNothing);
@@ -103,7 +103,7 @@ void main() {
     await answerUpToGender(tester);
     await tapText(tester, 'Continuer');
 
-    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(PostsMapScreen), findsOneWidget);
   });
 
   testWidgets('a failed save shows its message and stays', (tester) async {
@@ -146,6 +146,6 @@ void main() {
     store.fetchFailure = null;
     await tapText(tester, 'Réessayer');
 
-    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(PostsMapScreen), findsOneWidget);
   });
 }
