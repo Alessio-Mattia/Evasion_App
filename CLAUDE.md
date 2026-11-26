@@ -7,7 +7,7 @@ Ce fichier guide Claude Code sur ce projet. Le cahier des charges complet est la
 Application mobile (iOS + Android) qui sert à se rencontrer **dans la vraie vie** : croisements par proximité, posts géolocalisés éphémères, groupes qui deviennent des événements sur une carte, like et match débloqués par des rencontres réelles. Public : étudiants d'abord (un seul campus au lancement), puis tout le monde.
 
 Principes non négociables :
-- **Le réel débloque le virtuel** : le like n'est possible qu'après une rencontre réelle validée ; après un match, un quota de messages s'applique et une nouvelle rencontre réelle le recharge.
+- **Le réel débloque le virtuel** : on ne devient amis qu'en scannant le QR code de l'autre lors d'une vraie rencontre ; les messages et le like ne sont possibles qu'entre amis.
 - **Tout le monde au même niveau** : aucun compteur public (abonnés, likes, vues), pas de like sur les posts (on les épingle).
 - **Sécurité par défaut** : aucune position précise d'un utilisateur n'est exposée sans son choix explicite ; par défaut, tout est flou.
 
@@ -46,7 +46,7 @@ lib/
         └── presentation/  # écrans, widgets, controllers Riverpod
 ```
 
-Fonctionnalités : `auth`, `onboarding`, `profile`, `map`, `posts`, `groups`, `chat`, `encounters`, `connections` (amis, likes, matchs, rencontres réelles), `moderation`, `notifications`, `settings`.
+Fonctionnalités : `auth`, `onboarding`, `profile`, `map`, `posts`, `groups`, `chat`, `encounters`, `connections` (connexions par QR code, amis, likes, matchs), `moderation`, `notifications`, `settings`.
 
 Règles :
 - **Les widgets n'appellent jamais Supabase directement.** Widget → controller (Riverpod) → repository → Supabase.
@@ -71,11 +71,11 @@ Règles :
 
 - Croisement : les deux utilisateurs sont dans le rayon de détection l'un de l'autre ET correspondent aux critères mutuels (sexe, âge, distance). Historique affiché avec zone et heure arrondies.
 - Modes de position : `invisible`, `foreground`, `background`.
-- Rencontre réelle : validée par QR code scanné par les deux personnes (MVP). Débloque le like pendant une durée limitée.
-- Like secret ; message rédigé au like, révélé seulement au match. Like retirable, match annulable.
-- Quota de messages après match, rechargé par une nouvelle rencontre réelle.
+- Connexion : lors d'une vraie rencontre, une personne scanne le QR code temporaire de l'autre (un seul scan) ; les deux deviennent amis. Retirable à tout moment, sans que l'autre soit prévenu ; un blocage la retire aussi.
+- Like secret, possible seulement sur le profil d'un ami ; message rédigé au like, révélé seulement au match. Like retirable, match annulable.
+- Messages : entre amis uniquement, sans quota pour l'instant.
 - Post : image obligatoire. Lieu saisi à la main (limité à un rayon autour de la position réelle) ou, à défaut, position actuelle. Précision au choix : zone floue de quelques centaines de mètres (par défaut) ou exacte, avec un avertissement dans l'app. Public au choix : tout le monde, amis, ou une liste d'amis ; un post est toujours sur la carte pour son public. Durée choisie par l'auteur, bornée. Seuls le public et la durée sont modifiables ; le reste demande de supprimer et de reposter. L'expiration supprime le post ET l'image.
-- Amis : ajout mutuel depuis le profil (les deux doivent s'ajouter), possible seulement après une rencontre réelle (QR code, ou bouton quand les deux sont à moins d'une certaine distance). Servent au public des posts, aux conversations privées et aux groupes. Ami et amour (like, match) sont deux notions séparées : le quota de messages ne s'applique qu'à l'amour, et un amour peut aussi être un ami.
+- Amis : servent au public des posts, aux conversations privées et aux groupes.
 - Groupe public = événement sur la carte, avec lieu, date/heure de début, fin optionnelle, catégorie, ouvert ou sur demande, max de participants.
 - Blocage : l'utilisateur bloqué disparaît partout (carte, croisements, messagerie, profils).
 
