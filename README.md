@@ -52,7 +52,7 @@ Three principles drive every decision:
 
 | Principle | In practice |
 |---|---|
-| **Real life unlocks the virtual** | You become friends only by scanning each other's QR code when you meet in person. Messages and likes are only possible between friends. |
+| **Real life unlocks the virtual** | You become friends only by meeting in person: one of you scans the other's QR code. Messages and likes are only possible between friends. |
 | **Everyone on the same level** | No public counters: no followers, no likes, no views. Posts are not liked, they are pinned. |
 | **Safe by default** | No precise location is ever shown without the person's explicit choice. By default, everything is blurred. |
 
