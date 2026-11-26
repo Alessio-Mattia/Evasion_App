@@ -121,3 +121,40 @@ $$;
 
 revoke all on function public.connection_token_scan(text) from public, anon;
 grant execute on function public.connection_token_scan(text) to authenticated;
+
+-- A new token used to delete all the previous ones, scanned ones included:
+-- when the QR code renewed right after a scan, the screen could no longer
+-- tell who scanned it. Only the unused tokens are deleted now; the used
+-- ones stay until the hourly purge.
+--
+-- A new token for the QR code of the signed-in user, valid 2 minutes and
+-- once. Their previous unused tokens stop working: only the QR code on
+-- screen connects, while the scanned ones still tell who scanned them.
+create or replace function public.create_connection_token()
+returns table (token text, expires_at timestamptz)
+language plpgsql
+security definer
+set search_path = ''
+as $$
+#variable_conflict use_column
+declare
+  owner uuid := (select auth.uid());
+  new_token text := replace(gen_random_uuid()::text, '-', '');
+  new_expires_at timestamptz := now() + interval '2 minutes';
+begin
+  if not exists (
+    select 1 from public.profiles where id = owner and is_complete
+  ) then
+    raise exception 'the profile must be complete to connect'
+      using errcode = 'insufficient_privilege';
+  end if;
+
+  delete from public.connection_tokens
+  where user_id = owner and used_at is null;
+  insert into public.connection_tokens (token, user_id, expires_at)
+  values (new_token, owner, new_expires_at);
+
+  return query select new_token, new_expires_at;
+end;
+$$;
+

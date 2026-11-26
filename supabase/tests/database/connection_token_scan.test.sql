@@ -2,7 +2,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(7);
+select plan(8);
 
 -- Fixtures --------------------------------------------------------------------
 -- Alice shows her QR code; Bob scans it; Eve is someone else.
@@ -92,6 +92,17 @@ select is(
   pg_temp.scanner_seen_by('alice'),
   'Bob',
   'the owner of the QR code sees who scanned it'
+);
+
+-- The QR code renews right after the scan, before the screen asked.
+select pg_temp.act_as('alice');
+select public.create_connection_token();
+reset role;
+
+select is(
+  pg_temp.scanner_seen_by('alice'),
+  'Bob',
+  'a new QR code keeps the scanned one, which still tells who scanned it'
 );
 select is(
   (select used_by from public.connection_tokens
