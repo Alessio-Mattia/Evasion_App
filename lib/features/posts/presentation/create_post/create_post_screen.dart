@@ -3,10 +3,10 @@ import 'dart:typed_data';
 
 import 'package:evasion/app/router/app_routes.dart';
 import 'package:evasion/core/config/business_rules.dart';
+import 'package:evasion/core/models/geo_point.dart';
 import 'package:evasion/core/photos/photo_file.dart';
 import 'package:evasion/core/services/location_service.dart';
 import 'package:evasion/core/services/photo_picker.dart';
-import 'package:evasion/core/widgets/failure_snack_bar.dart';
 import 'package:evasion/core/widgets/form_page_layout.dart';
 import 'package:evasion/core/widgets/pick_photo.dart';
 import 'package:evasion/features/posts/domain/post.dart';
@@ -14,6 +14,7 @@ import 'package:evasion/features/posts/domain/post_draft.dart';
 import 'package:evasion/features/posts/presentation/create_post/create_post_controller.dart';
 import 'package:evasion/features/posts/presentation/create_post/post_options.dart';
 import 'package:evasion/features/posts/presentation/create_post/post_photo_and_caption.dart';
+import 'package:evasion/features/posts/presentation/create_post/publish_error.dart';
 import 'package:evasion/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,6 +38,9 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
   PostPrecision _precision = PostPrecision.fuzzy;
   Duration _lifetime = BusinessRules.postDefaultLifetime;
 
+  /// A place picked on the map; null puts the post at the phone's position.
+  GeoPoint? _place;
+
   @override
   void dispose() {
     _caption.dispose();
@@ -51,6 +55,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
       // pickCheckedPhoto only returns photos of a known format.
       format: detectPhotoFormat(photo)!,
       caption: _caption.text,
+      place: _place,
       precision: _precision,
       lifetime: _lifetime,
     );
@@ -70,7 +75,8 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
   }
 
   Future<void> _changePrecision(PostPrecision precision) async {
-    if (precision == PostPrecision.exact && !await confirmExactPlace(context)) {
+    if (precision == PostPrecision.exact &&
+        !await confirmExactPlace(context, placeChosen: _place != null)) {
       return;
     }
     if (mounted) setState(() => _precision = precision);
@@ -91,6 +97,7 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
     setState(() {
       _photo = null;
       _caption.clear();
+      _place = null;
       _precision = PostPrecision.fuzzy;
       _lifetime = BusinessRules.postDefaultLifetime;
     });
@@ -102,32 +109,19 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
     }
   }
 
-  void _showError(Object error) {
-    final l10n = AppLocalizations.of(context);
-    final (message, canOpenSettings) = switch (error) {
-      LocationAccessDenied(permanently: true) => (
-        l10n.locationDeniedForever,
-        true,
-      ),
-      LocationAccessDenied() => (l10n.locationDenied, false),
-      LocationServiceDisabled() => (l10n.locationDisabled, false),
-      TimeoutException() => (l10n.locationTimeout, false),
-      _ => (failureMessage(context, error), false),
-    };
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(message),
-          action: canOpenSettings
-              ? SnackBarAction(
-                  label: l10n.locationOpenSettings,
-                  onPressed: () =>
-                      ref.read(locationServiceProvider).openSettings(),
-                )
-              : null,
-        ),
-      );
+  void _showError(Object error) => showPublishError(
+    context,
+    error,
+    placeChosen: _place != null,
+    onOpenSettings: () => ref.read(locationServiceProvider).openSettings(),
+  );
+
+  Future<void> _choosePlace() async {
+    final place = await context.push<GeoPoint>(
+      AppRoutes.choosePlace,
+      extra: _place,
+    );
+    if (place != null && mounted) setState(() => _place = place);
   }
 
   @override
@@ -159,7 +153,12 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
                   const SizedBox(height: 24),
                   PostPlaceSection(
                     precision: _precision,
+                    placeChosen: _place != null,
                     onPrecisionChanged: isPublishing ? null : _changePrecision,
+                    onChoosePlace: isPublishing ? null : _choosePlace,
+                    onBackToMyPosition: isPublishing
+                        ? null
+                        : () => setState(() => _place = null),
                   ),
                   const SizedBox(height: 24),
                   const PostAudienceSection(),

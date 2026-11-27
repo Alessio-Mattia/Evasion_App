@@ -38,12 +38,21 @@ class PostFormSection extends StatelessWidget {
 class PostPlaceSection extends StatelessWidget {
   const PostPlaceSection({
     required this.precision,
+    required this.placeChosen,
     required this.onPrecisionChanged,
+    required this.onChoosePlace,
+    required this.onBackToMyPosition,
     super.key,
   });
 
   final PostPrecision precision;
+
+  /// Whether the place was picked on the map, rather than the phone's
+  /// position.
+  final bool placeChosen;
   final ValueChanged<PostPrecision>? onPrecisionChanged;
+  final VoidCallback? onChoosePlace;
+  final VoidCallback? onBackToMyPosition;
 
   @override
   Widget build(BuildContext context) {
@@ -58,14 +67,28 @@ class PostPlaceSection extends StatelessWidget {
           spacing: 12,
           children: [
             Icon(Icons.place_outlined, color: theme.colorScheme.primary),
-            Expanded(child: Text(l10n.createPostCurrentPosition)),
-            // Picking a place on the map comes with the map.
+            Expanded(
+              child: Text(
+                placeChosen
+                    ? l10n.createPostChosenPlace
+                    : l10n.createPostCurrentPosition,
+              ),
+            ),
             TextButton(
-              onPressed: null,
+              onPressed: onChoosePlace,
               child: Text(l10n.createPostChangePlace),
             ),
           ],
         ),
+        if (placeChosen)
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: TextButton.icon(
+              onPressed: onBackToMyPosition,
+              icon: const Icon(Icons.my_location),
+              label: Text(l10n.createPostBackToMyPosition),
+            ),
+          ),
         SizedBox(
           width: double.infinity,
           child: SegmentedButton<PostPrecision>(
@@ -91,6 +114,8 @@ class PostPlaceSection extends StatelessWidget {
             PostPrecision.fuzzy => l10n.createPostFuzzyHint(
               BusinessRules.postFuzzyCellSizeMeters,
             ),
+            PostPrecision.exact when placeChosen =>
+              l10n.createPostExactHintChosen,
             PostPrecision.exact => l10n.createPostExactHint,
           },
           style: theme.textTheme.bodySmall?.copyWith(
@@ -183,13 +208,20 @@ class PostLifetimeSection extends StatelessWidget {
 
 /// Warns before showing the exact place of the post. Returns whether the
 /// user confirmed.
-Future<bool> confirmExactPlace(BuildContext context) async {
+Future<bool> confirmExactPlace(
+  BuildContext context, {
+  required bool placeChosen,
+}) async {
   final l10n = AppLocalizations.of(context);
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
       title: Text(l10n.createPostExactConfirmTitle),
-      content: Text(l10n.createPostExactConfirmBody),
+      content: Text(
+        placeChosen
+            ? l10n.createPostExactConfirmBodyChosen
+            : l10n.createPostExactConfirmBody,
+      ),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
