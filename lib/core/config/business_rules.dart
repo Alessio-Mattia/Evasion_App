@@ -160,6 +160,21 @@ abstract final class BusinessRules {
   /// Also enforced in SQL (scan_connection_token).
   static const int connectionMaxDistanceMeters = 500;
 
+  // Likes and matches
+  //
+  // A like is secret, between friends only, and revealed to the other by a
+  // match only. It is meant to be deliberate, not a way to probe who liked
+  // you.
+
+  /// Also enforced in SQL. Counted in code points, like the texts above.
+  /// The message is optional.
+  static const int likeMessageMaxLength = 300;
+
+  /// After removing a like, the user cannot like the same friend again for
+  /// this long: liking then removing cannot be used to probe.
+  /// Also enforced in SQL (like_friend).
+  static const Duration likeCooldownAfterRemoval = Duration(days: 7);
+
   // Posts
 
   /// Side of the grid cells of fuzzy posts: a fuzzy post shows at the centre
