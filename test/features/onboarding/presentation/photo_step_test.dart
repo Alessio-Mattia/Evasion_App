@@ -1,7 +1,7 @@
 import 'package:evasion/core/errors/app_failure.dart';
 import 'package:evasion/core/photos/photo_file.dart';
 import 'package:evasion/core/services/photo_picker.dart';
-import 'package:evasion/features/map/presentation/home_screen.dart';
+import 'package:evasion/features/posts/presentation/map/posts_map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -54,7 +54,7 @@ void main() {
     await tapText(tester, 'Valider cette photo');
 
     expect(store.savedPhotoFormats, [PhotoFormat.png]);
-    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(PostsMapScreen), findsOneWidget);
   });
 
   testWidgets('the camera is offered too', (tester) async {
@@ -126,6 +126,6 @@ void main() {
       findsOneWidget,
     );
     expect(find.byType(CircleAvatar), findsOneWidget);
-    expect(find.byType(HomeScreen), findsNothing);
+    expect(find.byType(PostsMapScreen), findsNothing);
   });
 }

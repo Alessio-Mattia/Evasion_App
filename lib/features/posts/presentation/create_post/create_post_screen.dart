@@ -94,7 +94,12 @@ class _CreatePostScreenState extends ConsumerState<CreatePostScreen> {
       _precision = PostPrecision.fuzzy;
       _lifetime = BusinessRules.postDefaultLifetime;
     });
-    context.go(AppRoutes.home);
+    // Back to the map, which shows the new post.
+    if (context.canPop()) {
+      context.pop(true);
+    } else {
+      context.go(AppRoutes.map);
+    }
   }
 
   void _showError(Object error) {

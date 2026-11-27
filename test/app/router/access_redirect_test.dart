@@ -7,7 +7,7 @@ void main() {
   String? redirect(AccessStatus status, String location) =>
       accessRedirect(status: status, location: location);
 
-  const appScreens = [AppRoutes.home, AppRoutes.profile];
+  const appScreens = [AppRoutes.map, AppRoutes.profile];
   const otherAreas = [
     AppRoutes.signIn,
     AppRoutes.signInCode,
@@ -27,7 +27,7 @@ void main() {
       AccessStatus.loadingProfile,
       AccessStatus.profileError,
     ]) {
-      expect(redirect(status, AppRoutes.home), AppRoutes.startup);
+      expect(redirect(status, AppRoutes.map), AppRoutes.startup);
       expect(redirect(status, AppRoutes.signIn), AppRoutes.startup);
       expect(redirect(status, AppRoutes.startup), isNull);
     }
@@ -51,7 +51,7 @@ void main() {
       expect(redirect(AccessStatus.ready, location), isNull);
     }
     for (final location in otherAreas) {
-      expect(redirect(AccessStatus.ready, location), AppRoutes.home);
+      expect(redirect(AccessStatus.ready, location), AppRoutes.map);
     }
   });
 }

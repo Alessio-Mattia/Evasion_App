@@ -1,7 +1,10 @@
 abstract final class AppRoutes {
-  static const String home = '/home';
+  static const String map = '/map';
+  static const String crossings = '/crossings';
   static const String messages = '/messages';
-  static const String add = '/add';
+
+  /// Creating a post, over the tabs. Pops `true` once published.
+  static const String newPost = '/new-post';
   static const String profile = '/profile';
   static const String settings = '/profile/settings';
   static const String deleteAccount = '/profile/settings/delete-account';

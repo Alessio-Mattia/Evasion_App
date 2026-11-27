@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:evasion/features/auth/presentation/sign_in_code_screen.dart';
 import 'package:evasion/features/auth/presentation/sign_in_email_screen.dart';
-import 'package:evasion/features/map/presentation/home_screen.dart';
+import 'package:evasion/features/posts/presentation/map/posts_map_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -24,7 +24,7 @@ void main() {
     await pumpEvasionApp(tester, authRepository: repository);
 
     expect(find.byType(SignInEmailScreen), findsOneWidget);
-    expect(find.byType(HomeScreen), findsNothing);
+    expect(find.byType(PostsMapScreen), findsNothing);
   });
 
   testWidgets('a malformed email is refused before calling the server', (
@@ -81,7 +81,7 @@ void main() {
     expect(repository.verifyCodeCalls, 1);
     repository.pendingCall!.complete();
     await tester.pumpAndSettle();
-    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(PostsMapScreen), findsOneWidget);
   });
 
   testWidgets('a wrong code shows its message and stays', (tester) async {
@@ -104,7 +104,7 @@ void main() {
     // Typing the last digit submits the code.
     await tester.enterText(find.byType(TextFormField), '123456');
     await tester.pumpAndSettle();
-    expect(find.byType(HomeScreen), findsOneWidget);
+    expect(find.byType(PostsMapScreen), findsOneWidget);
 
     // Signing out is in the settings, opened from the profile tab.
     await tester.tap(find.text('Profil'));

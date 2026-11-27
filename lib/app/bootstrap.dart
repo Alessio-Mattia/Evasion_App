@@ -2,6 +2,7 @@ import 'package:evasion/app/app.dart';
 import 'package:evasion/app/config/app_environment.dart';
 import 'package:evasion/app/config/supabase_config.dart';
 import 'package:evasion/app/theme/app_fonts.dart';
+import 'package:evasion/core/map/map_config.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +17,7 @@ Future<void> bootstrap(AppEnvironment environment) async {
 
   WidgetsFlutterBinding.ensureInitialized();
   AppFonts.registerLicenses();
+  MapConfig.fromEnvironment().apply();
 
   final supabaseConfig = SupabaseConfig.fromEnvironment();
   await Supabase.initialize(

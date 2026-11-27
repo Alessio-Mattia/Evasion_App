@@ -4,17 +4,13 @@
   "@appTitle": {
     "description": "Application name shown by the operating system's task switcher."
   },
-  "tabHome": "Accueil",
-  "@tabHome": {
-    "description": "Bottom navigation label of the home tab."
-  },
-  "tabMessages": "Messagerie",
+  "tabMap": "Carte",
+  "@tabMap": {"description": "Tab of the map."},
+  "tabCrossings": "Croisements",
+  "@tabCrossings": {"description": "Tab of the people crossed."},
+  "tabMessages": "Messages",
   "@tabMessages": {
     "description": "Bottom navigation label of the messaging tab."
-  },
-  "tabAdd": "Ajout",
-  "@tabAdd": {
-    "description": "Bottom navigation label of the tab used to create content."
   },
   "tabProfile": "Profil",
   "@tabProfile": {
@@ -628,5 +624,21 @@
   "locationDisabled": "Active la localisation de ton téléphone pour publier un post.",
   "@locationDisabled": {"description": "Location is turned off on the phone."},
   "locationTimeout": "Ta position n'a pas pu être trouvée. Réessaie près d'une fenêtre ou dehors.",
-  "@locationTimeout": {"description": "No position came in time."}
+  "@locationTimeout": {"description": "No position came in time."},
+  "mapTitle": "Autour de toi",
+  "@mapTitle": {"description": "Title over the map."},
+  "mapZoomIn": "Zoome pour voir les posts",
+  "@mapZoomIn": {"description": "Shown when the map is zoomed out too far to load posts."},
+  "mapNewPost": "Créer un post",
+  "@mapNewPost": {"description": "Tooltip of the button creating a post, on the map."},
+  "postPin": "Épingler",
+  "@postPin": {"description": "Tooltip of the button pinning a post."},
+  "postUnpin": "Retirer l'épingle",
+  "@postUnpin": {"description": "Tooltip of the button unpinning a post."},
+  "postTimeLeftMinutes": "encore {count} min",
+  "@postTimeLeftMinutes": {"description": "Time before a post expires, in minutes.", "placeholders": {"count": {"type": "int", "example": "20"}}},
+  "postTimeLeftHours": "encore {count} h",
+  "@postTimeLeftHours": {"description": "Time before a post expires, in hours.", "placeholders": {"count": {"type": "int", "example": "5"}}},
+  "postTimeLeftDays": "{count, plural, =1{encore 1 jour} other{encore {count} jours}}",
+  "@postTimeLeftDays": {"description": "Time before a post expires, in days.", "placeholders": {"count": {"type": "int", "example": "3"}}}
 }
