@@ -14,6 +14,10 @@ abstract final class AppRoutes {
 
   /// Creating a post, over the tabs. Pops `true` once published.
   static const String newPost = '/new-post';
+
+  /// Picking the place of a new post on the map, given the place chosen
+  /// before as `extra`. Pops the place chosen.
+  static const String choosePlace = '/new-post/place';
   static const String profile = '/profile';
   static const String settings = '/profile/settings';
   static const String deleteAccount = '/profile/settings/delete-account';
