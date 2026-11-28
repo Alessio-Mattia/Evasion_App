@@ -1,4 +1,5 @@
 import 'package:evasion/core/models/geo_point.dart';
+import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -37,6 +38,10 @@ abstract interface class LocationService {
   /// Opens the app's page of the phone settings, where a permission refused
   /// for good can be granted again.
   Future<void> openSettings();
+
+  /// Asks again for the precise position, when the user chose the
+  /// approximate one: a system prompt on iOS, the app's settings on Android.
+  Future<void> askForPreciseLocation();
 }
 
 @Riverpod(keepAlive: true)
@@ -81,4 +86,14 @@ class DeviceLocationService implements LocationService {
 
   @override
   Future<void> openSettings() => Geolocator.openAppSettings();
+
+  @override
+  Future<void> askForPreciseLocation() async {
+    if (defaultTargetPlatform == TargetPlatform.iOS) {
+      // The purpose key of NSLocationTemporaryUsageDescriptionDictionary.
+      await Geolocator.requestTemporaryFullAccuracy(purposeKey: 'Crossings');
+    } else {
+      await Geolocator.openAppSettings();
+    }
+  }
 }

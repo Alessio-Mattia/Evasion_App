@@ -6,6 +6,7 @@ import 'package:evasion/core/services/photo_picker.dart';
 import 'package:evasion/core/storage/storage_images.dart';
 import 'package:evasion/features/auth/data/supabase_auth_repository.dart';
 import 'package:evasion/features/auth/domain/auth_repository.dart';
+import 'package:evasion/features/encounters/data/supabase_encounters_repository.dart';
 import 'package:evasion/features/onboarding/data/supabase_onboarding_repository.dart';
 import 'package:evasion/features/posts/data/supabase_posts_repository.dart';
 import 'package:evasion/features/profile/data/supabase_profile_repository.dart';
@@ -14,6 +15,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_auth_repository.dart';
+import 'fake_encounters_repository.dart';
 import 'fake_location_service.dart';
 import 'fake_map_view.dart';
 import 'fake_photo_picker.dart';
@@ -38,6 +40,7 @@ Future<void> pumpEvasionApp(
   FakeLocationService? location,
   FakePostsRepository? posts,
   FakeMapView? map,
+  FakeEncountersRepository? encounters,
 }) async {
   final store = profiles ?? FakeProfileStore(completeProfile(testUser.id));
   await tester.pumpWidget(
@@ -64,6 +67,9 @@ Future<void> pumpEvasionApp(
         ),
         postsRepositoryProvider.overrideWithValue(
           posts ?? FakePostsRepository(),
+        ),
+        encountersRepositoryProvider.overrideWithValue(
+          encounters ?? FakeEncountersRepository(),
         ),
         // The native Mapbox map cannot run in widget tests.
         mapViewBuilderProvider.overrideWithValue(

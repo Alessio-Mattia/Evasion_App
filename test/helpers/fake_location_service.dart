@@ -27,4 +27,9 @@ class FakeLocationService implements LocationService {
 
   @override
   Future<void> openSettings() async => settingsOpened++;
+
+  int preciseLocationAsked = 0;
+
+  @override
+  Future<void> askForPreciseLocation() async => preciseLocationAsked++;
 }

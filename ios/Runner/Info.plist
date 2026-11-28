@@ -34,6 +34,11 @@
 	<string>Evasion utilise l'appareil photo pour prendre les photos de ton profil et de tes posts.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Evasion accède à tes photos pour que tu choisisses celles de ton profil et de tes posts. Seules les photos choisies sont envoyées.</string>
+	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
+	<dict>
+		<key>Crossings</key>
+		<string>Evasion a besoin de ta position précise pour savoir qui tu croises. Les autres ne voient qu'une zone et une heure arrondies.</string>
+	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Evasion utilise ta position pour placer tes posts près de toi, uniquement quand l'app est ouverte. Par défaut, les autres ne voient qu'une zone floue.</string>
 	<key>UIApplicationSceneManifest</key>
