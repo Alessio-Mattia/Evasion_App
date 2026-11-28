@@ -32,10 +32,11 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  test('times are shown in hours and half hours', () {
-    expect(crossingTime(DateTime(2026, 11, 28, 14)), '14 h');
-    expect(crossingTime(DateTime(2026, 11, 28, 14, 30)), '14 h 30');
-    expect(crossingTime(DateTime(2026, 11, 28, 9, 30)), '9 h 30');
+  test('times are shown in hours and half hours, never split', () {
+    // Non-breaking spaces.
+    expect(crossingTime(DateTime(2026, 11, 28, 14)), '14 h');
+    expect(crossingTime(DateTime(2026, 11, 28, 14, 30)), '14 h 30');
+    expect(crossingTime(DateTime(2026, 11, 28, 9, 30)), '9 h 30');
   });
 
   testWidgets('shows today, then this week, with rounded times', (
@@ -54,15 +55,13 @@ void main() {
     expect(find.text('AUJOURD’HUI'.replaceAll('’', "'")), findsOneWidget);
     expect(find.text('CETTE SEMAINE'), findsOneWidget);
     expect(find.text('Léa, 23'), findsOneWidget);
-    expect(find.text('Vers 0 h 30'), findsOneWidget);
-    expect(find.textContaining(', vers 0 h 30'), findsOneWidget);
+    expect(find.text('Vers 0 h 30'), findsOneWidget);
+    expect(find.textContaining(', vers 0 h 30'), findsOneWidget);
     // The student badge of the test crossings.
     expect(find.byIcon(Icons.school_outlined), findsNWidgets(2));
   });
 
-  testWidgets('a new crossing shows up after the next report', (
-    tester,
-  ) async {
+  testWidgets('a new crossing shows up after the next report', (tester) async {
     await openCrossings(tester);
     expect(find.byType(CrossingTile), findsNothing);
 

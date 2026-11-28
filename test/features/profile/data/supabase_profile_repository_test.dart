@@ -7,6 +7,7 @@ import 'package:evasion/features/profile/data/supabase_profile_repository.dart';
 import 'package:evasion/features/profile/domain/page_draft.dart';
 import 'package:evasion/features/profile/domain/profile_details.dart';
 import 'package:evasion/features/profile/domain/profile_page.dart';
+import 'package:evasion/features/profile/domain/public_profile.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -60,9 +61,9 @@ void main() {
 
   tearDown(() => server.close(force: true));
 
-  group('fetchOwnPages', () {
+  group('fetchPages', () {
     test('asks for the pages of the user in ascending position', () async {
-      await repository.fetchOwnPages(userId);
+      await repository.fetchPages(userId);
 
       final query = requests.single.uri.queryParameters;
       expect(requests.single.uri.path, '/rest/v1/profile_pages');
@@ -99,10 +100,73 @@ void main() {
         ],
       );
 
-      final pages = await repository.fetchOwnPages(userId);
+      final pages = await repository.fetchPages(userId);
 
       expect(pages.map((page) => page.id), ['p1', 'p3']);
       expect(pages.last, isA<PhotoPage>());
+    });
+  });
+
+  group('fetchPublicProfile', () {
+    test('reads the profile through get_public_profile', () async {
+      answer = (_) => (
+        status: 200,
+        body: [
+          {
+            'id': 'other',
+            'display_name': 'Noé',
+            'age': 22,
+            'gender': 'man',
+            'bio': 'Bio',
+            'occupation': null,
+            'university': 'UNIL',
+            'is_student_verified': true,
+            'avatar_path': 'other/a.jpg',
+          },
+        ],
+      );
+
+      final profile = await repository.fetchPublicProfile('other');
+
+      final request = requests.single;
+      expect(request.method, 'POST');
+      expect(request.uri.path, '/rest/v1/rpc/get_public_profile');
+      expect(request.body, {'profile_id': 'other'});
+      expect(
+        profile,
+        const PublicProfile(
+          id: 'other',
+          displayName: 'Noé',
+          age: 22,
+          isStudentVerified: true,
+          avatarPath: 'other/a.jpg',
+          university: 'UNIL',
+          bio: 'Bio',
+        ),
+      );
+    });
+
+    test('fails with NotFoundFailure when the profile cannot be seen', () {
+      answer = (_) => (status: 200, body: <Object>[]);
+
+      expect(
+        repository.fetchPublicProfile('other'),
+        throwsA(isA<NotFoundFailure>()),
+      );
+    });
+
+    test('fails with NotFoundFailure for a row it cannot show', () {
+      answer = (_) => (
+        status: 200,
+        body: [
+          {'id': 'other', 'display_name': null, 'age': 22},
+        ],
+      );
+
+      expect(
+        repository.fetchPublicProfile('other'),
+        throwsA(isA<NotFoundFailure>()),
+      );
     });
   });
 

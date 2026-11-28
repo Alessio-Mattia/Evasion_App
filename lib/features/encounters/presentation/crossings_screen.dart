@@ -1,3 +1,4 @@
+import 'package:evasion/app/router/app_routes.dart';
 import 'package:evasion/core/services/location_service.dart';
 import 'package:evasion/core/widgets/failure_snack_bar.dart';
 import 'package:evasion/features/encounters/domain/crossing.dart';
@@ -8,6 +9,7 @@ import 'package:evasion/features/encounters/presentation/location_reporting.dart
 import 'package:evasion/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 /// The people whose paths crossed the user's, today then this week. Places
 /// and times are rounded by the server.
@@ -80,7 +82,13 @@ class CrossingsScreen extends ConsumerWidget {
         if (group.isNotEmpty) ...[
           _SectionTitle(title),
           for (final crossing in group)
-            CrossingTile(crossing: crossing, showDay: showDay),
+            CrossingTile(
+              crossing: crossing,
+              showDay: showDay,
+              onTap: () => context.push(
+                AppRoutes.crossingProfile(crossing.userId, crossing.id),
+              ),
+            ),
         ],
     ];
   }

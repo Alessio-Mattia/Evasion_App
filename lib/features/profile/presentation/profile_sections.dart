@@ -1,4 +1,5 @@
-import 'package:evasion/features/profile/domain/profile.dart';
+import 'package:evasion/core/widgets/failure_snack_bar.dart';
+import 'package:evasion/features/profile/domain/public_profile.dart';
 import 'package:evasion/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 
@@ -28,7 +29,7 @@ class ProfileHint extends StatelessWidget {
 class AboutSection extends StatelessWidget {
   const AboutSection({super.key, required this.profile});
 
-  final Profile profile;
+  final PublicProfile profile;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +48,38 @@ class AboutSection extends StatelessWidget {
           ),
           Text(bio, style: textTheme.bodyLarge),
         ],
+      ),
+    );
+  }
+}
+
+/// Why a profile could not be loaded, with a button to try again.
+class ProfileFailureView extends StatelessWidget {
+  const ProfileFailureView({
+    required this.error,
+    required this.onRetry,
+    super.key,
+  });
+
+  final Object error;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          spacing: 16,
+          children: [
+            Text(failureMessage(context, error), textAlign: TextAlign.center),
+            FilledButton(
+              onPressed: onRetry,
+              child: Text(AppLocalizations.of(context).retry),
+            ),
+          ],
+        ),
       ),
     );
   }

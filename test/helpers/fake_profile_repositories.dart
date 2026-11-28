@@ -13,6 +13,7 @@ import 'package:evasion/features/profile/domain/profile.dart';
 import 'package:evasion/features/profile/domain/profile_details.dart';
 import 'package:evasion/features/profile/domain/profile_page.dart';
 import 'package:evasion/features/profile/domain/profile_repository.dart';
+import 'package:evasion/features/profile/domain/public_profile.dart';
 
 /// Profile with every required field, as after onboarding.
 Profile completeProfile(String userId) => Profile(
@@ -74,6 +75,22 @@ class FakeProfileStore implements ProfileRepository, OnboardingRepository {
   /// Photos deleted with their page.
   final List<String> deletedPhotos = [];
 
+  /// The profiles of other users the signed-in user can see, by id. Any
+  /// other id fails with `NotFoundFailure`, as on the server.
+  final Map<String, PublicProfile> others = {};
+
+  /// The pages of the profiles in [others], by user id.
+  final Map<String, List<ProfilePage>> othersPages = {};
+
+  /// Set to make the next reads of other profiles fail.
+  AppFailure? othersFailure;
+
+  @override
+  Future<PublicProfile> fetchPublicProfile(String userId) async {
+    if (othersFailure case final failure?) throw failure;
+    return others[userId] ?? (throw const NotFoundFailure());
+  }
+
   @override
   Future<Profile> fetchOwnProfile(String userId) async {
     fetchCount++;
@@ -124,9 +141,12 @@ class FakeProfileStore implements ProfileRepository, OnboardingRepository {
   }
 
   @override
-  Future<List<ProfilePage>> fetchOwnPages(String userId) async {
+  Future<List<ProfilePage>> fetchPages(String userId) async {
     if (pagesFailure case final failure?) throw failure;
-    return [...pages]..sort((a, b) => a.position.compareTo(b.position));
+    final userPages = userId == profile.id
+        ? pages
+        : othersPages[userId] ?? const <ProfilePage>[];
+    return [...userPages]..sort((a, b) => a.position.compareTo(b.position));
   }
 
   @override

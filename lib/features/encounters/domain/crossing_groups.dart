@@ -6,13 +6,7 @@ import 'package:evasion/features/encounters/domain/crossing.dart';
   List<Crossing> crossings,
   DateTime now,
 ) {
-  final localNow = now.toLocal();
-  bool isToday(Crossing crossing) {
-    final local = crossing.crossedAt.toLocal();
-    return local.year == localNow.year &&
-        local.month == localNow.month &&
-        local.day == localNow.day;
-  }
+  bool isToday(Crossing crossing) => isSameLocalDay(crossing.crossedAt, now);
 
   return (
     today: [
@@ -24,4 +18,13 @@ import 'package:evasion/features/encounters/domain/crossing.dart';
         if (!isToday(crossing)) crossing,
     ],
   );
+}
+
+/// Whether [time] is on the same day as [now], in the phone's time zone.
+bool isSameLocalDay(DateTime time, DateTime now) {
+  final local = time.toLocal();
+  final localNow = now.toLocal();
+  return local.year == localNow.year &&
+      local.month == localNow.month &&
+      local.day == localNow.day;
 }

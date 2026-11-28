@@ -466,9 +466,9 @@ class _SlowStore extends FakeProfileStore {
   static const _delay = Duration(milliseconds: 200);
 
   @override
-  Future<List<ProfilePage>> fetchOwnPages(String userId) async {
+  Future<List<ProfilePage>> fetchPages(String userId) async {
     await Future<void>.delayed(_delay);
-    return super.fetchOwnPages(userId);
+    return super.fetchPages(userId);
   }
 
   @override

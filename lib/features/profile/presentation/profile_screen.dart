@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:evasion/app/router/app_routes.dart';
 import 'package:evasion/core/config/business_rules.dart';
+import 'package:evasion/core/utils/server_date.dart';
 import 'package:evasion/core/widgets/failure_snack_bar.dart';
 import 'package:evasion/features/profile/domain/profile_page.dart';
+import 'package:evasion/features/profile/domain/public_profile.dart';
 import 'package:evasion/features/profile/presentation/carousel/profile_carousel.dart';
 import 'package:evasion/features/profile/presentation/edit/confirm_page_deletion.dart';
 import 'package:evasion/features/profile/presentation/edit/pages_edit_strip.dart';
@@ -125,50 +127,60 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
         ],
       ),
       body: switch (ref.watch(ownProfileProvider(_userId))) {
-        AsyncValue(:final value?) => RefreshIndicator(
-          onRefresh: _reload,
-          child: ListView(
-            padding: const EdgeInsets.only(left: 16, top: 8, bottom: 24),
-            children: [
-              if (_editing) ...[
-                PagesEditStrip(
-                  avatarPath: value.avatarPath,
-                  pages: pages,
-                  deletingId: _deletingId,
-                  isBusy: _deletingId != null || isReordering,
-                  onEditProfile: _editProfile,
-                  onEdit: _edit,
-                  onDelete: _delete,
-                  onReorder: _reorder,
-                ),
-                ProfileHint(l10n.profileEditHint),
-              ] else ...[
-                ProfileCarousel(
-                  profile: value,
-                  pages: pages,
-                  onAddPage: pages.length < BusinessRules.profilePagesMax
-                      ? _addPage
-                      : null,
-                  onLongPressPage: _startEditing,
-                ),
-                ProfileHint(l10n.profileEditTip),
-              ],
-              AboutSection(profile: value),
-            ],
-          ),
-        ),
-        AsyncValue(:final error?) => Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            spacing: 16,
-            children: [
-              Text(failureMessage(context, error), textAlign: TextAlign.center),
-              FilledButton(onPressed: _reload, child: Text(l10n.retry)),
-            ],
-          ),
+        AsyncValue(:final value?) => switch (value.asSeenByOthers(
+          serverToday(),
+        )) {
+          final shown? => _loaded(shown, pages, isReordering: isReordering),
+          // Only before the end of onboarding, which keeps the user out of
+          // the tabs.
+          null => const SizedBox.shrink(),
+        },
+        AsyncValue(:final error?) => ProfileFailureView(
+          error: error,
+          onRetry: _reload,
         ),
         _ => const Center(child: CircularProgressIndicator()),
       },
+    );
+  }
+
+  Widget _loaded(
+    PublicProfile profile,
+    List<ProfilePage> pages, {
+    required bool isReordering,
+  }) {
+    final l10n = AppLocalizations.of(context);
+    return RefreshIndicator(
+      onRefresh: _reload,
+      child: ListView(
+        padding: const EdgeInsets.only(left: 16, top: 8, bottom: 24),
+        children: [
+          if (_editing) ...[
+            PagesEditStrip(
+              avatarPath: profile.avatarPath,
+              pages: pages,
+              deletingId: _deletingId,
+              isBusy: _deletingId != null || isReordering,
+              onEditProfile: _editProfile,
+              onEdit: _edit,
+              onDelete: _delete,
+              onReorder: _reorder,
+            ),
+            ProfileHint(l10n.profileEditHint),
+          ] else ...[
+            ProfileCarousel(
+              profile: profile,
+              pages: pages,
+              onAddPage: pages.length < BusinessRules.profilePagesMax
+                  ? _addPage
+                  : null,
+              onLongPressPage: _startEditing,
+            ),
+            ProfileHint(l10n.profileEditTip),
+          ],
+          AboutSection(profile: profile),
+        ],
+      ),
     );
   }
 }

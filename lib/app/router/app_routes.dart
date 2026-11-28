@@ -1,6 +1,15 @@
 abstract final class AppRoutes {
   static const String map = '/map';
   static const String crossings = '/crossings';
+  static const String userIdParameter = 'userId';
+  static const String crossingParameter = 'crossing';
+
+  /// The profile of [userId], opened from their crossing [crossingId], which
+  /// it recalls.
+  static String crossingProfile(String userId, String crossingId) => Uri(
+    path: '$crossings/profile/$userId',
+    queryParameters: {crossingParameter: crossingId},
+  ).toString();
   static const String messages = '/messages';
 
   /// Creating a post, over the tabs. Pops `true` once published.
