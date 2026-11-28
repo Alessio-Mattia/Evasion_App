@@ -3,6 +3,7 @@ import 'package:evasion/app/router/access_status.dart';
 import 'package:evasion/app/router/app_routes.dart';
 import 'package:evasion/app/router/app_shell.dart';
 import 'package:evasion/app/startup/startup_screen.dart';
+import 'package:evasion/core/models/geo_point.dart';
 import 'package:evasion/features/auth/presentation/current_user.dart';
 import 'package:evasion/features/auth/presentation/delete_account/delete_account_button.dart';
 import 'package:evasion/features/auth/presentation/delete_account/delete_account_screen.dart';
@@ -14,6 +15,7 @@ import 'package:evasion/features/encounters/presentation/crossings_screen.dart';
 import 'package:evasion/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:evasion/features/posts/presentation/create_post/create_post_screen.dart';
 import 'package:evasion/features/posts/presentation/map/posts_map_screen.dart';
+import 'package:evasion/features/posts/presentation/place_picker/place_picker_screen.dart';
 import 'package:evasion/features/profile/domain/page_draft.dart';
 import 'package:evasion/features/profile/presentation/editor/edit_page_screen.dart';
 import 'package:evasion/features/profile/presentation/editor/new_page_screen.dart';
@@ -78,6 +80,13 @@ GoRouter appRouter(Ref ref) {
           // Only while signing out: the redirect then leaves the app.
           null => const SizedBox.shrink(),
         },
+        routes: [
+          GoRoute(
+            path: 'place',
+            builder: (context, state) =>
+                PlacePickerScreen(initialPlace: state.extra as GeoPoint?),
+          ),
+        ],
       ),
       // indexedStack keeps each tab alive, so its state survives tab switches.
       StatefulShellRoute.indexedStack(
