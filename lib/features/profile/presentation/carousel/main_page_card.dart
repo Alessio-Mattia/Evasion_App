@@ -1,7 +1,6 @@
 import 'package:evasion/core/storage/storage_images.dart';
-import 'package:evasion/core/utils/server_date.dart';
 import 'package:evasion/core/widgets/storage_image.dart';
-import 'package:evasion/features/profile/domain/profile.dart';
+import 'package:evasion/features/profile/domain/public_profile.dart';
 import 'package:evasion/features/profile/presentation/carousel/carousel_card.dart';
 import 'package:evasion/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -11,15 +10,13 @@ import 'package:flutter/material.dart';
 class MainPageCard extends StatelessWidget {
   const MainPageCard({required this.profile, super.key});
 
-  final Profile profile;
+  final PublicProfile profile;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final onPhoto = theme.colorScheme.onSurface;
-    final birthDate = profile.birthDate;
-    final name = profile.displayName ?? '';
     final avatarPath = profile.avatarPath;
 
     return CarouselCard(
@@ -45,12 +42,7 @@ class MainPageCard extends StatelessWidget {
                         visualDensity: VisualDensity.compact,
                       ),
                     Text(
-                      birthDate == null
-                          ? name
-                          : l10n.profileNameAndAge(
-                              name,
-                              ageOn(birthDate, serverToday()),
-                            ),
+                      l10n.profileNameAndAge(profile.displayName, profile.age),
                       style: theme.textTheme.headlineMedium?.copyWith(
                         color: onPhoto,
                       ),

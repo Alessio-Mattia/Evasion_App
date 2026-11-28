@@ -10,6 +10,7 @@ import 'package:evasion/features/auth/presentation/sign_in_code_screen.dart';
 import 'package:evasion/features/auth/presentation/sign_in_email_screen.dart';
 import 'package:evasion/features/auth/presentation/sign_out_button.dart';
 import 'package:evasion/features/chat/presentation/messaging_screen.dart';
+import 'package:evasion/features/encounters/presentation/crossing_note.dart';
 import 'package:evasion/features/encounters/presentation/crossings_screen.dart';
 import 'package:evasion/features/onboarding/presentation/onboarding_screen.dart';
 import 'package:evasion/features/posts/presentation/create_post/create_post_screen.dart';
@@ -17,6 +18,7 @@ import 'package:evasion/features/posts/presentation/map/posts_map_screen.dart';
 import 'package:evasion/features/profile/domain/page_draft.dart';
 import 'package:evasion/features/profile/presentation/editor/edit_page_screen.dart';
 import 'package:evasion/features/profile/presentation/editor/new_page_screen.dart';
+import 'package:evasion/features/profile/presentation/other_profile/other_profile_screen.dart';
 import 'package:evasion/features/profile/presentation/own_profile.dart';
 import 'package:evasion/features/profile/presentation/profile_edit/edit_profile_screen.dart';
 import 'package:evasion/features/profile/presentation/profile_screen.dart';
@@ -99,6 +101,19 @@ GoRouter appRouter(Ref ref) {
                 path: AppRoutes.crossings,
                 builder: (context, state) =>
                     const CrossingsScreen(visibilityNotice: InvisibleNotice()),
+                routes: [
+                  GoRoute(
+                    path: 'profile/:${AppRoutes.userIdParameter}',
+                    builder: (context, state) => OtherProfileScreen(
+                      userId: state.pathParameters[AppRoutes.userIdParameter]!,
+                      meetingNote: switch (state.uri.queryParameters[AppRoutes
+                          .crossingParameter]) {
+                        final id? => CrossingNote(crossingId: id),
+                        null => null,
+                      },
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

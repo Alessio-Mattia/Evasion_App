@@ -16,4 +16,4 @@ Future<Profile> ownProfile(Ref ref, String userId) =>
 /// The carousel pages of the signed-in user [userId], in their order.
 @riverpod
 Future<List<ProfilePage>> ownPages(Ref ref, String userId) =>
-    ref.watch(profileRepositoryProvider).fetchOwnPages(userId);
+    ref.watch(profileRepositoryProvider).fetchPages(userId);

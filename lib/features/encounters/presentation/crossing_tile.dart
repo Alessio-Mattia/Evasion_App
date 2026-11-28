@@ -6,24 +6,36 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 /// "14 h 30", or "14 h" on the hour: the time of a crossing, already rounded
-/// by the server.
+/// by the server. Its spaces are non-breaking, so that it is never split
+/// across two lines.
 String crossingTime(DateTime crossedAt) {
+  const space = ' ';
   final local = crossedAt.toLocal();
   final minutes = local.minute.toString().padLeft(2, '0');
-  return local.minute == 0 ? '${local.hour} h' : '${local.hour} h $minutes';
+  final hour = '${local.hour}${space}h';
+  return local.minute == 0 ? hour : '$hour$space$minutes';
+}
+
+/// "lundi" in French: the day of a crossing, in the phone's time zone.
+String crossingDay(BuildContext context, DateTime crossedAt) {
+  final locale = Localizations.localeOf(context).toLanguageTag();
+  return DateFormat.EEEE(locale).format(crossedAt.toLocal());
 }
 
 /// Someone crossed: photo, name and age, student badge, and when. Today's
-/// crossings show the time only, earlier ones the day too.
+/// crossings show the time only, earlier ones the day too. A tap calls
+/// [onTap], to open their profile.
 class CrossingTile extends StatelessWidget {
   const CrossingTile({
     required this.crossing,
     required this.showDay,
+    required this.onTap,
     super.key,
   });
 
   final Crossing crossing;
   final bool showDay;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -32,9 +44,9 @@ class CrossingTile extends StatelessWidget {
     final colors = theme.colorScheme;
     final avatar = crossing.avatarPath;
     final time = crossingTime(crossing.crossedAt);
-    final locale = Localizations.localeOf(context).toLanguageTag();
 
     return ListTile(
+      onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 4),
       leading: ClipOval(
         child: SizedBox.square(
@@ -61,9 +73,7 @@ class CrossingTile extends StatelessWidget {
       subtitle: Text(
         showDay
             ? l10n.crossingDayAndTime(
-                _capitalized(
-                  DateFormat.EEEE(locale).format(crossing.crossedAt.toLocal()),
-                ),
+                _capitalized(crossingDay(context, crossing.crossedAt)),
                 time,
               )
             : l10n.crossingTime(time),

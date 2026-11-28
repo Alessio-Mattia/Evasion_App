@@ -6,6 +6,7 @@ import 'package:evasion/features/profile/domain/page_positions.dart';
 import 'package:evasion/features/profile/domain/profile.dart';
 import 'package:evasion/features/profile/domain/profile_details.dart';
 import 'package:evasion/features/profile/domain/profile_page.dart';
+import 'package:evasion/features/profile/domain/public_profile.dart';
 
 /// Reads profiles, and edits the signed-in user's profile and pages.
 ///
@@ -29,9 +30,15 @@ abstract interface class ProfileRepository {
   /// Fails with `InvalidInputFailure` if it was already used.
   Future<void> correctBirthDate(String userId, DateTime birthDate);
 
-  /// The carousel pages of [userId], in their order. Pages this version of the
-  /// app cannot show are left out.
-  Future<List<ProfilePage>> fetchOwnPages(String userId);
+  /// The profile of [userId] as the signed-in user sees it. Fails with
+  /// `NotFoundFailure` when they cannot see it: deleted, not complete yet, or
+  /// blocked either way. The user never learns which.
+  Future<PublicProfile> fetchPublicProfile(String userId);
+
+  /// The carousel pages of [userId], the signed-in user or someone whose
+  /// profile they can see, in their order. Pages this version of the app
+  /// cannot show are left out.
+  Future<List<ProfilePage>> fetchPages(String userId);
 
   /// The positions of all the pages of [userId], including those this version
   /// of the app cannot show.

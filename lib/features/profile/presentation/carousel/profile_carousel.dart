@@ -1,6 +1,6 @@
 import 'package:evasion/core/widgets/page_indicator.dart';
-import 'package:evasion/features/profile/domain/profile.dart';
 import 'package:evasion/features/profile/domain/profile_page.dart';
+import 'package:evasion/features/profile/domain/public_profile.dart';
 import 'package:evasion/features/profile/presentation/carousel/add_page_card.dart';
 import 'package:evasion/features/profile/presentation/carousel/main_page_card.dart';
 import 'package:evasion/features/profile/presentation/carousel/page_cards.dart';
@@ -21,7 +21,7 @@ class ProfileCarousel extends StatefulWidget {
     super.key,
   });
 
-  final Profile profile;
+  final PublicProfile profile;
   final List<ProfilePage> pages;
 
   /// Shows the add card at the end. Null on the profile of someone else.

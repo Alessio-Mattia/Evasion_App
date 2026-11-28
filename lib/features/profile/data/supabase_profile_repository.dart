@@ -12,6 +12,7 @@ import 'package:evasion/features/profile/domain/profile.dart';
 import 'package:evasion/features/profile/domain/profile_details.dart';
 import 'package:evasion/features/profile/domain/profile_page.dart';
 import 'package:evasion/features/profile/domain/profile_repository.dart';
+import 'package:evasion/features/profile/domain/public_profile.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -78,7 +79,21 @@ class SupabaseProfileRepository implements ProfileRepository {
       );
 
   @override
-  Future<List<ProfilePage>> fetchOwnPages(String userId) => guard(() async {
+  Future<PublicProfile> fetchPublicProfile(String userId) => guard(() async {
+    final rows = await _client.rpc<List<dynamic>>(
+      'get_public_profile',
+      params: {'profile_id': userId},
+    );
+    // No row when the profile cannot be seen, whatever the reason.
+    final profile = rows.isEmpty
+        ? null
+        : publicProfileFromRow(rows.first as Map<String, dynamic>);
+    if (profile == null) throw const NotFoundFailure();
+    return profile;
+  });
+
+  @override
+  Future<List<ProfilePage>> fetchPages(String userId) => guard(() async {
     final rows = await _client
         .from('profile_pages')
         .select('id, position, type, content, image_path')
