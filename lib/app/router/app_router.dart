@@ -11,6 +11,7 @@ import 'package:evasion/features/auth/presentation/sign_in_code_screen.dart';
 import 'package:evasion/features/auth/presentation/sign_in_email_screen.dart';
 import 'package:evasion/features/auth/presentation/sign_out_button.dart';
 import 'package:evasion/features/chat/presentation/messaging_screen.dart';
+import 'package:evasion/features/connections/presentation/connect/connect_screen.dart';
 import 'package:evasion/features/encounters/presentation/crossing_note.dart';
 import 'package:evasion/features/encounters/presentation/crossings_screen.dart';
 import 'package:evasion/features/onboarding/presentation/onboarding_screen.dart';
@@ -88,6 +89,21 @@ GoRouter appRouter(Ref ref) {
             path: 'place',
             builder: (context, state) =>
                 PlacePickerScreen(initialPlace: state.extra as GeoPoint?),
+          ),
+        ],
+      ),
+      GoRoute(
+        path: AppRoutes.connect,
+        builder: (context, state) => ConnectScreen(
+          onOpenProfile: (userId) =>
+              context.push(AppRoutes.connectProfile(userId)),
+        ),
+        routes: [
+          GoRoute(
+            path: 'profile/:${AppRoutes.userIdParameter}',
+            builder: (context, state) => OtherProfileScreen(
+              userId: state.pathParameters[AppRoutes.userIdParameter]!,
+            ),
           ),
         ],
       ),

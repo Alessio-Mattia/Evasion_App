@@ -72,8 +72,12 @@ class FakeConnectionsRepository implements ConnectionsRepository {
     return (friendId: owner.userId, alreadyFriends: alreadyFriends);
   }
 
+  /// How many times [whoScanned] was asked.
+  int whoScannedCalls = 0;
+
   @override
   Future<Friend?> whoScanned(String token) async {
+    whoScannedCalls++;
     _throwIfFailing();
     return token == currentToken ? scannedBy : null;
   }

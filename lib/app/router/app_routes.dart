@@ -12,6 +12,12 @@ abstract final class AppRoutes {
   ).toString();
   static const String messages = '/messages';
 
+  /// Connecting with someone met in person by QR code, over the tabs.
+  static const String connect = '/connect';
+
+  /// The profile of [userId], just connected with.
+  static String connectProfile(String userId) => '$connect/profile/$userId';
+
   /// Creating a post, over the tabs. Pops `true` once published.
   static const String newPost = '/new-post';
 

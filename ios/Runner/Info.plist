@@ -31,7 +31,7 @@
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>Evasion utilise l'appareil photo pour prendre les photos de ton profil et de tes posts.</string>
+	<string>Evasion utilise l'appareil photo pour prendre les photos de ton profil et de tes posts, et pour scanner le QR code des personnes que tu rencontres.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Evasion accède à tes photos pour que tu choisisses celles de ton profil et de tes posts. Seules les photos choisies sont envoyées.</string>
 	<key>NSLocationTemporaryUsageDescriptionDictionary</key>
