@@ -22,6 +22,7 @@ import 'package:evasion/features/profile/presentation/editor/new_page_screen.dar
 import 'package:evasion/features/profile/presentation/own_profile.dart';
 import 'package:evasion/features/profile/presentation/profile_edit/edit_profile_screen.dart';
 import 'package:evasion/features/profile/presentation/profile_screen.dart';
+import 'package:evasion/features/settings/presentation/invisible_notice.dart';
 import 'package:evasion/features/settings/presentation/settings_button.dart';
 import 'package:evasion/features/settings/presentation/settings_screen.dart';
 import 'package:flutter/widgets.dart';
@@ -105,7 +106,8 @@ GoRouter appRouter(Ref ref) {
             routes: [
               GoRoute(
                 path: AppRoutes.crossings,
-                builder: (context, state) => const CrossingsScreen(),
+                builder: (context, state) =>
+                    const CrossingsScreen(visibilityNotice: InvisibleNotice()),
               ),
             ],
           ),

@@ -116,6 +116,16 @@ abstract final class BusinessRules {
   /// sooner is ignored. Also enforced in SQL (report_location).
   static const Duration locationReportMinInterval = Duration(seconds: 30);
 
+  /// How often the app sends the position while it is open and the user is
+  /// visible: often enough for the server, which only matches positions
+  /// less than crossingMaxPositionAge old. App side only.
+  static const Duration locationReportInterval = Duration(seconds: 90);
+
+  /// Imprecise positions in a row before the app asks for the precise
+  /// location: one may be a bad fix, several mean the user chose
+  /// "approximate". App side only.
+  static const int impreciseReportsBeforeNotice = 3;
+
   /// Worst GPS accuracy accepted, in metres: a less precise position, as
   /// often indoors, is ignored rather than create false crossings.
   /// Also enforced in SQL (report_location).
