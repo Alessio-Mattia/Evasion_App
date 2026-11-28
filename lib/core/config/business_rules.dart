@@ -175,6 +175,14 @@ abstract final class BusinessRules {
   /// Also enforced in SQL (like_friend).
   static const Duration likeCooldownAfterRemoval = Duration(days: 7);
 
+  // Messages
+  //
+  // Between friends only, with no quota for now. Text only.
+
+  /// Also enforced in SQL (send_message). Counted in code points, like the
+  /// texts above.
+  static const int messageMaxLength = 2000;
+
   // Posts
 
   /// Side of the grid cells of fuzzy posts: a fuzzy post shows at the centre
