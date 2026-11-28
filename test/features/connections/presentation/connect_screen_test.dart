@@ -67,6 +67,33 @@ void main() {
               as ValueKey<String>)
           .value;
 
+  Future<void> tapTab(WidgetTester tester, String label) async {
+    await tester.tap(
+      find.descendant(
+        of: find.byType(NavigationBar),
+        matching: find.text(label),
+      ),
+    );
+    await tester.pumpAndSettle();
+  }
+
+  /// The new friend's profile, in the messages tab, the connect screen left
+  /// behind: the tab bar is the way out, and back to the messages.
+  Future<void> expectNewFriendProfile(WidgetTester tester) async {
+    expect(find.byType(OtherProfileScreen), findsOneWidget);
+    expect(find.text('Noé, 23'), findsOneWidget);
+    expect(find.byType(ConnectScreen), findsNothing);
+    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.byType(BackButton), findsNothing);
+
+    // Through another tab: the messages tab opens on its root again.
+    await tapTab(tester, 'Profil');
+    await tapTab(tester, 'Messages');
+    expect(find.byType(OtherProfileScreen), findsNothing);
+    expect(find.byType(ConnectScreen), findsNothing);
+    expect(find.byTooltip("Se connecter avec quelqu'un"), findsOneWidget);
+  }
+
   Future<void> showScanner(WidgetTester tester) async {
     await tester.tap(find.text('Scanner'));
     await tester.pumpAndSettle();
@@ -117,8 +144,7 @@ void main() {
 
       await tester.tap(find.text('Voir son profil'));
       await tester.pumpAndSettle();
-      expect(find.byType(OtherProfileScreen), findsOneWidget);
-      expect(find.text('Noé, 23'), findsOneWidget);
+      await expectNewFriendProfile(tester);
 
       await closeApp(tester);
     });
@@ -187,7 +213,7 @@ void main() {
 
       await tester.tap(find.text('Voir son profil'));
       await tester.pumpAndSettle();
-      expect(find.text('Noé, 23'), findsOneWidget);
+      await expectNewFriendProfile(tester);
 
       await closeApp(tester);
     });

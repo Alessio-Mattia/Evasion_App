@@ -95,22 +95,18 @@ GoRouter appRouter(Ref ref) {
       GoRoute(
         path: AppRoutes.connect,
         builder: (context, state) => ConnectScreen(
+          // Leaves the connect screen for good: back never shows the
+          // connection message again.
           onOpenProfile: (userId) =>
-              context.push(AppRoutes.connectProfile(userId)),
+              context.go(AppRoutes.newFriendProfile(userId)),
         ),
-        routes: [
-          GoRoute(
-            path: 'profile/:${AppRoutes.userIdParameter}',
-            builder: (context, state) => OtherProfileScreen(
-              userId: state.pathParameters[AppRoutes.userIdParameter]!,
-            ),
-          ),
-        ],
       ),
       // indexedStack keeps each tab alive, so its state survives tab switches.
       StatefulShellRoute.indexedStack(
-        builder: (context, state, navigationShell) =>
-            AppShell(navigationShell: navigationShell),
+        builder: (context, state, navigationShell) => AppShell(
+          navigationShell: navigationShell,
+          currentPath: state.uri.path,
+        ),
         branches: [
           StatefulShellBranch(
             routes: [
@@ -147,6 +143,17 @@ GoRouter appRouter(Ref ref) {
               GoRoute(
                 path: AppRoutes.messages,
                 builder: (context, state) => const MessagingScreen(),
+                routes: [
+                  GoRoute(
+                    path: 'friend/:${AppRoutes.userIdParameter}',
+                    // Reached from the connect screen, which is gone: the
+                    // tab bar leads elsewhere.
+                    builder: (context, state) => OtherProfileScreen(
+                      userId: state.pathParameters[AppRoutes.userIdParameter]!,
+                      showBackButton: false,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
