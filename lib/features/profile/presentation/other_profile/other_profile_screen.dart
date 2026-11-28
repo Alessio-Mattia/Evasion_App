@@ -10,13 +10,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// The profile of someone else, read only: the carousel, how the user met
 /// them, then the bio.
 class OtherProfileScreen extends ConsumerWidget {
-  const OtherProfileScreen({required this.userId, this.meetingNote, super.key});
+  const OtherProfileScreen({
+    required this.userId,
+    this.meetingNote,
+    this.showBackButton = true,
+    super.key,
+  });
 
   final String userId;
 
   /// Provided by the router, so that this feature does not depend on the
   /// one the profile was opened from: for example when the two crossed.
   final Widget? meetingNote;
+
+  /// False when the screen it was opened from is gone, such as the connect
+  /// screen after a new connection.
+  final bool showBackButton;
 
   Future<void> _reload(WidgetRef ref) async {
     ref
@@ -32,7 +41,7 @@ class OtherProfileScreen extends ConsumerWidget {
         ref.watch(otherPagesProvider(userId)).value ?? const <ProfilePage>[];
 
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(automaticallyImplyLeading: showBackButton),
       body: switch (ref.watch(publicProfileProvider(userId))) {
         AsyncValue(:final value?) => RefreshIndicator(
           onRefresh: () => _reload(ref),

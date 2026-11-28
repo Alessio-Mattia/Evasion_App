@@ -1,11 +1,13 @@
 import 'package:evasion/app/app.dart';
 import 'package:evasion/app/config/app_environment.dart';
 import 'package:evasion/core/map/map_view.dart';
+import 'package:evasion/core/scanner/scanner_view.dart';
 import 'package:evasion/core/services/location_service.dart';
 import 'package:evasion/core/services/photo_picker.dart';
 import 'package:evasion/core/storage/storage_images.dart';
 import 'package:evasion/features/auth/data/supabase_auth_repository.dart';
 import 'package:evasion/features/auth/domain/auth_repository.dart';
+import 'package:evasion/features/connections/data/supabase_connections_repository.dart';
 import 'package:evasion/features/encounters/data/supabase_encounters_repository.dart';
 import 'package:evasion/features/onboarding/data/supabase_onboarding_repository.dart';
 import 'package:evasion/features/posts/data/supabase_posts_repository.dart';
@@ -15,12 +17,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_auth_repository.dart';
+import 'fake_connections_repository.dart';
 import 'fake_encounters_repository.dart';
 import 'fake_location_service.dart';
 import 'fake_map_view.dart';
 import 'fake_photo_picker.dart';
 import 'fake_posts_repository.dart';
 import 'fake_profile_repositories.dart';
+import 'fake_scanner_view.dart';
 import 'fake_settings_repository.dart';
 import 'fake_storage_images.dart';
 
@@ -29,7 +33,8 @@ import 'fake_storage_images.dart';
 /// or [profiles] to change that, and [settings] to control the settings.
 /// [photoPicker] replaces the phone's gallery and camera, [storageImages]
 /// the links to private photos, [location] the phone's position and [posts]
-/// the posts, and [map] the native map.
+/// the posts, [map] the native map, [connections] the friends and QR codes,
+/// and [scanner] the camera reading them.
 Future<void> pumpEvasionApp(
   WidgetTester tester, {
   AuthRepository? authRepository,
@@ -41,6 +46,8 @@ Future<void> pumpEvasionApp(
   FakePostsRepository? posts,
   FakeMapView? map,
   FakeEncountersRepository? encounters,
+  FakeConnectionsRepository? connections,
+  FakeScannerView? scanner,
 }) async {
   final store = profiles ?? FakeProfileStore(completeProfile(testUser.id));
   await tester.pumpWidget(
@@ -70,6 +77,13 @@ Future<void> pumpEvasionApp(
         ),
         encountersRepositoryProvider.overrideWithValue(
           encounters ?? FakeEncountersRepository(),
+        ),
+        connectionsRepositoryProvider.overrideWithValue(
+          connections ?? FakeConnectionsRepository(),
+        ),
+        // The camera cannot run in widget tests either.
+        scannerViewBuilderProvider.overrideWithValue(
+          (scanner ?? FakeScannerView()).builder,
         ),
         // The native Mapbox map cannot run in widget tests.
         mapViewBuilderProvider.overrideWithValue(

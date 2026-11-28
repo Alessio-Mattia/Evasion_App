@@ -170,6 +170,13 @@ abstract final class BusinessRules {
   /// Also enforced in SQL (scan_connection_token).
   static const int connectionMaxDistanceMeters = 500;
 
+  /// How long before its token expires the QR code on screen is renewed, so
+  /// that a scan never reaches the server with an expired one.
+  static const Duration connectionTokenRenewMargin = Duration(seconds: 20);
+
+  /// How often the screen showing the QR code asks who scanned it.
+  static const Duration connectionScanPollInterval = Duration(seconds: 3);
+
   // Likes and matches
   //
   // A like is secret, between friends only, and revealed to the other by a
@@ -259,6 +266,5 @@ abstract final class BusinessRules {
 
   /// Radius of the area drawn for a blurred post: it covers its whole grid
   /// cell (half its diagonal), wherever the post really is. App side only.
-  static const double mapFuzzyAreaRadiusMeters =
-      postFuzzyCellSizeMeters * 0.71;
+  static const double mapFuzzyAreaRadiusMeters = postFuzzyCellSizeMeters * 0.71;
 }

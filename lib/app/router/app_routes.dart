@@ -12,6 +12,19 @@ abstract final class AppRoutes {
   ).toString();
   static const String messages = '/messages';
 
+  /// Connecting with someone met in person by QR code, over the tabs.
+  static const String connect = '/connect';
+
+  /// The profile of [userId], just connected with, in the messages tab: the
+  /// connect screen is left behind.
+  static String newFriendProfile(String userId) => '$messages/friend/$userId';
+
+  /// Whether [path] is a page the user only passes through, such as the
+  /// profile of a new friend: once the user leaves its tab, the tab opens
+  /// on its root again instead of on that page.
+  static bool isPassingPage(String path) =>
+      path.startsWith('$messages/friend/');
+
   /// Creating a post, over the tabs. Pops `true` once published.
   static const String newPost = '/new-post';
 
